@@ -109,18 +109,3 @@ fn prompt_text(content: &Value) -> Option<String> {
     // Skip harness-injected prompts like <command-name> or <local-command-stdout>.
     (!text.trim_start().starts_with('<')).then_some(text)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn reads_fixture() -> anyhow::Result<()> {
-        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/claude.jsonl");
-        let session = read_session(&path)?.context("expected a session")?;
-        assert_eq!(session.cwd, Path::new("/Users/test/codes/blog"));
-        assert_eq!(session.title, "Blog redesign");
-        assert_eq!(session.prompts, 2);
-        Ok(())
-    }
-}

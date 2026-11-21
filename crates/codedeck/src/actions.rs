@@ -1,3 +1,4 @@
+use crate::shell::{Screen, Shell};
 use codedeck_ui::prelude::*;
 
 actions!(codedeck, [Quit, Rescan, GoHome, OpenSettings, ToggleTheme]);
@@ -26,4 +27,27 @@ pub fn install(cx: &mut App) {
     ]);
     // Closing the only window ends the app, like most single-window Mac utilities.
     cx.on_window_closed(|cx, _| cx.quit()).detach();
+}
+
+/// App-wide handlers, so shortcuts and menus work whatever has focus
+/// (clicking a plain element clears focus, which would strand view-level handlers).
+pub fn route_to(shell: WeakEntity<Shell>, cx: &mut App) {
+    let go = |screen: Screen| {
+        let shell = shell.clone();
+        move |cx: &mut App| {
+            shell.update(cx, |shell, cx| shell.go(screen.clone(), cx)).ok();
+        }
+    };
+    let home = go(Screen::Home);
+    let settings = go(Screen::Settings);
+    cx.on_action(move |_: &GoHome, cx| home(cx));
+    cx.on_action(move |_: &OpenSettings, cx| settings(cx));
+    let rescan = shell.clone();
+    cx.on_action(move |_: &Rescan, cx| {
+        rescan.update(cx, |shell, cx| shell.state.update(cx, |state, cx| state.rescan(cx))).ok();
+    });
+    let theme = shell;
+    cx.on_action(move |_: &ToggleTheme, cx| {
+        theme.update(cx, |shell, cx| shell.toggle_theme(cx)).ok();
+    });
 }

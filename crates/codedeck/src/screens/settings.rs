@@ -79,9 +79,24 @@ impl Shell {
         }));
 
         let folders = group("Folders")
-            .children(settings.roots.iter().map(|root| {
-                row("Scanning", None).child(div().font_family(MONO).text_size(px(12.5)).text_color(theme.ink_2).child(tilde(root)))
+            .children(settings.roots.iter().enumerate().map(|(index, root)| {
+                let remove = root.clone();
+                row("Scanning", None)
+                    .child(div().font_family(MONO).text_size(px(12.5)).text_color(theme.ink_2).child(tilde(root)))
+                    .child(GelButton::new(SharedString::from(format!("rm-root-{index}")), "Remove").paper().small().on_click(
+                        cx.listener(move |this, _, _, cx| {
+                            let remove = remove.clone();
+                            this.state.update(cx, |state, cx| state.update_settings(cx, |s| s.roots.retain(|r| *r != remove)));
+                        }),
+                    ))
             }))
+            .child(
+                row("Add a folder", Some("Codedeck finds every project inside it.".into())).child(
+                    GelButton::new("add-root", "Choose…").small().icon("icons/ui/folder.svg").on_click(cx.listener(|this, _, _, cx| {
+                        this.add_folders(cx);
+                    })),
+                ),
+            )
             .child(row("Depth", Some("How deep to look for projects inside each folder.".into())).child(div().font_family(MONO).child(settings.depth.to_string())))
             .child(
                 row("Rescan", Some("Codedeck also rescans when files change.".into()))

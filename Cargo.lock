@@ -875,7 +875,6 @@ name = "codedeck_ui"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "env_logger",
  "gpui-kit",
  "log",
  "rust-embed",

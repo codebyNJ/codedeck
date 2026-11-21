@@ -21,14 +21,18 @@ pub fn fetch_missing<'a>(names: impl IntoIterator<Item = &'a str>) {
             continue;
         }
         let url = format!("https://api.dicebear.com/10.x/bottts-neutral/svg?seed={}&radius=22", encode(name));
+        // Download beside the target and rename when complete: the UI may read
+        // the target at any moment, and a half-written SVG gets cached as broken.
+        let partial = target.with_extension("part");
         let ok = Command::new("curl")
             .args(["-sf", "--max-time", "8", "-o"])
-            .arg(&target)
+            .arg(&partial)
             .arg(&url)
             .status()
             .is_ok_and(|s| s.success());
-        if !ok {
-            let _ = std::fs::remove_file(&target); // no half-written files; missing is expected
+        let renamed = ok && std::fs::rename(&partial, &target).is_ok();
+        if !renamed {
+            std::fs::remove_file(&partial).ok(); // missing is expected; the UI draws a bot
         }
     }
 }

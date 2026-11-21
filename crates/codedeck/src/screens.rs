@@ -88,6 +88,30 @@ impl Shell {
             .into_any_element()
     }
 
+    /// Native folder picker; picked folders join the scan roots.
+    pub fn add_folders(&mut self, cx: &mut Context<Self>) {
+        let picked = cx.prompt_for_paths(PathPromptOptions {
+            files: false,
+            directories: true,
+            multiple: true,
+            prompt: Some("Scan".into()),
+        });
+        let state = self.state.clone();
+        cx.spawn(async move |_, cx| {
+            let Ok(Ok(Some(paths))) = picked.await else { return };
+            state.update(cx, |state, cx| {
+                state.update_settings(cx, |s| {
+                    for path in paths {
+                        if !s.roots.contains(&path) {
+                            s.roots.push(path);
+                        }
+                    }
+                })
+            });
+        })
+        .detach();
+    }
+
     pub fn toggle_theme(&mut self, cx: &mut Context<Self>) {
         Theme::toggle(cx);
         let dark = cx.theme().dark;

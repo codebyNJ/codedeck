@@ -1,4 +1,4 @@
-use crate::{actions::*, app_state::AppState};
+use crate::app_state::AppState;
 use codedeck_ui::{motion, prelude::*};
 use std::path::PathBuf;
 
@@ -16,7 +16,6 @@ pub struct Shell {
     pub screen: Screen,
     pub filter: usize,
     pub sort: usize,
-    focus: FocusHandle,
     _subscriptions: Vec<Subscription>,
 }
 
@@ -27,11 +26,9 @@ const LABEL: f32 = 34.;
 const RECENT: usize = 6;
 
 impl Shell {
-    pub fn new(state: Entity<AppState>, window: &mut Window, cx: &mut Context<Self>) -> Self {
+    pub fn new(state: Entity<AppState>, cx: &mut Context<Self>) -> Self {
         let observe = cx.observe(&state, |_, _, cx| cx.notify());
-        let focus = cx.focus_handle();
-        window.focus(&focus, cx);
-        Self { state, screen: Screen::Home, filter: 0, sort: 0, focus, _subscriptions: vec![observe] }
+        Self { state, screen: Screen::Home, filter: 0, sort: 0, _subscriptions: vec![observe] }
     }
 
     pub fn go(&mut self, screen: Screen, cx: &mut Context<Self>) {
@@ -163,14 +160,9 @@ impl Render for Shell {
         };
         h_flex()
             .size_full()
-            .track_focus(&self.focus)
             .bg(theme.bg)
             .text_color(theme.ink)
             .font_family(SANS)
-            .on_action(cx.listener(|this, _: &GoHome, _, cx| this.go(Screen::Home, cx)))
-            .on_action(cx.listener(|this, _: &OpenSettings, _, cx| this.go(Screen::Settings, cx)))
-            .on_action(cx.listener(|this, _: &Rescan, _, cx| this.state.update(cx, |state, cx| state.rescan(cx))))
-            .on_action(cx.listener(|this, _: &ToggleTheme, _, cx| this.toggle_theme(cx)))
             .child(self.render_sidebar(cx))
             .child(div().id("content").flex_1().min_w_0().h_full().overflow_y_scroll().child(content))
     }

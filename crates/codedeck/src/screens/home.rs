@@ -6,9 +6,9 @@ use codedeck_ui::prelude::*;
 /// Painting by time of day: (asset, credit).
 fn painting(hour: i8) -> (&'static str, &'static str) {
     match hour {
-        5..=10 => ("art/wheat-day.jpg", "Claude Monet, Stacks of Wheat (End of Day, Autumn), 1890–91"),
-        11..=15 => ("art/jatte.jpg", "Georges Seurat, A Sunday on La Grande Jatte, 1884–86"),
-        16..=19 => ("art/wheat-summer.jpg", "Claude Monet, Stacks of Wheat (End of Summer), 1890–91"),
+        5..=11 => ("art/wheat-day.jpg", "Claude Monet, Stacks of Wheat (End of Day, Autumn), 1890–91"),
+        12..=16 => ("art/jatte.jpg", "Georges Seurat, A Sunday on La Grande Jatte, 1884–86"),
+        17..=20 => ("art/wheat-summer.jpg", "Claude Monet, Stacks of Wheat (End of Summer), 1890–91"),
         _ => ("art/farm.jpg", "George Inness, The Lonely Farm, Nantucket, 1892"),
     }
 }
@@ -17,6 +17,7 @@ fn greeting(hour: i8) -> &'static str {
     match hour {
         5..=11 => "Good morning",
         12..=16 => "Good afternoon",
+        17..=20 => "Good evening",
         _ => "Good evening",
     }
 }

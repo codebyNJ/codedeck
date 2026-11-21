@@ -1,5 +1,2 @@
 /target
 .DS_Store
-spike/node_modules
-spike/dist
-spike/src-tauri/target

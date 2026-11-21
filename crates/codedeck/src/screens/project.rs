@@ -90,7 +90,7 @@ impl Shell {
                         .child(Pill::new(session.agent.label()))
                         .child(div().flex_1().min_w_0().text_size(px(13.5)).truncate().child(session.title.clone()))
                         .when(session.is_live(now), |row| row.child(Badge::running()))
-                        .child(div().text_size(px(12.)).text_color(theme.ink_3).child(format!("{} prompts", session.prompts)))
+                        .child(div().text_size(px(12.)).text_color(theme.ink_3).child(if session.prompts == 1 { "1 prompt".to_string() } else { format!("{} prompts", session.prompts) }))
                         .child(div().w(px(36.)).text_size(px(12.)).text_color(theme.ink_3).child(ago(session.updated_ms)))
                 }))
         }));

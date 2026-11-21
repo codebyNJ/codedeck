@@ -17,7 +17,9 @@ pub fn dirty_count(root: &Path) -> u32 {
         return 0;
     }
     Command::new("git")
-        .args(["status", "--porcelain"])
+        // No index refresh: otherwise every scan rewrites .git/index and every
+        // project looks like it was just touched.
+        .args(["--no-optional-locks", "status", "--porcelain"])
         .current_dir(root)
         .output()
         .map(|out| out.stdout.split(|b| *b == b'\n').filter(|l| !l.is_empty()).count() as u32)

@@ -26,9 +26,12 @@ fn main() {
             window_min_size: Some(size(px(880.), px(560.))),
             ..Default::default()
         };
-        if let Err(error) = gpui_kit::open_window(options, cx, |window, cx| cx.new(|cx| Shell::new(state, window, cx))) {
-            log::error!("couldn't open the window: {error:#}");
-            cx.quit();
+        match gpui_kit::open_window(options, cx, |_, cx| cx.new(|cx| Shell::new(state, cx))) {
+            Ok((_, shell)) => actions::route_to(shell.downgrade(), cx),
+            Err(error) => {
+                log::error!("couldn't open the window: {error:#}");
+                cx.quit();
+            }
         }
         cx.activate(true);
     });

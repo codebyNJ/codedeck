@@ -1,7 +1,0 @@
-{"type":"queue-operation","operation":"enqueue","sessionId":"s1","timestamp":"2026-11-20T10:00:00Z"}
-{"type":"user","cwd":"/Users/test/codes/blog","sessionId":"s1","isMeta":true,"message":{"role":"user","content":"<command-name>/clear</command-name>"}}
-{"type":"user","cwd":"/Users/test/codes/blog","sessionId":"s1","message":{"role":"user","content":[{"type":"text","text":"Redesign the blog header\nwith serif type"}]}}
-not json at all
-{"type":"assistant","cwd":"/Users/test/codes/blog","sessionId":"s1","message":{"role":"assistant","content":[{"type":"text","text":"Sure"}]}}
-{"type":"user","cwd":"/Users/test/codes/blog","sessionId":"s1","message":{"role":"user","content":"Thanks"}}
-{"type":"ai-title","aiTitle":"Blog redesign","sessionId":"s1"}

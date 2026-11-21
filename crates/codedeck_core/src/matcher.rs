@@ -56,7 +56,9 @@ fn project(root: PathBuf) -> Project {
         branch: git::branch(&root),
         dirty: git::dirty_count(&root),
         sessions: Vec::new(),
-        updated_ms: mtime_ms(&root.join(".git/index")).max(mtime_ms(&root)),
+        // Commits, checkouts and pulls append to logs/HEAD; the folder's own mtime
+        // covers files added or removed at the top level.
+        updated_ms: mtime_ms(&root.join(".git/logs/HEAD")).max(mtime_ms(&root)),
         root,
     }
 }
