@@ -20,7 +20,7 @@ pub struct Segmented {
     options: Vec<SharedString>,
     selected: usize,
     small: bool,
-    on_select: Option<Rc<dyn Fn(&usize, &mut Window, &mut App)>>,
+    on_select: Option<crate::Handler<usize>>,
 }
 
 impl Segmented {

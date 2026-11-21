@@ -5,8 +5,10 @@ use crate::{Agent, Session, mtime_ms};
 use anyhow::Context as _;
 use serde_json::Value;
 use std::{
+    collections::HashMap,
     io::{BufRead, BufReader},
-    path::Path,
+    path::{Path, PathBuf},
+    sync::Mutex,
 };
 
 pub fn read(home: &Path) -> anyhow::Result<Read> {
@@ -19,7 +21,7 @@ pub fn read(home: &Path) -> anyhow::Result<Read> {
             if path.extension().is_none_or(|e| e != "jsonl") {
                 continue;
             }
-            match read_session(&path) {
+            match read_cached(&path) {
                 Ok(Some(session)) => read.sessions.push(session),
                 Ok(None) => {}
                 Err(error) => {
@@ -30,6 +32,25 @@ pub fn read(home: &Path) -> anyhow::Result<Read> {
         }
     }
     Ok(read)
+}
+
+/// Session files only grow, so an unchanged mtime means an unchanged session.
+/// Rescans then cost one stat per file instead of a full parse.
+fn read_cached(path: &Path) -> anyhow::Result<Option<Session>> {
+    type Seen = HashMap<PathBuf, (i64, Option<Session>)>;
+    static CACHE: Mutex<Option<Seen>> = Mutex::new(None);
+    let mtime = mtime_ms(path);
+    if let Ok(cache) = CACHE.lock()
+        && let Some((seen, session)) = cache.as_ref().and_then(|c| c.get(path))
+        && *seen == mtime
+    {
+        return Ok(session.clone());
+    }
+    let session = read_session(path)?;
+    if let Ok(mut cache) = CACHE.lock() {
+        cache.get_or_insert_default().insert(path.to_path_buf(), (mtime, session.clone()));
+    }
+    Ok(session)
 }
 
 /// One pass over the file. The cwd comes from inside the lines, because the

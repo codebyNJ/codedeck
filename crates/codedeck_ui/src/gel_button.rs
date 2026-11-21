@@ -1,7 +1,7 @@
 use crate::{motion, prelude::*};
 use std::rc::Rc;
 
-type OnClick = Rc<dyn Fn(&ClickEvent, &mut Window, &mut App)>;
+type OnClick = crate::Handler<ClickEvent>;
 
 /// Hover and press, kept per element so RenderOnce pieces can spring.
 #[derive(Default, Clone, Copy)]

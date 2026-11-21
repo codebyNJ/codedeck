@@ -4,6 +4,9 @@ fn main() {
     let settings = codedeck_core::Settings::load();
     let started = std::time::Instant::now();
     let snapshot = codedeck_core::scan_all(&settings);
+    let again = std::time::Instant::now();
+    codedeck_core::scan_all(&settings);
+    println!("rescan (cached): {:?}", again.elapsed());
     let now = codedeck_core::now_ms();
     println!("roots: {:?}", settings.roots);
     println!(

@@ -30,6 +30,9 @@ pub mod prelude {
     pub use gpui_kit::*;
 }
 
+/// Event callback held by a component.
+pub(crate) type Handler<T> = std::rc::Rc<dyn Fn(&T, &mut gpui_kit::Window, &mut gpui_kit::App)>;
+
 /// A stable child id under `parent`, for springs and keyed state.
 pub fn child_id(parent: &gpui_kit::ElementId, name: impl Into<gpui_kit::SharedString>) -> gpui_kit::ElementId {
     gpui_kit::ElementId::NamedChild(std::sync::Arc::new(parent.clone()), name.into())

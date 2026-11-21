@@ -8,9 +8,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-/// Most a watcher burst can make us rescan. A scan reads every session file.
-// ponytail: full rescan on any change; make scans incremental (mtime per file) if this shows in CPU.
-const MIN_RESCAN_GAP: Duration = Duration::from_secs(15);
+/// Most a watcher burst can make us rescan. Unchanged session files are cached,
+/// so a rescan mostly costs a walk, a stat per file and one `git status` per project.
+const MIN_RESCAN_GAP: Duration = Duration::from_secs(10);
 
 /// Everything the screens show, and the only bridge to codedeck_core.
 pub struct AppState {

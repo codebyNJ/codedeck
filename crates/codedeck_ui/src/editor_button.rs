@@ -9,7 +9,7 @@ pub struct EditorButton {
     icon: SharedString,
     is_default: bool,
     size: f32,
-    on_click: Option<Rc<dyn Fn(&ClickEvent, &mut Window, &mut App)>>,
+    on_click: Option<crate::Handler<ClickEvent>>,
 }
 
 impl EditorButton {

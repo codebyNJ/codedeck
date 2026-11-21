@@ -51,7 +51,7 @@ mod tests {
         std::fs::write(tmp.join("a/Cargo.toml"), "")?;
         std::fs::write(tmp.join("a/packages/inner/package.json"), "{}")?;
         std::fs::create_dir_all(tmp.join("notes"))?;
-        let found = find_projects(&[tmp.clone()], 4);
+        let found = find_projects(std::slice::from_ref(&tmp), 4);
         std::fs::remove_dir_all(&tmp)?;
         assert_eq!(found, vec![tmp.join("a")]);
         Ok(())

@@ -6,7 +6,7 @@ use std::rc::Rc;
 pub struct Toggle {
     id: ElementId,
     on: bool,
-    on_change: Option<Rc<dyn Fn(&bool, &mut Window, &mut App)>>,
+    on_change: Option<crate::Handler<bool>>,
 }
 
 impl Toggle {
