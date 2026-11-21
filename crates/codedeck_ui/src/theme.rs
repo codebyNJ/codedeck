@@ -33,7 +33,7 @@ impl Theme {
             dark: false,
             bg: rgb(0xffffff).into(),
             card: rgb(0xffffff).into(),
-            side: rgb(0xfafaf9).into(),
+            side: rgb(0xffffff).into(),
             soft: rgb(0xf5f5f3).into(),
             soft_2: rgb(0xededea).into(),
             hi: rgb(0xececea).into(),
@@ -56,9 +56,9 @@ impl Theme {
     pub fn dark() -> Self {
         Self {
             dark: true,
-            bg: rgb(0x121214).into(),
-            card: rgb(0x19191c).into(),
-            side: rgb(0x151517).into(),
+            bg: rgb(0x000000).into(),
+            card: rgb(0x000000).into(),
+            side: rgb(0x000000).into(),
             soft: rgb(0x202024).into(),
             soft_2: rgb(0x2a2a2f).into(),
             hi: rgb(0x232327).into(),
