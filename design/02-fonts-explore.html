@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Codedeck — Font exploration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Young+Serif&family=Gloock&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Hedvig+Letters+Serif:opsz@12..24&family=Petrona:ital,wght@0,300..700;1,300..700&family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400..600&family=Geist:wght@400..600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=gambetta@400,500,401,501&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,401&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=erode@400,500,401,501&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=sentient@400,500,401,501&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=boska@400,500,401,501&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=gambarino@400&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=bespoke-serif@400,500,401,501&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=rowan@400,500,401,501&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f6f4ef; --ink: #1d1b18; --muted: #7d786e; --line: rgba(0,0,0,.08);
+    --card: #fffdfa; --accent: #e0662f;
+    --sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #131210; --ink: #efebe4; --muted: #8f897f; --line: rgba(255,255,255,.08); --card: #1b1a17; --accent: #f08a57; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sys); -webkit-font-smoothing: antialiased; font-synthesis: none; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 64px 40px 120px; }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+  a { color: inherit; }
+
+  header h1 { font: 450 52px/1.05 "Fraunces", serif; font-variation-settings: "SOFT" 100, "opsz" 144; letter-spacing: -.02em; margin: 0 0 14px; }
+  header h1 em { color: var(--accent); }
+  header p { color: var(--muted); font-size: 16px; max-width: 680px; margin: 0; }
+
+  .try { position: sticky; top: 0; z-index: 5; margin: 36px -40px 0; padding: 14px 40px; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: center; }
+  .try input { flex: 1; max-width: 520px; height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 14px var(--sys); outline: none; }
+  .try input:focus { border-color: var(--muted); }
+  .try .hint { color: var(--muted); font-size: 12px; }
+  .try .seg { display: flex; gap: 4px; margin-left: auto; }
+  .try .seg button { font: 12px var(--sys); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--muted); }
+  .try .seg button.on { color: var(--bg); background: var(--ink); border-color: transparent; }
+
+  h2 { font-size: 13px; font-weight: 600; margin: 72px 0 4px; }
+  h2 + p { color: var(--muted); margin: 0 0 20px; max-width: 760px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px 18px; display: flex; flex-direction: column; min-height: 260px; }
+  .meta { display: flex; gap: 8px; align-items: center; font-size: 12px; }
+  .meta b { font-weight: 600; font-size: 13px; }
+  .badge { font-size: 10.5px; padding: 2px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+  .badge.g { color: #2f7d4f; border-color: rgba(47,125,79,.3); }
+  .badge.f { color: #8a5a1f; border-color: rgba(138,90,31,.3); }
+  .star { margin-left: auto; color: var(--accent); font-size: 12px; }
+  .head { margin: 26px 0 14px; font-size: 34px; line-height: 1.06; letter-spacing: -.015em; }
+  .head em { color: var(--accent); }
+  .noital .head em { font-style: normal; }
+  .row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+  .wm { font-size: 30px; line-height: 1; letter-spacing: -.02em; }
+  .wm span { color: var(--accent); }
+  .small { font-size: 15px; color: var(--muted); }
+  .note { margin: 12px 0 0; color: var(--muted); font-size: 12.5px; }
+  body.dark-frames .card { background: #1a1917; color: #efebe4; }
+
+  .pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+  .pair { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .pair .h { font: 450 28px/1.08 "Fraunces", serif; font-variation-settings: "SOFT" 100, "opsz" 96; letter-spacing: -.02em; margin: 14px 0 10px; }
+  .pair .h em { color: var(--accent); }
+  .pair p { margin: 0; font-size: 14.5px; line-height: 1.55; }
+
+  .curators { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+  .cur { display: block; text-decoration: none; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; transition: border-color .15s, transform .15s; }
+  .cur:hover { border-color: var(--muted); transform: translateY(-1px); }
+  .cur b { font-size: 14px; }
+  .cur .badge { margin-left: 6px; }
+  .cur p { margin: 6px 0 0; color: var(--muted); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Fraunces, and its <em>neighbours</em></h1>
+  <p>You liked Fraunces, so the first block tunes Fraunces itself four ways. Below that are free fonts with the same warm, soft-serif feeling from Google Fonts and Fontshare, then partners for body text, then the curators worth browsing.</p>
+</header>
+
+<div class="try">
+  <input id="txt" value="Your code is *everywhere.*" spellcheck="false" />
+  <span class="hint">Type anything · wrap a word in *stars* to emphasise it</span>
+  <div class="seg"><button class="on" data-s="34">M</button><button data-s="48">L</button><button data-s="64">XL</button></div>
+</div>
+
+<h2>A · Fraunces, tuned</h2>
+<p>Fraunces has two extra dials. <b>SOFT</b> rounds the serifs, and <b>WONK</b> adds the leaning, quirky letters (the n, h and m tilt). Same font, very different personalities.</p>
+<div class="grid" id="fraunces"></div>
+
+<h2>B · Same feeling, other fonts</h2>
+<p>Warm, characterful serifs. Fontshare fonts are drawn by Indian Type Foundry and are free for commercial use. Their licence is a little stricter than Google's on redistribution, so I'll check the fine print on bundling before we ship.</p>
+<div class="grid" id="others"></div>
+
+<h2>C · Partner for longer text (website, deck)</h2>
+<p>Inside the app, body text stays in the Mac system font. The website and deck need a body font next to Fraunces.</p>
+<div class="pairs" id="pairs"></div>
+
+<h2>D · Curators worth browsing</h2>
+<p>Places where people pick and preview good free fonts. Send me any font you like from these and I'll add it to this page.</p>
+<div class="curators">
+  <a class="cur" href="https://fonts.google.com/?categories=Serif" target="_blank"><b>Google Fonts</b><span class="badge g">OFL</span><p>The biggest open library. Filter by "feeling" (calm, playful, cute) and by variable axes.</p></a>
+  <a class="cur" href="https://www.fontshare.com/?category=serif" target="_blank"><b>Fontshare</b><span class="badge f">ITF free</span><p>Indian Type Foundry's free collection. Quality close to paid fonts; Satoshi and Gambetta come from here.</p></a>
+  <a class="cur" href="https://uncut.wtf" target="_blank"><b>Uncut.wtf</b><span class="badge">curated</span><p>A hand-picked catalogue of contemporary free and libre typefaces. The most "design Twitter" taste of the lot.</p></a>
+  <a class="cur" href="https://www.collletttivo.it" target="_blank"><b>Collletttivo</b><span class="badge g">open source</span><p>An Italian open-source type collective. Expressive display faces, good for a logo or wordmark.</p></a>
+  <a class="cur" href="https://velvetyne.fr" target="_blank"><b>Velvetyne</b><span class="badge g">libre</span><p>A French libre foundry. Experimental and bold; the best source for an unusual wordmark.</p></a>
+  <a class="cur" href="https://open-foundry.com" target="_blank"><b>Open Foundry</b><span class="badge">curated</span><p>Open-source fonts shown as beautiful specimen pages, which makes judging them easy.</p></a>
+  <a class="cur" href="https://www.design-research.be/by-womxn/" target="_blank"><b>Badass Libre Fonts by Womxn</b><span class="badge g">libre</span><p>Libre fonts designed by women, many of them display faces with lots of character.</p></a>
+  <a class="cur" href="https://www.typewolf.com" target="_blank"><b>Typewolf</b><span class="badge">inspiration</span><p>Shows which fonts real sites use, plus pairing guides. Good for seeing a font "in the wild".</p></a>
+  <a class="cur" href="https://fontsinuse.com" target="_blank"><b>Fonts In Use</b><span class="badge">archive</span><p>A searchable archive of real brands, packaging and apps, by typeface. Use it to see how far a font can stretch.</p></a>
+</div>
+</div>
+
+<script>
+  // [name, css font-family, weight, variation settings, source, italic?, note, star]
+  const FR = [
+    ["Soft · Regular", "Fraunces", 450, '"SOFT" 100, "WONK" 0, "opsz" 96', "g", true, "What you saw last time. Round, warm, readable.", ""],
+    ["Soft + Wonky · Semibold", "Fraunces", 620, '"SOFT" 100, "WONK" 1, "opsz" 144', "g", true, "Chunkier, with tilted letters. The most mascot-friendly and the most memorable as a wordmark.", "★ try this"],
+    ["Soft · Light, big optical size", "Fraunces", 320, '"SOFT" 60, "WONK" 0, "opsz" 144', "g", true, "Thin and elegant. Closest to Dia's calm; it needs large sizes.", ""],
+    ["Sharp · Medium", "Fraunces", 520, '"SOFT" 0, "WONK" 0, "opsz" 72', "g", true, "Soft turned off: a classic, bookish serif. Shown for contrast.", ""],
+  ];
+  const OT = [
+    ["Gambetta", "Gambetta", 500, "normal", "f", true, "Fontshare's warm text serif. Feels like Fraunces with fewer quirks; great italic.", "★"],
+    ["Bespoke Serif", "Bespoke Serif", 500, "normal", "f", true, "High contrast and crisp. More premium and fashion than friendly.", ""],
+    ["Erode", "Erode", 500, "normal", "f", true, "Sturdy and bookish, with a nice rhythm at large sizes.", ""],
+    ["Zodiak", "Zodiak", 400, "normal", "f", true, "A display serif with sharp details. Confident, slightly editorial.", ""],
+    ["Sentient", "Sentient", 500, "normal", "f", true, "A quiet, literary serif. Very readable; low personality.", ""],
+    ["Boska", "Boska", 500, "normal", "f", true, "Elegant, with sharp, leaf-like serifs. Pretty, but cooler in tone.", ""],
+    ["Rowan", "Rowan", 500, "normal", "f", true, "Soft, slightly rounded serifs. The closest Fontshare cousin of Fraunces Soft.", "★"],
+    ["Gambarino", "Gambarino", 400, "normal", "f", false, "Retro, bouncy display serif with lots of charm. Headlines only; no italic.", ""],
+    ["Young Serif", "Young Serif", 400, "normal", "g", false, "A chunky old-style serif, warm and a bit vintage. One weight only.", ""],
+    ["Gloock", "Gloock", 400, "normal", "g", false, "Heavy, high-contrast display. Dramatic; better for a deck title than the app.", ""],
+    ["Newsreader", "Newsreader", 500, '"opsz" 72', "g", true, "A refined newspaper serif with a lovely italic. Mature, not playful.", ""],
+    ["Petrona", "Petrona", 500, "normal", "g", true, "A friendly text serif with a softer, rounder feel. A good all-rounder.", ""],
+    ["Hedvig Letters Serif", "Hedvig Letters Serif", 400, '"opsz" 24', "g", false, "Wide and geometric, with a crisp modern feel. Unusual and clean.", ""],
+    ["Instrument Serif", "Instrument Serif", 400, "normal", "g", true, "Last round's pick, kept for comparison.", ""],
+  ];
+  const PAIRS = [
+    ["Mac system (SF)", "-apple-system, system-ui, sans-serif", "Inside the app. Native, invisible, perfect for daily use."],
+    ["Satoshi", "Satoshi", "Fontshare. A friendly geometric sans with rounded energy; it sits beside Fraunces naturally."],
+    ["General Sans", "General Sans", "Fontshare. Neutral and crisp; lets Fraunces carry all the personality."],
+    ["Instrument Sans", "Instrument Sans", "Google. Compact and modern; slightly more technical."],
+    ["Geist", "Geist", "Google. A clean dev-tool feel; the contrast with Fraunces is sharpest."],
+  ];
+
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const fmt = s => esc(s).replace(/\*(.+?)\*/g, "<em>$1</em>");
+  const src = s => s === "g" ? '<span class="badge g">Google · OFL</span>' : '<span class="badge f">Fontshare · ITF free</span>';
+
+  function card([name, fam, w, v, s, ital, note, star]) {
+    const st = `font-family:'${fam}';font-weight:${w};font-variation-settings:${v}`;
+    return `<div class="card${ital ? "" : " noital"}">
+      <div class="meta"><b>${name}</b>${src(s)}${star ? `<span class="star">${star}</span>` : ""}</div>
+      <div class="head" style="${st}"></div>
+      <div class="row"><div class="wm" style="${st}">codedeck<span>.</span></div><div class="small" style="${st}">Nothing to resume</div></div>
+      <p class="note">${note}</p></div>`;
+  }
+  document.getElementById("fraunces").innerHTML = FR.map(card).join("");
+  document.getElementById("others").innerHTML = OT.map(card).join("");
+  document.getElementById("pairs").innerHTML = PAIRS.map(([n, f, note]) => `<div class="pair">
+    <div class="meta"><b>${n}</b></div>
+    <div class="h">Pick up <em>exactly</em> where you left off.</div>
+    <p style="font-family:${f.includes(",") ? f : `'${f}'`}">Codedeck scans your folders once, locally, and maps every Claude, Codex and OpenCode session to its project.</p><p class="note">${note}</p></div>`).join("");
+
+  const txt = document.getElementById("txt");
+  const render = () => document.querySelectorAll(".head").forEach(h => (h.innerHTML = fmt(txt.value)));
+  txt.addEventListener("input", render);
+  render();
+  document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
+    document.querySelectorAll(".seg button").forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll(".head").forEach(h => (h.style.fontSize = b.dataset.s + "px"));
+  });
+</script>
+</body>
+</html>

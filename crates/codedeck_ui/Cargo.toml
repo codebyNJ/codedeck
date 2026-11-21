@@ -1,0 +1,20 @@
+[package]
+name = "codedeck_ui"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/codedeck_ui.rs"
+
+[dependencies]
+gpui-kit.workspace = true
+rust-embed.workspace = true
+anyhow.workspace = true
+log.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+env_logger.workspace = true

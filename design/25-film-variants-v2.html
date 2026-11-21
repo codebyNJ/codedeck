@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Codedeck — Film variants (pixel + serif)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=Instrument+Sans:wght@400..700&family=Geist+Mono:wght@400..600&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet" />
+<style>
+:root { --ink: #111112; --ink-2: #55555b; --ink-3: #8a8a90; --line: #e6e6e3; --f: "Instrument Sans", system-ui, sans-serif; --s: "Fraunces", Georgia, serif; --m: "Geist Mono", ui-monospace, monospace; --spring: cubic-bezier(.3,1.4,.5,1); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: #efefed; font-family: var(--f); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.top { position: fixed; top: 16px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 14px; z-index: 5; }
+.tabs { position: relative; display: inline-flex; padding: 4px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.tabs button { position: relative; z-index: 1; height: 34px; padding: 0 16px; border-radius: 99px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); transition: color .25s; display: inline-flex; align-items: center; gap: 8px; }
+.tabs button b { font: 10.5px var(--m); color: var(--ink-3); font-weight: 400; }
+.tabs button[aria-checked="true"] { color: #fff; } .tabs button[aria-checked="true"] b { color: rgba(255,255,255,.6); }
+.tabs .knob { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 99px; background: linear-gradient(180deg, #333336, #111112 80%); box-shadow: inset 0 1px 0 rgba(255,255,255,.22); }
+.top a { font: 12px var(--m); color: var(--ink-3); text-decoration: none; } .top a:hover { color: var(--ink); }
+.stage { position: fixed; inset: 70px 0 92px; }
+.scaler { position: absolute; left: 50%; top: 50%; width: 1180px; height: 740px; }
+.win { position: relative; width: 1180px; height: 740px; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.09); }
+.win canvas { position: absolute; inset: 0; width: 1180px; height: 740px; }
+.win canvas.px { image-rendering: pixelated; }
+.lights { position: absolute; z-index: 5; top: 16px; left: 16px; display: flex; gap: 8px; }
+.lights i { width: 12px; height: 12px; border-radius: 50%; background: rgba(120,120,120,.25); }
+.line { position: absolute; z-index: 4; left: 50%; top: 70px; width: 940px; margin-left: -470px; text-align: center; font-size: 27px; line-height: 1.3; letter-spacing: -.012em; color: var(--ink); pointer-events: none; }
+.line .it { font-family: var(--s); font-style: italic; font-variation-settings: "opsz" 144, "SOFT" 100; color: var(--ink-3); }
+.line .w { display: inline-block; }
+.win.pixel .line { font-size: 28px; }
+.win.pixel .line .it { color: #4e6a88; }
+.win.paint .line { color: #1d2430; } .win.paint .line .it { color: #4c5566; }
+.ctl { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 6px 18px 6px 6px; border-radius: 26px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.ctl .pp { width: 34px; height: 34px; border-radius: 99px; display: grid; place-items: center; background: linear-gradient(180deg, #333336, #111112 80%); color: #fff; transition: transform .45s var(--spring); }
+.ctl .pp:active { transform: scale(.9, .84); } .ctl .pp svg { width: 13px; height: 13px; }
+.ctl input { width: 300px; accent-color: #111; }
+.ctl .tc { font: 11.5px var(--m); color: var(--ink-3); width: 82px; }
+.note { max-width: 420px; padding-left: 6px; border-left: 1px solid var(--line); margin-left: 4px; font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+.note b { font-weight: 600; color: var(--ink); margin-right: 6px; }
+</style>
+</head>
+<body>
+<div class="top"><div class="tabs" id="tabs"><span class="knob"></span>
+  <button data-v="pixel" aria-checked="true">Pixel <b>A</b></button><button data-v="vector" aria-checked="false">Clean vector <b>B</b></button><button data-v="paint" aria-checked="false">Painting <b>C</b></button></div>
+  <a href="23-prototype-v18.html">ASCII is in v18 →</a></div>
+<div class="stage"><div class="scaler" id="scaler"><div class="win pixel" id="win"><div class="lights"><i></i><i></i><i></i></div><canvas id="cv"></canvas><div class="line" id="line"></div></div></div></div>
+<div class="ctl"><button class="pp" id="pp"></button><input type="range" id="scrub" min="0" max="17000" value="0" /><span class="tc" id="tc">0.0 / 17.0s</span><div class="note" id="note"></div></div>
+<script>
+/* ===================== shared: story, timing, bot ===================== */
+const VISOR = "M96 2H8c-4.5 0-8 3.5-8 8.03V28c0 4.5 3.5 8 8 8h13c8 0 11 8 18 8h27c7 0 9-8 17-8h13c4.5 0 8-3.5 8-8V10c0-4.5-3.5-8-8-8";
+const SLIT = "M87 14H17c-3.5 0-5 3-5 5v2c0 2 1.5 5 5 5h12c6 0 11.62 8 17 8h14c5.38 0 9-8 15-8h12c3.5 0 5-3 5-5v-2c0-2-1.5-5-5-5";
+const GLINT = "M31.4 40.78c-2.63-1.98-5.23-4.22-8.96-4.7L37.26 2h11zM15.48 36h-4L26.26 2h4z";
+const VP = new Path2D(VISOR), SP = new Path2D(SLIT), GP = new Path2D(GLINT);
+const STORY = [
+  [900, 4300, "You plant a project,", "and move on to the next one."],
+  [4900, 8300, "Some keep growing in folders you forgot.", "Some conversations stop halfway."],
+  [8900, 12600, "Codedeck walks the whole field,", "and gathers every one."],
+  [13100, 15700, "Nothing leaves this Mac.", "Let's see what you've grown."],
+];
+const FILM = 17000;
+const NOTES = {
+  pixel: ["A · Pixel", "The whole scene is drawn at one fifth of the size and scaled up with hard edges: dithered sky, blocky clouds, swaying blade pixels, a pixel bot. Text in Instrument Sans with Fraunces italic, the same pair as the rest of the app."],
+  vector: ["B · Clean vector", "Flat layered hills, hundreds of curved grass blades bending in the wind, rounded clouds, flowers, petals. The bot is the real SVG shape, solid."],
+  paint: ["C · Painting", "Monet's Stacks of Wheat cut into five depth layers. A slow push-in with parallax, warm drifting light, and the solid bot standing in the field."],
+};
+const H = (a, b = 0, c = 0) => { const x = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453; return x - Math.floor(x); };
+const ease = k => k <= 0 ? 0 : k >= 1 ? 1 : k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const eout = k => k <= 0 ? 0 : k >= 1 ? 1 : 1 - Math.pow(1 - k, 3);
+const sm = (t, a, b) => ease((t - a) / (b - a));
+const ring = (t, at, f = 46, d = 260) => t < at ? 0 : Math.exp(-(t - at) / d) * Math.sin((t - at) / f);
+function pose(t, BOT, X0, GROUND) {
+  const Y0 = GROUND - BOT / 2, k = eout((t - 2400) / 2700), dist = 2 * Math.PI * 2 * (BOT / 2);
+  let x = X0 - dist * (1 - k), y = Y0, sx = 1, sy = 1, rot = (x - X0) / (BOT / 2);
+  y -= Math.abs(Math.sin(rot * 2)) * BOT * .05 * (1 - k);
+  const w = ring(t, 5100, 50, 240); sy -= w * .12; sx += w * .1; y += Math.max(0, w) * BOT * .045;
+  let open = t < 5500 ? 0 : t < 5680 ? (t - 5500) / 180 * 1.1 : 1 + ring(t, 5680, 40, 120) * .25;
+  for (const b of [7900, 12500, 12760]) if (t > b && t < b + 170) open = Math.abs(t - b - 85) / 85;
+  let eye = -24 * sm(t, 5900, 6400) + 48 * sm(t, 6700, 7300) - 24 * sm(t, 7500, 7850);
+  rot += eye / 24 * .06 + ring(t, 6400, 55, 240) * .04 - ring(t, 7300, 55, 240) * .04;
+  let hop = 0; for (const [a, h] of [[8250, .13], [12200, .24]]) if (t > a && t < a + 560) { const q = (t - a) / 560; hop = Math.sin(q * Math.PI) * h * BOT; y -= hop; sy += Math.sin(q * Math.PI) * .05; sx -= Math.sin(q * Math.PI) * .04; }
+  for (const a of [8810, 12760]) { const v = ring(t, a, 45, 160); sy -= v * .08; sx += v * .07; }
+  if (t > 9000 && t < 12000) eye = Math.sin(t / 240) * 10;
+  const out = sm(t, 14600, 15600);
+  return { x, y: y - out * 30, rot, sx, sy, eye, open, talk: t > 13200 && t < 15600, a: 1 - out, hop, BOT, ground: GROUND };
+}
+function drawBot(g, p, flash = 0) {
+  if (p.a <= .01) return;
+  const S = p.BOT / 120;
+  g.save(); g.globalAlpha = p.a; g.translate(p.x, p.y); g.rotate(p.rot); g.scale(S * p.sx, S * p.sy); g.translate(-60, -60);
+  g.fillStyle = "#e45e4d"; g.beginPath(); g.roundRect(0, 0, 120, 120, 27); g.fill();
+  g.strokeStyle = "rgba(255,255,255,.16)"; g.lineWidth = 2; g.beginPath(); g.roundRect(1.5, 1.5, 117, 117, 25.5); g.stroke();
+  g.save(); g.translate(8, 20); g.fillStyle = "rgba(0,0,0,.82)"; g.fill(VP); g.fillStyle = "#5c1210"; g.fill(SP); g.clip(SP); g.translate(-8, -20);
+  const eh = 20 * Math.max(0, Math.min(1.15, p.open));
+  if (eh > .5) { const ex = 44 + p.eye; g.shadowColor = "#ff3d3d"; g.shadowBlur = (6 + flash * 16) * S; g.fillStyle = flash > .2 ? "#ff7a5c" : "#ff3d3d"; g.beginPath(); g.roundRect(ex, 40 - eh / 2, 32, eh, Math.min(10, eh / 2)); g.fill(); g.shadowBlur = 0;
+    if (eh > 8) { g.fillStyle = "#ff5a4a"; g.beginPath(); g.roundRect(ex + 5, 40 - eh * .3, 22, eh * .6, Math.min(6, eh * .3)); g.fill(); g.fillStyle = "#ffb3a8"; g.beginPath(); g.roundRect(ex + 10, 40 - eh * .2, 9, 4, 2); g.fill(); } }
+  g.restore();
+  g.save(); g.translate(8, 20); g.fillStyle = "rgba(255,255,255,.18)"; g.fill(GP); g.restore();
+  g.fillStyle = "rgba(0,0,0,.6)"; [8, 20, 32, 44, 56].forEach((x, i) => { const h = p.talk ? 2.5 + Math.abs(Math.sin(performance.now() / (85 + i * 23))) * 8 : 8; g.beginPath(); g.roundRect(26 + x, 80 + (8 - h) / 2, 4, h, 2); g.fill(); });
+  g.restore();
+}
+// one light per project, out in the field, away from where the bot stands
+function makeLights(X0, yA, yB, avoid) { const L = []; for (let i = 0; L.length < 24; i++) { const x = 30 + H(i, 9) * 1120; if (Math.abs(x - X0) < avoid) continue; L.push({ x, y: yA + H(i, 8) * (yB - yA), ph: H(i, 7) * 6.28 }); } L.sort((a, b) => Math.abs(a.x - X0) - Math.abs(b.x - X0)).forEach((l, i) => (l.s = 8800 + i * 120)); return L; }
+function lightStates(t, L, p) {
+  const S = p.BOT / 120, ex = p.x + p.eye * S * .6, ey = p.y - 20 * S; let flash = 0; const out = [];
+  L.forEach((l, k) => {
+    const wake = sm(t, 6000 + k * 40, 7400 + k * 40);
+    if (t < l.s) { if (wake > 0) out.push({ x: l.x, y: l.y, a: wake * (.5 + .5 * Math.abs(Math.sin(t / 380 + l.ph))), trail: [] }); return; }
+    const q = (t - l.s) / 1300;
+    if (q < 1) { const pts = []; for (let j = 0; j < 5; j++) { const e = Math.max(0, ease(q) - j * .035), a = (1 - e) ** 2, mx = (l.x + ex) / 2, my = Math.min(l.y, ey) - 170; pts.push([a * l.x + 2 * (1 - e) * e * mx + e * e * ex, a * l.y + 2 * (1 - e) * e * my + e * e * ey]); } out.push({ x: pts[0][0], y: pts[0][1], a: 1, trail: pts.slice(1) }); return; }
+    if (t - (l.s + 1300) < 260) flash = Math.max(flash, 1 - (t - l.s - 1300) / 260);
+    const rel = sm(t, 13700 + k * 25, 14700 + k * 25);
+    if (rel > 0) out.push({ x: ex + (590 + (k - 11.5) * 24 - ex) * rel, y: ey + (370 - ey) * rel - Math.sin(rel * Math.PI) * 40, a: Math.min(1, rel * 3), trail: [], row: true });
+  });
+  return { list: out, flash };
+}
+const fadeScene = t => sm(t, 14800, 16200);
+
+/* ===================== A · PIXEL ===================== */
+const PIXEL = (() => {
+  const K = 5, W = 236, Hh = 148, GROUND = 580, X0 = 590, BOT = 160;
+  const lo = document.createElement("canvas"); lo.width = W; lo.height = Hh; const g = lo.getContext("2d");
+  const bc = document.createElement("canvas"); bc.width = W; bc.height = Hh; const b = bc.getContext("2d", { willReadFrequently: true });
+  const gy = x => Math.round(GROUND / K + Math.sin(x * .08) * .8);
+  const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  const lerp = (a, c, k) => a.map((v, i) => Math.round(v + (c[i] - v) * k));
+  const hex = c => `rgb(${c})`;
+  // static: dithered sky, hills with trees, textured ground
+  const st = document.createElement("canvas"); st.width = W; st.height = Hh; const s = st.getContext("2d");
+  const SKY = [[118, 182, 240], [160, 206, 246], [198, 226, 250], [228, 242, 253], [246, 251, 255]];
+  for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) { const f = Math.min(1, y / 112) * (SKY.length - 1), i = Math.floor(f), fr = f - i, use = fr * 16 > BAYER[y % 4][x % 4] ? Math.min(SKY.length - 1, i + 1) : i; s.fillStyle = hex(SKY[use]); s.fillRect(x, y, 1, 1); }
+  const far = x => Math.round(80 + Math.sin(x * .035 + 1) * 6 + Math.sin(x * .09) * 2), mid = x => Math.round(97 + Math.sin(x * .05 + 3) * 5 + Math.sin(x * .13) * 1.5);
+  for (let x = 0; x < W; x++) { for (let y = far(x); y < Hh; y++) { s.fillStyle = (y - far(x)) < 1 ? "#cde9b8" : (x * 7 + y * 3) % 11 === 0 ? "#a9d596" : "#b7dea3"; s.fillRect(x, y, 1, 1); } }
+  [[24, 1], [52, 0], [150, 1], [200, 0], [214, 1]].forEach(([tx, big]) => { const ty = far(tx); s.fillStyle = "#6fae63"; s.fillRect(tx - 1 - big, ty - 5 - big * 2, 3 + big * 2, 4 + big * 2); s.fillRect(tx - big, ty - 6 - big * 2, 1 + big * 2, 1); s.fillStyle = "#4d8a49"; s.fillRect(tx + big, ty - 3 - big, 1, 2); s.fillStyle = "#7a5a3a"; s.fillRect(tx, ty - 1, 1, 2); });
+  for (let x = 0; x < W; x++) { for (let y = mid(x); y < Hh; y++) { s.fillStyle = (y - mid(x)) < 1 ? "#a6dc8a" : (x * 5 + y * 7) % 13 === 0 ? "#78bd62" : "#88c870"; s.fillRect(x, y, 1, 1); } }
+  for (let x = 0; x < W; x++) { const top = gy(x); for (let y = top; y < Hh; y++) { const d = y - top, h = H(x, y); let c = d < 2 ? "#6cc04a" : d < 7 ? "#4caf50" : d < 14 ? "#3b9a45" : "#2e7d38"; if (h < .14) c = d < 7 ? "#3d9a43" : "#256b30"; if (h > .97 && d > 3) c = "#7ccf5a"; s.fillStyle = c; s.fillRect(x, y, 1, 1); } }
+  // sprites: clouds
+  const cloud = (w, h, seed) => { const c = document.createElement("canvas"); c.width = w; c.height = h; const q = c.getContext("2d"); const circ = (cx, cy, r) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * .6) q.fillRect(cx + x, cy + y, 1, 1); };
+    q.fillStyle = "#dce9f7"; const blobs = [[w * .3, h * .62, h * .34], [w * .52, h * .45, h * .42], [w * .72, h * .6, h * .3], [w * .16, h * .7, h * .22], [w * .86, h * .72, h * .2]].map(a => a.map(Math.round)); blobs.forEach(([x, y, r]) => circ(x, y + 1, r)); q.fillStyle = "#ffffff"; blobs.forEach(([x, y, r]) => circ(x, y - 1, r)); q.clearRect(0, Math.round(h * .9), w, h); return c; };
+  const CL = [[cloud(40, 16), 20, 18], [cloud(56, 20), 120, 9], [cloud(34, 14), 200, 26]];
+  const BLADES = Array.from({ length: W }, (_, x) => ({ on: H(x, 2) > .25, h: 2 + Math.floor(H(x, 3) * 4), c: H(x, 4) }));
+  const FLOW = Array.from({ length: 34 }, (_, i) => ({ x: Math.floor(H(i, 11) * W), d: Math.floor(H(i, 12) * 22), c: ["#ff7eb6", "#ffb3d1", "#ff5c9a", "#ffe066", "#ffffff"][i % 5] }));
+  const PET = Array.from({ length: 22 }, (_, i) => [H(i, 21) * 260, 40 + H(i, 22) * 70, H(i, 23)]);
+  const LIGHTS = makeLights(X0, GROUND + 20, 720, 120);
+  const wind = (x, t) => Math.sin(x * .07 - t * .0018) * .9 + Math.exp(-((((x * K) - ((t * .11) % 320 - 60) * 4) / 60) ** 2)) * 1.4;
+  function draw(ctx, t) {
+    const p = pose(t, BOT, X0, GROUND), fade = fadeScene(t);
+    g.imageSmoothingEnabled = false; g.drawImage(st, 0, 0);
+    const sy = Math.round(46 - 18 * eout(t / 12000)); g.fillStyle = "#ffe9a8"; for (let y = -6; y <= 6; y++) for (let x = -6; x <= 6; x++) if (x * x + y * y <= 40) g.fillRect(180 + x, sy + y, 1, 1); g.fillStyle = "#ffd166"; for (let y = -4; y <= 4; y++) for (let x = -4; x <= 4; x++) if (x * x + y * y <= 18) g.fillRect(180 + x, sy + y, 1, 1);
+    CL.forEach(([c, x0, y]) => g.drawImage(c, Math.round((x0 + t * .0024) % 290 - 50), y));
+    // birds
+    g.fillStyle = "#4a5866"; [[0, 22, 1500], [8, 26, 1900], [18, 20, 2300]].forEach(([dx, by, st0], i) => { if (t < st0) return; const x = Math.round((t - st0) * .012 - 8 - dx), y = Math.round(by + Math.sin(t / 600 + i)); const up = ((t / 170 + i) | 0) % 2; g.fillRect(x, y, 1, 1); g.fillRect(x - 1, y - up, 1, 1); g.fillRect(x + 1, y - up, 1, 1); });
+    // bot, hard-edged
+    b.setTransform(1, 0, 0, 1, 0, 0); b.clearRect(0, 0, W, Hh); b.setTransform(1 / K, 0, 0, 1 / K, 0, 0);
+    const lt = lightStates(t, LIGHTS, p); drawBot(b, p, lt.flash);
+    const id = b.getImageData(0, 0, W, Hh), d = id.data; for (let i = 3; i < d.length; i += 4) d[i] = d[i] > 110 ? 255 : 0; b.putImageData(id, 0, 0);
+    g.drawImage(bc, 0, 0);
+    // grass blades in front, swaying
+    for (let x = 0; x < W; x++) { const B = BLADES[x]; if (!B.on) continue; const top = gy(x), w = wind(x, t); for (let k = 1; k <= B.h; k++) { const off = Math.round(w * (k / B.h) * (k > 1 ? 1 : 0)); g.fillStyle = k === B.h ? (B.c < .5 ? "#8fd16b" : "#7cc957") : B.c < .5 ? "#5bb84b" : "#4aa843"; g.fillRect(x + off, top - k, 1, 1); } }
+    FLOW.forEach(f => { const top = gy(f.x) + f.d, off = Math.round(wind(f.x, t) * .6); g.fillStyle = "#3b8f3d"; g.fillRect(f.x, top - 1, 1, 2); g.fillStyle = f.c; g.fillRect(f.x + off, top - 2, 1, 1); if (f.d < 6) { g.fillRect(f.x + off - 1, top - 2, 1, 1); g.fillRect(f.x + off + 1, top - 2, 1, 1); g.fillRect(f.x + off, top - 3, 1, 1); g.fillStyle = "#ffe066"; g.fillRect(f.x + off, top - 2, 1, 1); } });
+    PET.forEach(([x0, y0, ph], i) => { const x = Math.round((x0 + t * .006 + Math.sin(t / 900 + i) * 4) % 260 - 12), y = Math.round(y0 + Math.sin(t / 700 + ph * 6) * 3); g.fillStyle = ["#ff7eb6", "#ffb3d1", "#ff5c9a"][i % 3]; g.fillRect(x, y, 1, 1); if (((t / 300 + i) | 0) % 2) g.fillRect(x + 1, y, 1, 1); });
+    if (fade > 0) { g.fillStyle = `rgba(255,255,255,${fade})`; g.fillRect(0, 0, W, Hh); }
+    lt.list.forEach(l => { const x = Math.round(l.x / K), y = Math.round(l.y / K); l.trail.forEach(([tx, ty], j) => { g.fillStyle = `rgba(255,200,80,${.6 - j * .12})`; g.fillRect(Math.round(tx / K), Math.round(ty / K), 1, 1); });
+      g.fillStyle = `rgba(255,214,102,${l.a * .55})`; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3); g.fillStyle = `rgba(255,248,220,${l.a})`; g.fillRect(x, y, 1, 1); });
+    ctx.imageSmoothingEnabled = false; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(lo, 0, 0, ctx.canvas.width, ctx.canvas.height);
+  }
+  return { draw, px: true };
+})();
+
+/* ===================== B · CLEAN VECTOR ===================== */
+const VECTOR = (() => {
+  const GROUND = 580, X0 = 590, BOT = 160;
+  const hill = (base, amp, f, ph) => x => base + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph * 1.7) * amp * .35;
+  const FAR = hill(468, 16, .006, 1), MID = hill(520, 14, .008, 3.2), GR = x => GROUND + Math.sin(x * .01) * 4;
+  const BL = []; for (let r = 0; r < 9; r++) for (let x = -10; x < 1200; x += 7 + (r % 3)) { const h = H(x, r); if (h < .15) continue; const root = GR(x) + r * 19 + h * 10; BL.push({ x: x + h * 6, y: root, len: 15 + r * 2.4 + h * 12, w: 2 + r * .18, c: r === 0 ? (h < .5 ? "#8bd26a" : "#78c95c") : `hsl(${112 + h * 18}, ${46 + h * 12}%, ${44 - r * 2.6 + h * 8}%)`, f: H(x, r, 2) < .05 + r * .006 ? ["#ff7eb6", "#ffb3d1", "#ffd84d", "#ffffff", "#ff5c9a"][Math.floor(H(x, r, 3) * 5)] : null, r }); }
+  BL.sort((a, b) => a.y - b.y);
+  const PET = Array.from({ length: 24 }, (_, i) => [H(i, 31) * 1300, 230 + H(i, 32) * 300, H(i, 33)]);
+  const CL = [[160, 150, 1], [620, 112, 1.35], [1000, 186, .9]];
+  const TREES = [[120, 1], [262, .8], [880, 1.1], [1060, .85]];
+  const LIGHTS = makeLights(X0, GROUND + 18, 730, 120);
+  const cloud = (g, x, y, s) => { const B = [[-46, 8, 22], [-18, -6, 30], [18, -2, 26], [44, 10, 18], [0, 12, 22]]; g.fillStyle = "#e3eef9"; B.forEach(([a, b2, r]) => { g.beginPath(); g.arc(x + a * s, y + (b2 + 4) * s, r * s, 0, 7); g.fill(); }); g.fillStyle = "#ffffff"; B.forEach(([a, b2, r]) => { g.beginPath(); g.arc(x + a * s, y + b2 * s, r * s, 0, 7); g.fill(); }); };
+  function blades(g, t, front, p) {
+    const gust = (t * .11) % 320 - 60;
+    for (const B of BL) { const isFront = B.y > p.ground + 6; if (isFront !== front) continue;
+      const w = .5 * Math.sin(B.x * .012 - t * .0018) + .25 * Math.sin(B.x * .03 - t * .004) + 1.1 * Math.exp(-(((B.x - gust * 4) / 70) ** 2));
+      const tx = B.x + w * B.len * .7, ty = B.y - B.len * (1 - Math.abs(w) * .12);
+      g.strokeStyle = B.c; g.lineWidth = B.w; g.beginPath(); g.moveTo(B.x, B.y); g.quadraticCurveTo(B.x + w * B.len * .15, B.y - B.len * .55, tx, ty); g.stroke();
+      if (B.f) { g.fillStyle = B.f; for (let i = 0; i < 5; i++) { const a = i / 5 * 6.28 + t * .0004; g.beginPath(); g.arc(tx + Math.cos(a) * 3.2, ty + Math.sin(a) * 3.2, 2.6, 0, 7); g.fill(); } g.fillStyle = B.f === "#ffd84d" ? "#ffffff" : "#ffd84d"; g.beginPath(); g.arc(tx, ty, 2, 0, 7); g.fill(); } }
+  }
+  function draw(g, t) {
+    const p = pose(t, BOT, X0, GROUND), fade = fadeScene(t);
+    g.setTransform(2, 0, 0, 2, 0, 0);
+    const sky = g.createLinearGradient(0, 0, 0, 480); sky.addColorStop(0, "#cfe6fb"); sky.addColorStop(1, "#ffffff"); g.fillStyle = sky; g.fillRect(0, 0, 1180, 740);
+    const sy = 210 - 80 * eout(t / 12000), halo = g.createRadialGradient(930, sy, 10, 930, sy, 120); halo.addColorStop(0, "rgba(255,214,120,.55)"); halo.addColorStop(1, "rgba(255,214,120,0)"); g.fillStyle = halo; g.fillRect(780, sy - 130, 300, 260); g.fillStyle = "#ffd06b"; g.beginPath(); g.arc(930, sy, 34, 0, 7); g.fill();
+    CL.forEach(([x0, y, s]) => cloud(g, (x0 + t * .012 + 200) % 1500 - 200, y, s));
+    g.strokeStyle = "#4b5a6a"; g.lineWidth = 1.8; g.lineCap = "round"; [[0, 150, 1500], [40, 168, 1900], [90, 140, 2300]].forEach(([dx, by, st0], i) => { if (t < st0) return; const x = (t - st0) * .06 - 40 - dx, y = by + Math.sin(t / 600 + i) * 5, f = Math.sin(t / 110 + i) * 4; g.beginPath(); g.moveTo(x - 7, y - f); g.quadraticCurveTo(x - 3, y - 3, x, y); g.quadraticCurveTo(x + 3, y - 3, x + 7, y - f); g.stroke(); });
+    const fill = (fn, c) => { g.fillStyle = c; g.beginPath(); g.moveTo(0, 740); for (let x = 0; x <= 1180; x += 10) g.lineTo(x, fn(x)); g.lineTo(1180, 740); g.fill(); };
+    fill(FAR, "#d6edca"); TREES.forEach(([tx, s]) => { const ty = FAR(tx); g.fillStyle = "#8a6a4a"; g.fillRect(tx - 2 * s, ty - 16 * s, 4 * s, 18 * s); g.fillStyle = "#9fd08e"; g.beginPath(); g.arc(tx, ty - 26 * s, 15 * s, 0, 7); g.fill(); g.fillStyle = "#8cc67c"; g.beginPath(); g.arc(tx + 5 * s, ty - 22 * s, 10 * s, 0, 7); g.fill(); });
+    fill(MID, "#b4e09d");
+    const gg = g.createLinearGradient(0, GROUND, 0, 740); gg.addColorStop(0, "#77c862"); gg.addColorStop(1, "#3f9449"); fill(GR, gg);
+    blades(g, t, false, p);
+    if (p.a > .01) { g.fillStyle = `rgba(30,70,30,${.18 * p.a * (1 - p.hop / BOT)})`; g.beginPath(); g.ellipse(p.x, GROUND + 4, BOT * .42 * (1 - p.hop / BOT * .5), 9, 0, 0, 7); g.fill(); }
+    const lt = lightStates(t, LIGHTS, p); drawBot(g, p, lt.flash);
+    blades(g, t, true, p);
+    PET.forEach(([x0, y0, ph], i) => { const x = (x0 + t * .03 + Math.sin(t / 900 + i) * 20) % 1300 - 60, y = y0 + Math.sin(t / 700 + ph * 6) * 14; g.save(); g.translate(x, y); g.rotate(t / 600 + i); g.fillStyle = ["#ff8fbf", "#ffc0d9", "#ff6aa4"][i % 3]; g.beginPath(); g.ellipse(0, 0, 5, 2.6, 0, 0, 7); g.fill(); g.restore(); });
+    if (fade > 0) { g.fillStyle = `rgba(255,255,255,${fade})`; g.fillRect(0, 0, 1180, 740); }
+    lt.list.forEach(l => { l.trail.forEach(([x, y], j) => { g.fillStyle = `rgba(255,196,80,${.45 - j * .09})`; g.beginPath(); g.arc(x, y, 3 - j * .4, 0, 7); g.fill(); });
+      const r = g.createRadialGradient(l.x, l.y, 0, l.x, l.y, 16); r.addColorStop(0, `rgba(255,214,110,${.8 * l.a})`); r.addColorStop(1, "rgba(255,214,110,0)"); g.fillStyle = r; g.beginPath(); g.arc(l.x, l.y, 16, 0, 7); g.fill(); g.fillStyle = `rgba(255,250,232,${l.a})`; g.beginPath(); g.arc(l.x, l.y, 3.2, 0, 7); g.fill(); });
+  }
+  return { draw };
+})();
+
+/* ===================== C · PAINTING (multiplane Monet) ===================== */
+const PAINT = (() => {
+  const GROUND = 640, X0 = 590, BOT = 112;
+  const L = ["bg.jpg", "mid.png", "stackL.png", "stackR.png", "fore.png"].map(f => { const i = new Image(); i.src = "assets/art/layers/" + f; return i; });
+  const DEPTH = [.25, .45, .7, .7, 1.15];
+  const MOTES = Array.from({ length: 46 }, (_, i) => [H(i, 41) * 1300, 120 + H(i, 42) * 520, H(i, 43)]);
+  const PET = Array.from({ length: 18 }, (_, i) => [H(i, 51) * 1300, 300 + H(i, 52) * 260, H(i, 53)]);
+  const LIGHTS = makeLights(X0, 600, 725, 100);
+  function draw(g, t) {
+    const p = pose(t, BOT, X0, GROUND), fade = fadeScene(t), push = eout(t / FILM);
+    g.setTransform(2, 0, 0, 2, 0, 0); g.fillStyle = "#e9e3d6"; g.fillRect(0, 0, 1180, 740);
+    const base = 740 / 996 * 1.04, w = 1686 * base, h = 996 * base;
+    const layer = (img, i, after) => { if (!img.complete || !img.naturalWidth) return; const z = 1 + push * .07 * DEPTH[i], sway = i === 4 ? Math.sin(t / 1400) * 2 : 0, dx = -push * 24 * DEPTH[i] + sway;
+      g.save(); g.translate(590, 400); g.scale(z, z); g.translate(-590 + dx, -400); g.drawImage(img, 590 - w / 2, 370 - h / 2, w, h); g.restore(); };
+    layer(L[0], 0); layer(L[1], 1); layer(L[2], 2); layer(L[3], 3);
+    const lt = lightStates(t, LIGHTS, p);
+    if (p.a > .01) { g.fillStyle = `rgba(60,48,30,${.22 * p.a * (1 - p.hop / BOT)})`; g.beginPath(); g.ellipse(p.x, GROUND + 3, BOT * .42, 7, 0, 0, 7); g.fill(); }
+    drawBot(g, p, lt.flash);
+    layer(L[4], 4);
+    g.globalCompositeOperation = "lighter";
+    MOTES.forEach(([x0, y0, ph], i) => { const x = (x0 + t * .014 + Math.sin(t / 1300 + i) * 16) % 1300 - 60, y = y0 + Math.sin(t / 900 + ph * 6) * 10, a = (.25 + .35 * Math.abs(Math.sin(t / 700 + ph * 9))) * (1 - fade); g.fillStyle = `rgba(255,224,160,${a})`; g.beginPath(); g.arc(x, y, 1.6 + ph * 1.4, 0, 7); g.fill(); });
+    g.globalCompositeOperation = "source-over";
+    PET.forEach(([x0, y0, ph], i) => { const x = (x0 + t * .028 + Math.sin(t / 900 + i) * 20) % 1300 - 60, y = y0 + Math.sin(t / 700 + ph * 6) * 14; g.save(); g.translate(x, y); g.rotate(t / 600 + i); g.fillStyle = ["rgba(244,150,180,.85)", "rgba(250,196,214,.85)", "rgba(232,120,160,.85)"][i % 3]; g.beginPath(); g.ellipse(0, 0, 4.5, 2.2, 0, 0, 7); g.fill(); g.restore(); });
+    const vg = g.createLinearGradient(0, 0, 0, 240); vg.addColorStop(0, "rgba(255,255,255,.55)"); vg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = vg; g.fillRect(0, 0, 1180, 240);
+    if (fade > 0) { g.fillStyle = `rgba(255,255,255,${fade})`; g.fillRect(0, 0, 1180, 740); }
+    g.globalCompositeOperation = fade > .5 ? "source-over" : "lighter";
+    lt.list.forEach(l => { l.trail.forEach(([x, y], j) => { g.fillStyle = `rgba(255,200,110,${.4 - j * .08})`; g.beginPath(); g.arc(x, y, 2.8 - j * .4, 0, 7); g.fill(); });
+      const r = g.createRadialGradient(l.x, l.y, 0, l.x, l.y, 18); r.addColorStop(0, `rgba(255,214,130,${.85 * l.a})`); r.addColorStop(1, "rgba(255,214,130,0)"); g.fillStyle = r; g.beginPath(); g.arc(l.x, l.y, 18, 0, 7); g.fill(); g.fillStyle = `rgba(255,250,236,${l.a})`; g.beginPath(); g.arc(l.x, l.y, 3, 0, 7); g.fill(); });
+    g.globalCompositeOperation = "source-over";
+  }
+  return { draw };
+})();
+
+/* ===================== player ===================== */
+const R = { pixel: PIXEL, vector: VECTOR, paint: PAINT };
+let view = new URLSearchParams(location.search).get("v") || "pixel", playing = true, t = +new URLSearchParams(location.search).get("ft") || 0, last = performance.now(), lineIdx = -2;
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d"), win = document.getElementById("win"), line = document.getElementById("line"), scrub = document.getElementById("scrub"), tc = document.getElementById("tc"), ppB = document.getElementById("pp");
+cv.width = 2360; cv.height = 1480;
+const PLAY = '<svg viewBox="0 0 12 12"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg>', PAUSE = '<svg viewBox="0 0 12 12"><rect x="2.5" y="2" width="2.4" height="8" rx="1" fill="currentColor"/><rect x="7.1" y="2" width="2.4" height="8" rx="1" fill="currentColor"/></svg>';
+const words = s => s.split(" ").map(w => `<span class="w">${w}</span>`).join(" ");
+function setLine(i, animate) {
+  if (i === lineIdx) return; const prev = [...line.querySelectorAll(".w")];
+  const put = () => { lineIdx = i; if (i < 0) { line.innerHTML = ""; return; } const [, , a, b] = STORY[i]; line.innerHTML = `${words(a)} <span class="it">${words(b)}</span>`; if (animate) line.querySelectorAll(".w").forEach((w, k) => w.animate([{ opacity: 0, transform: "translateY(.4em)", filter: "blur(8px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { duration: 950, delay: k * 55, fill: "both", easing: "cubic-bezier(.2,.8,.2,1)" })); };
+  if (animate && prev.length) { prev.forEach((w, k) => w.animate([{ opacity: 1 }, { opacity: 0, filter: "blur(8px)" }], { duration: 480, delay: k * 15, fill: "both" })); lineIdx = i; setTimeout(put, 380); } else put();
+}
+function tick(now) {
+  const dt = Math.min(64, now - last); last = now;
+  if (playing) { t += dt; if (t > FILM) t = FILM; }
+  const i = STORY.findIndex(([a, b]) => t >= a && t < b);
+  setLine(i, playing);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
+  R[view].draw(ctx, t);
+  scrub.value = t; tc.textContent = (t / 1000).toFixed(1) + " / 17.0s";
+  if (t >= FILM && playing) { playing = false; ppB.innerHTML = PLAY; }
+  requestAnimationFrame(tick);
+}
+function choose(v, anim) {
+  view = v; win.className = "win " + v; cv.className = R[v].px ? "px" : ""; lineIdx = -2;
+  const n = NOTES[v]; document.getElementById("note").innerHTML = `<b>${n[0]}</b>${n[1]}`;
+  const tabs = document.getElementById("tabs"), knob = tabs.querySelector(".knob"), btn = tabs.querySelector(`[data-v="${v}"]`), prev = tabs.querySelector('[aria-checked="true"]');
+  const from = { p: prev.offsetLeft, s: prev.offsetWidth }; prev.setAttribute("aria-checked", "false"); btn.setAttribute("aria-checked", "true");
+  knob.style.left = btn.offsetLeft + "px"; knob.style.width = btn.offsetWidth + "px";
+  if (anim && from.p !== btn.offsetLeft) { const dir = Math.sign(btn.offsetLeft - from.p), start = Math.min(from.p, btn.offsetLeft), span = Math.max(from.p + from.s, btn.offsetLeft + btn.offsetWidth) - start;
+    knob.animate([{ left: from.p + "px", width: from.s + "px" }, { left: start + "px", width: span + "px", transform: "scaleY(.84)", offset: .42 }, { left: btn.offsetLeft + dir * 4 + "px", width: btn.offsetWidth + "px", transform: "scaleY(1.07)", offset: .72 }, { left: btn.offsetLeft + "px", width: btn.offsetWidth + "px" }], { duration: 580, easing: "cubic-bezier(.3,.6,.35,1)" }); }
+  t = 0; playing = true; ppB.innerHTML = PAUSE;
+}
+document.getElementById("tabs").onclick = e => { const b = e.target.closest("[data-v]"); if (b && b.dataset.v !== view) choose(b.dataset.v, true); };
+ppB.onclick = () => { if (t >= FILM) t = 0; playing = !playing; ppB.innerHTML = playing ? PAUSE : PLAY; };
+scrub.oninput = () => { t = +scrub.value; playing = false; ppB.innerHTML = PLAY; };
+addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); ppB.click(); } });
+function fit() { const k = Math.min((innerWidth - 40) / 1180, (innerHeight - 172) / 740, 1.2); document.getElementById("scaler").style.transform = `translate(-50%,-50%) scale(${k})`; }
+addEventListener("resize", fit); fit();
+document.fonts.ready.then(() => { const tabs = document.getElementById("tabs"); tabs.querySelector('[aria-checked="true"]').setAttribute("aria-checked", "false"); tabs.querySelector('[data-v="pixel"]').setAttribute("aria-checked", "true"); choose(view, false); if (new URLSearchParams(location.search).get("ft")) { t = +new URLSearchParams(location.search).get("ft"); playing = false; ppB.innerHTML = PLAY; } requestAnimationFrame(tick); });
+ppB.innerHTML = PAUSE;
+</script>
+</body>
+</html>

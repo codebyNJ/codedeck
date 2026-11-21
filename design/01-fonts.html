@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Codedeck — Fonts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,100;1,9..144,300..700,100&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f6f5f2; --ink: #1c1b19; --muted: #7b776f; --line: rgba(0,0,0,.08);
+    --card: #fff; --win: #fbfaf8;
+    --wash1: linear-gradient(160deg, #fbf3e6 0%, #f6e7ec 100%);
+    --wash2: linear-gradient(160deg, #eef0fb 0%, #e9f3f1 100%);
+    --wash3: linear-gradient(160deg, #eef6ea 0%, #fbf1e3 100%);
+    --accent: #e0662f;
+    --sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121211; --ink: #efece6; --muted: #8f8a81; --line: rgba(255,255,255,.08);
+      --card: #1c1b1a; --win: #181716;
+      --wash1: linear-gradient(160deg, #2a2119 0%, #2a1c22 100%);
+      --wash2: linear-gradient(160deg, #1b1d2b 0%, #172422 100%);
+      --wash3: linear-gradient(160deg, #1a2417 0%, #2a2117 100%);
+      --accent: #f08a57;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sys); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 72px 40px 120px; }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+
+  /* ---------- Intro ---------- */
+  header h1 { font: 400 56px/1.05 "Instrument Serif", serif; letter-spacing: -.01em; margin: 0 0 16px; }
+  header h1 em { color: var(--accent); }
+  header p.lead { max-width: 620px; color: var(--muted); font-size: 16px; margin: 0; }
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 48px 0 96px; }
+  .rule { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+  .rule b { display: block; font-size: 13px; margin-bottom: 6px; }
+  .rule p { margin: 0; color: var(--muted); font-size: 13px; }
+  .rule .n { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+
+  /* ---------- Option ---------- */
+  .opt { margin-bottom: 120px; }
+  .opt-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+  .opt-head .n { font-size: 12px; color: var(--muted); }
+  .opt-head h2 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+  .opt-head .tag { margin-left: auto; font-size: 12px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+  .opt-head .tag.pick { background: var(--ink); color: var(--bg); border-color: transparent; }
+  .opt > p { color: var(--muted); margin: 0 0 22px; max-width: 760px; }
+
+  /* Three onboarding frames = the story */
+  .story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .frame {
+    position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.06);
+    display: flex; flex-direction: column; justify-content: center; padding: 0 9%;
+  }
+  .frame:nth-child(1) { background: var(--wash1); }
+  .frame:nth-child(2) { background: var(--wash2); }
+  .frame:nth-child(3) { background: var(--wash3); }
+  .lights { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
+  .lights i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .step { position: absolute; top: 12px; right: 14px; font-size: 10px; color: var(--muted); }
+  .frame h3 { margin: 0 0 10px; font-family: var(--display); font-weight: var(--dw); font-size: var(--ds); line-height: 1.05; letter-spacing: var(--dt); font-variation-settings: var(--dv, normal); }
+  .frame h3 em { font-style: var(--emstyle, italic); color: var(--emcolor, inherit); }
+  .frame p { margin: 0; font-size: 12px; color: var(--muted); max-width: 90%; }
+  .frame .scanline { margin-top: 14px; font-family: var(--mono); font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .frame .scanline i { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
+  .frame .btn { margin-top: 16px; align-self: flex-start; font: 500 12px var(--sys); padding: 7px 14px; border-radius: 99px; background: var(--ink); color: var(--bg); }
+  .dots { position: absolute; bottom: 14px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; }
+  .dots i { width: 5px; height: 5px; border-radius: 99px; background: var(--line); }
+  .dots i.on { width: 14px; background: var(--muted); }
+
+  /* Strip: wordmark / in-app card / type scale */
+  .strip { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 14px; margin-top: 14px; }
+  .cell { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; min-height: 170px; display: flex; flex-direction: column; }
+  .cell .lbl { font-size: 11px; color: var(--muted); margin-bottom: auto; }
+  .wordmark { font-family: var(--display); font-weight: var(--ww, var(--dw)); font-size: 44px; letter-spacing: var(--dt); line-height: 1; font-variation-settings: var(--dv, normal); }
+  .wordmark span { color: var(--accent); }
+
+  /* In-app card: UI is always SF — the brand font only appears in the header */
+  .app-card { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--win); font-family: var(--sys); }
+  .app-card .top { display: flex; gap: 10px; align-items: center; }
+  .ico { width: 30px; height: 30px; border-radius: 8px; background: #e0814f; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .app-card b { font-size: 13px; font-weight: 600; display: block; }
+  .app-card .path { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .app-card .when { margin-left: auto; align-self: flex-start; font-size: 11px; color: var(--muted); }
+  .app-card .row { margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 7px 8px; border-radius: 8px; background: var(--bg); }
+  .app-card .row span:nth-child(2) { flex: 1; }
+  .app-card .row code { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+
+  .scale div { font-family: var(--display); font-weight: var(--dw); letter-spacing: var(--dt); line-height: 1.1; font-variation-settings: var(--dv, normal); }
+  .scale .s1 { font-size: 30px; } .scale .s2 { font-size: 20px; margin-top: 4px; } .scale .s3 { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 10px; font-weight: 400; }
+
+  /* ---------- Font options ---------- */
+  #o1 { --display: "Instrument Serif", serif; --dw: 400; --ds: 34px; --dt: -.01em; --mono: "Geist Mono", monospace; --emcolor: var(--accent); }
+  #o2 { --display: "Fraunces", serif; --dw: 450; --ds: 30px; --dt: -.02em; --dv: "SOFT" 100, "opsz" 96; --mono: "JetBrains Mono", monospace; --emcolor: var(--accent); }
+  #o3 { --display: "Bricolage Grotesque", sans-serif; --dw: 600; --ds: 30px; --dt: -.035em; --dv: "opsz" 96; --mono: "Geist Mono", monospace; --emstyle: normal; --emcolor: var(--accent); }
+  #o4 { --display: "Geist", sans-serif; --dw: 600; --ds: 29px; --dt: -.04em; --mono: "Geist Mono", monospace; --emstyle: normal; --emcolor: var(--muted); }
+
+  footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 24px; }
+  footer b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Choosing the <em>type</em> for Codedeck</h1>
+  <p class="lead">Four directions, each shown where it matters most: the three-screen onboarding story, the wordmark, and an in-app card. Pick one, or mix two, and that sets the tone for the mascot and the brand deck.</p>
+</header>
+
+<section class="rules">
+  <div class="rule"><div class="n mono">RULE 1</div><b>Two voices, never three</b><p>A brand font for the story moments (onboarding, empty states, website, deck) and the native system font for everything you use daily. Mono only for paths and commands.</p></div>
+  <div class="rule"><div class="n mono">RULE 2</div><b>Spend the "novelty budget" once</b><p>Dia's rule: daily UI stays familiar; character goes only where it adds feeling. For us that's onboarding, the first scan, and the mascot. Cards and lists stay quiet.</p></div>
+  <div class="rule"><div class="n mono">RULE 3</div><b>Must be bundlable</b><p>All four options are under the SIL Open Font License, so we can ship them inside the .app and use them on the site and in the deck for free.</p></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section class="opt" id="o1">
+  <div class="opt-head"><span class="n mono">01</span><h2>Editorial — Instrument Serif</h2><span class="tag pick">My pick</span></div>
+  <p>Calm, warm and premium; the italic gives each story screen one emphasised word. It reads like a well-made Mac app rather than another dev tool, and a soft mascot sits comfortably next to it. Mono: Geist Mono.</p>
+  <div class="story">
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">1/3</span>
+      <h3>Your code is <em>everywhere.</em></h3><p>Forty folders, three agents, a hundred half-finished chats.</p>
+      <div class="dots"><i class="on"></i><i></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">2/3</span>
+      <h3>Codedeck <em>finds</em> all of it.</h3><p>One local scan. Nothing ever leaves your Mac.</p>
+      <div class="scanline"><i></i>24 projects · 61 sessions</div>
+      <div class="dots"><i></i><i class="on"></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">3/3</span>
+      <h3>Pick up <em>exactly</em> where you left off.</h3><p>Resume any Claude, Codex or OpenCode session in one click.</p>
+      <span class="btn">Open Codedeck</span>
+      <div class="dots"><i></i><i></i><i class="on"></i></div></div>
+  </div>
+  <div class="strip">
+    <div class="cell"><span class="lbl">Wordmark</span><div class="wordmark">codedeck<span>.</span></div></div>
+    <div class="cell"><span class="lbl">In-app (system font + mono)</span>
+      <div class="app-card"><div class="top"><div class="ico">R</div><div><b>ledger-cli</b><div class="path">~/codes/ledger-cli</div></div><span class="when">2h</span></div>
+      <div class="row"><span>✻</span><span>Explain this lifetime error</span><code>claude --resume</code></div></div></div>
+    <div class="cell scale"><span class="lbl">Scale</span><div class="s1">Nothing to resume</div><div class="s2">Start a session and it'll show up here.</div><div class="s3">~/codes · 24 projects</div></div>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="opt" id="o2">
+  <div class="opt-head"><span class="n mono">02</span><h2>Soft &amp; friendly — Fraunces (Soft)</h2><span class="tag">Best with a cute mascot</span></div>
+  <p>Fraunces with its "soft" axis turned all the way up, so the serifs are rounded and a little bouncy. The friendliest option, close to a storybook. The risk is that it tips into cute if the mascot is also cute. Mono: JetBrains Mono.</p>
+  <div class="story">
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">1/3</span>
+      <h3>Your code is <em>everywhere.</em></h3><p>Forty folders, three agents, a hundred half-finished chats.</p>
+      <div class="dots"><i class="on"></i><i></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">2/3</span>
+      <h3>Codedeck <em>finds</em> all of it.</h3><p>One local scan. Nothing ever leaves your Mac.</p>
+      <div class="scanline"><i></i>24 projects · 61 sessions</div>
+      <div class="dots"><i></i><i class="on"></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">3/3</span>
+      <h3>Pick up <em>exactly</em> where you left off.</h3><p>Resume any Claude, Codex or OpenCode session in one click.</p>
+      <span class="btn">Open Codedeck</span>
+      <div class="dots"><i></i><i></i><i class="on"></i></div></div>
+  </div>
+  <div class="strip">
+    <div class="cell"><span class="lbl">Wordmark</span><div class="wordmark">codedeck<span>.</span></div></div>
+    <div class="cell"><span class="lbl">In-app (system font + mono)</span>
+      <div class="app-card"><div class="top"><div class="ico">R</div><div><b>ledger-cli</b><div class="path">~/codes/ledger-cli</div></div><span class="when">2h</span></div>
+      <div class="row"><span>✻</span><span>Explain this lifetime error</span><code>claude --resume</code></div></div></div>
+    <div class="cell scale"><span class="lbl">Scale</span><div class="s1">Nothing to resume</div><div class="s2">Start a session and it'll show up here.</div><div class="s3">~/codes · 24 projects</div></div>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="opt" id="o3">
+  <div class="opt-head"><span class="n mono">03</span><h2>Characterful grotesk — Bricolage Grotesque</h2><span class="tag">Most "indie"</span></div>
+  <p>A sans serif with quirks: ink traps and a squat, chunky feel at large sizes. It's modern and confident with some personality, and suits a bolder, graphic mascot. It has no italic, so emphasis is done with colour. Mono: Geist Mono.</p>
+  <div class="story">
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">1/3</span>
+      <h3>Your code is <em>everywhere.</em></h3><p>Forty folders, three agents, a hundred half-finished chats.</p>
+      <div class="dots"><i class="on"></i><i></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">2/3</span>
+      <h3>Codedeck <em>finds</em> all of it.</h3><p>One local scan. Nothing ever leaves your Mac.</p>
+      <div class="scanline"><i></i>24 projects · 61 sessions</div>
+      <div class="dots"><i></i><i class="on"></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">3/3</span>
+      <h3>Pick up <em>exactly</em> where you left off.</h3><p>Resume any Claude, Codex or OpenCode session in one click.</p>
+      <span class="btn">Open Codedeck</span>
+      <div class="dots"><i></i><i></i><i class="on"></i></div></div>
+  </div>
+  <div class="strip">
+    <div class="cell"><span class="lbl">Wordmark</span><div class="wordmark">codedeck<span>.</span></div></div>
+    <div class="cell"><span class="lbl">In-app (system font + mono)</span>
+      <div class="app-card"><div class="top"><div class="ico">R</div><div><b>ledger-cli</b><div class="path">~/codes/ledger-cli</div></div><span class="when">2h</span></div>
+      <div class="row"><span>✻</span><span>Explain this lifetime error</span><code>claude --resume</code></div></div></div>
+    <div class="cell scale"><span class="lbl">Scale</span><div class="s1">Nothing to resume</div><div class="s2">Start a session and it'll show up here.</div><div class="s3">~/codes · 24 projects</div></div>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="opt" id="o4">
+  <div class="opt-head"><span class="n mono">04</span><h2>Technical — Geist everywhere</h2><span class="tag">Safest</span></div>
+  <p>Tight, neutral, Vercel-style. It always looks clean, but it's also what every dev tool looks like right now, so the brand would have to lean on the mascot and colour to be remembered.</p>
+  <div class="story">
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">1/3</span>
+      <h3>Your code is <em>everywhere.</em></h3><p>Forty folders, three agents, a hundred half-finished chats.</p>
+      <div class="dots"><i class="on"></i><i></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">2/3</span>
+      <h3>Codedeck <em>finds</em> all of it.</h3><p>One local scan. Nothing ever leaves your Mac.</p>
+      <div class="scanline"><i></i>24 projects · 61 sessions</div>
+      <div class="dots"><i></i><i class="on"></i><i></i></div></div>
+    <div class="frame"><div class="lights"><i></i><i></i><i></i></div><span class="step mono">3/3</span>
+      <h3>Pick up <em>exactly</em> where you left off.</h3><p>Resume any Claude, Codex or OpenCode session in one click.</p>
+      <span class="btn">Open Codedeck</span>
+      <div class="dots"><i></i><i></i><i class="on"></i></div></div>
+  </div>
+  <div class="strip">
+    <div class="cell"><span class="lbl">Wordmark</span><div class="wordmark">codedeck<span>.</span></div></div>
+    <div class="cell"><span class="lbl">In-app (system font + mono)</span>
+      <div class="app-card"><div class="top"><div class="ico">R</div><div><b>ledger-cli</b><div class="path">~/codes/ledger-cli</div></div><span class="when">2h</span></div>
+      <div class="row"><span>✻</span><span>Explain this lifetime error</span><code>claude --resume</code></div></div></div>
+    <div class="cell scale"><span class="lbl">Scale</span><div class="s1">Nothing to resume</div><div class="s2">Start a session and it'll show up here.</div><div class="s3">~/codes · 24 projects</div></div>
+  </div>
+</section>
+
+<footer><b>Next, once a font is picked:</b> mascot sketches (3 directions) → wordmark + app icon → colour system → the full onboarding story in motion → the brand deck.</footer>
+</div>
+</body>
+</html>

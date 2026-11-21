@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Codedeck — GPUI architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Fraunces:ital,opsz,wght@1,9..144,380&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fff; --card: #fff; --soft: #f4f4f2; --soft-2: #ecebe7; --ink: #111418; --ink-2: #4a4f57; --ink-3: #8a8f97; --ink-4: #c4c6ca;
+  --line: #ececea; --line-2: #e0dfdb; --live: #22a35a; --warn-bg: #fdf1dc; --amber: #a86a10; --red: #e45e4d; --blue: #4e6a88;
+  --s: "Fraunces", Georgia, serif; --m: "Geist Mono", ui-monospace, monospace;
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+}
+:root[data-theme="dark"] {
+  --bg: #0f1113; --card: #15181b; --soft: #1c2024; --soft-2: #24292e; --ink: #eef0f2; --ink-2: #b5bac1; --ink-3: #7d838b; --ink-4: #454b52;
+  --line: #22262b; --line-2: #2c3137; --warn-bg: #3a2c12; --amber: #e5a947; --blue: #8fb0d3; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.it { font-family: var(--s); font-style: italic; font-weight: 380; color: var(--blue); letter-spacing: -.01em; }
+.mono, code { font-family: var(--m); font-size: .86em; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+.lab { font: 500 11px/1 var(--m); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+
+/* top bar with squish seg */
+header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 14px; height: 58px; }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 600; }
+.brand svg { width: 26px; height: 26px; }
+.brand small { font: 500 11px var(--m); color: var(--ink-3); font-weight: 400; }
+.sp { flex: 1; }
+.seg { position: relative; display: inline-flex; padding: 3px; border-radius: 11px; background: var(--soft); }
+.seg button { position: relative; z-index: 1; border: 0; background: none; font: 500 13px "Instrument Sans"; color: var(--ink-2); padding: 6px 13px; border-radius: 8px; cursor: default; transition: color .2s; }
+.seg button.on { color: var(--ink); }
+.seg .knob { position: absolute; top: 3px; bottom: 3px; border-radius: 8px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line-2); }
+.gel { position: relative; border: 0; border-radius: 10px; padding: 7px 13px; font: 500 13px "Instrument Sans"; background: var(--ink); color: var(--bg); overflow: hidden; transition: transform .5s var(--spring); }
+.gel::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.22), transparent 60%); opacity: 0; transition: opacity .2s; }
+.gel:hover::after { opacity: 1; } .gel:hover { animation: wob .7s var(--spring); }
+.gel:active { transform: scale(.94, .88); transition-duration: .08s; }
+.gel.paper { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); }
+.gel[data-m="jelly"] { animation: jelly .6s; }
+@keyframes wob { 30% { transform: scale(1.04, .97); } 60% { transform: scale(.98, 1.02); } }
+@keyframes jelly { 0% { transform: scale(1); } 30% { transform: scale(1.12, .86); } 45% { transform: scale(.92, 1.08); } 65% { transform: scale(1.04, .97); } 100% { transform: scale(1); } }
+
+/* hero */
+.hero { padding: 72px 0 34px; }
+.hero h1 { font-size: 54px; line-height: 1.04; letter-spacing: -.035em; font-weight: 500; margin: 14px 0 16px; max-width: 900px; }
+.hero p { color: var(--ink-2); font-size: 17px; max-width: 700px; margin: 0; }
+.status { display: inline-flex; align-items: center; gap: 7px; height: 22px; padding: 0 9px; border-radius: 6px; background: var(--warn-bg); color: var(--amber); font: 600 11.5px "Instrument Sans"; }
+.status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.6s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+
+section { padding: 46px 0; border-top: 1px solid var(--line); }
+section h2 { font-size: 30px; letter-spacing: -.025em; font-weight: 500; margin: 10px 0 8px; }
+section > .wrap > p.lead { color: var(--ink-2); max-width: 720px; margin: 0 0 26px; }
+
+/* option cards */
+.opts { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 12px; }
+.opt { position: relative; border-radius: 18px; padding: 18px; box-shadow: inset 0 0 0 1px var(--line-2); background: var(--card); }
+.opt.pick { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--live) 45%, var(--line-2)); }
+.opt .runb { position: absolute; top: -10px; right: 18px; height: 20px; padding: 0 8px; border-radius: 6px; background: var(--live); color: #fff; font: 600 11px/20px "Instrument Sans"; box-shadow: 0 0 0 3px var(--bg); }
+.opt h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.opt .v { font: 500 11.5px var(--m); color: var(--ink-3); margin-bottom: 10px; }
+.opt p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; }
+.pill { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 6px; background: var(--soft); color: var(--ink-2); font-size: 11.5px; }
+.pill.warn { background: var(--warn-bg); color: var(--amber); }
+.pill.ok { background: color-mix(in srgb, var(--live) 14%, transparent); color: var(--live); }
+
+.risks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+.risk { padding: 14px 16px; border-radius: 14px; background: var(--soft); font-size: 13.5px; color: var(--ink-2); }
+.risk b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+
+/* layers */
+.layers { display: grid; grid-template-columns: 1fr 60px 1fr 60px 1fr; align-items: center; }
+.layer { border-radius: 18px; padding: 18px; box-shadow: inset 0 0 0 1px var(--line-2); min-height: 170px; transition: transform .5s var(--spring); }
+.layer:hover { transform: translateY(-3px); }
+.layer .nm { font: 600 15px var(--m); }
+.layer .kind { font-size: 12.5px; color: var(--ink-3); margin: 2px 0 10px; }
+.layer ul { margin: 0; padding-left: 16px; color: var(--ink-2); font-size: 13.5px; }
+.layer.core { background: var(--soft); box-shadow: none; }
+.arrow { text-align: center; color: var(--ink-4); font: 500 20px var(--m); }
+.under { grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 10px; color: var(--ink-3); font-size: 13px; }
+
+/* explorer */
+.explorer { display: grid; grid-template-columns: 430px 1fr; border-radius: 20px; box-shadow: inset 0 0 0 1px var(--line-2); overflow: hidden; min-height: 640px; }
+.tree { position: relative; padding: 12px 8px; border-right: 1px solid var(--line); font: 13px/1 var(--m); overflow: auto; max-height: 760px; }
+.tree .hi { position: absolute; left: 8px; right: 8px; height: 28px; border-radius: 8px; background: var(--soft-2); pointer-events: none; opacity: 0; }
+.row { position: relative; z-index: 1; display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 8px; border-radius: 8px; color: var(--ink-2); cursor: default; white-space: nowrap; }
+.row:hover { color: var(--ink); }
+.row.on { color: var(--ink); font-weight: 600; }
+.row .car { width: 10px; color: var(--ink-4); transition: transform .35s var(--spring); display: inline-block; }
+.row.open .car { transform: rotate(90deg); }
+.row .ic { width: 14px; height: 14px; flex: none; }
+.row .tag { margin-left: auto; font: 500 10px var(--m); color: var(--ink-3); background: var(--soft); padding: 2px 6px; border-radius: 5px; }
+.row .tag.app { background: color-mix(in srgb, var(--red) 13%, transparent); color: var(--red); }
+.row .tag.ui { background: color-mix(in srgb, var(--blue) 15%, transparent); color: var(--blue); }
+.row .tag.core { background: color-mix(in srgb, var(--live) 14%, transparent); color: var(--live); }
+.kids { overflow: hidden; }
+.detail { padding: 26px 28px; overflow: auto; max-height: 760px; }
+.detail .path { font: 500 12px var(--m); color: var(--ink-3); }
+.detail h3 { font-size: 26px; letter-spacing: -.02em; font-weight: 500; margin: 6px 0 10px; }
+.detail p { color: var(--ink-2); margin: 0 0 14px; max-width: 620px; }
+.detail .rules { margin: 0 0 16px; padding: 0; list-style: none; }
+.detail .rules li { position: relative; padding: 8px 0 8px 22px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+.detail .rules li::before { content: ""; position: absolute; left: 3px; top: 15px; width: 7px; height: 7px; border-radius: 2px; background: var(--ink-4); }
+pre { margin: 0; padding: 16px 18px; border-radius: 14px; background: var(--soft); font: 12.5px/1.6 var(--m); color: var(--ink); overflow: auto; }
+pre .c { color: var(--ink-3); } pre .k { color: #b0413e; } pre .s { color: #2f7a4b; } pre .t { color: var(--blue); }
+:root[data-theme="dark"] pre .k { color: #f08a7e; } :root[data-theme="dark"] pre .s { color: #7dcf9a; }
+.fade-in { animation: fin .45s var(--spring); }
+@keyframes fin { from { opacity: 0; transform: translateY(6px) scale(.99); } }
+
+/* patterns tabs */
+.ptabs { margin-bottom: 14px; }
+.pgrid { display: grid; grid-template-columns: 1fr 330px; gap: 14px; align-items: start; }
+.note { padding: 18px; border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line-2); font-size: 14px; color: var(--ink-2); }
+.note h4 { margin: 0 0 8px; color: var(--ink); font-size: 15px; }
+.note ol { margin: 0; padding-left: 18px; } .note li { margin: 4px 0; }
+
+/* rules grid */
+.rgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.rcard { padding: 16px; border-radius: 16px; box-shadow: inset 0 0 0 1px var(--line-2); }
+.rcard .lab { margin-bottom: 8px; }
+.rcard .do, .rcard .dont { font: 12.5px/1.5 var(--m); padding: 8px 10px; border-radius: 9px; margin-top: 6px; }
+.rcard .do { background: color-mix(in srgb, var(--live) 10%, transparent); }
+.rcard .dont { background: var(--soft); color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+
+/* flow */
+.flow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lane { border-radius: 18px; padding: 18px; background: var(--soft); }
+.lane.fg { background: var(--card); box-shadow: inset 0 0 0 1px var(--line-2); }
+.step { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-top: 1px solid var(--line-2); font-size: 14px; color: var(--ink-2); }
+.step:first-of-type { border-top: 0; }
+.step b { flex: none; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: var(--ink); color: var(--bg); font: 600 11px var(--m); }
+
+/* table */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font: 500 11px var(--m); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); padding: 0 12px 10px 0; }
+td { padding: 11px 12px 11px 0; border-top: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+td:first-child { color: var(--ink); }
+td .pill { margin-left: 6px; }
+
+/* plan */
+.plan { display: grid; gap: 0; counter-reset: s; }
+.pstep { display: grid; grid-template-columns: 70px 1fr 1fr; gap: 16px; padding: 16px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.pstep .n { font: 500 28px var(--m); color: var(--ink-4); }
+.pstep h4 { margin: 0; font-size: 16px; font-weight: 600; }
+.pstep .d { color: var(--ink-2); font-size: 14px; }
+.pstep.spike .n { color: var(--red); }
+
+/* decisions */
+.qs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.q { padding: 18px; border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line-2); }
+.q .lab { margin-bottom: 8px; }
+.q h4 { margin: 0 0 12px; font-size: 16px; font-weight: 600; }
+.q .seg { width: 100%; } .q .seg button { flex: 1; font-size: 12.5px; padding: 6px 8px; }
+.q small { display: block; margin-top: 10px; color: var(--ink-3); font-size: 12.5px; }
+.copyout { margin-top: 18px; display: flex; gap: 10px; align-items: center; }
+.copyout code { color: var(--ink-3); }
+
+footer { padding: 40px 0 70px; color: var(--ink-3); font-size: 13px; border-top: 1px solid var(--line); }
+footer a { color: var(--ink-2); }
+@media (max-width: 900px) {
+  .opts, .risks, .rgrid, .qs, .flow, .pgrid { grid-template-columns: 1fr; }
+  .layers { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); }
+  .explorer { grid-template-columns: 1fr; } .tree { border-right: 0; border-bottom: 1px solid var(--line); max-height: 420px; }
+  .hero h1 { font-size: 38px; } header.top .seg { display: none; }
+  .pstep { grid-template-columns: 48px 1fr; } .pstep .d { grid-column: 2; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="14" fill="#e45e4d"/><rect x="13" y="20" width="38" height="13" rx="6.5" fill="#111418"/><rect x="20" y="25" width="24" height="3" rx="1.5" fill="#e45e4d"/><g fill="#111418"><rect x="20" y="41" width="3" height="8" rx="1.5"/><rect x="26" y="41" width="3" height="8" rx="1.5"/><rect x="32" y="41" width="3" height="8" rx="1.5"/><rect x="38" y="41" width="3" height="8" rx="1.5"/><rect x="44" y="41" width="0" height="8"/></g></svg>Codedeck <small>architecture · GPUI · proposal v1</small></div>
+  <span class="sp"></span>
+  <div class="seg" id="nav"><button data-to="why" class="on">Research</button><button data-to="layers">Layers</button><button data-to="tree">Folders</button><button data-to="patterns">Patterns</button><button data-to="rules">Rules</button><button data-to="plan">Plan</button><button data-to="decide">Decide</button></div>
+  <button class="gel paper" id="theme">Dark</button>
+</div></header>
+
+<div class="wrap hero">
+  <span class="status"><i></i>Proposal: nothing built yet</span>
+  <h1>One native app, <span class="it">three crates,</span> every pixel ours.</h1>
+  <p>How Codedeck gets built on GPUI: the library choice, the folder tree, what each file looks like inside, and the order we build it in. Click through the tree to see every folder. The decisions I need from you are at the bottom.</p>
+</div>
+
+<section id="why"><div class="wrap">
+  <div class="lab">01 · Research</div>
+  <h2>Which GPUI, <span class="it">and what it can't do yet</span></h2>
+  <p class="lead">Checked on crates.io, GitHub, and docs.rs on 21 Nov 2026. GPUI itself is still pre-1.0. The safest way in is the wrapper a shipping product already depends on.</p>
+  <div class="opts">
+    <div class="opt pick"><span class="runb">Pick</span><h3>gpui-kit</h3><div class="v">0.10.0 · Longbridge · 2026-11-16</div>
+      <p>Pins a matching GPUI snapshot and adds <code>gpui-base</code>, which is unstyled behavior: focus, text input, virtual list, popovers, motion. We turn off the styled components and own the whole look. It powers Longbridge Pro.</p>
+      <div class="pills"><span class="pill ok">ships a real app</span><span class="pill">default-features = false</span><span class="pill">exact pin</span></div></div>
+    <div class="opt"><h3>gpui</h3><div class="v">0.2.2 · Zed · 2026-10-30</div>
+      <p>Upstream. Built around Zed's needs, with breaking changes common. It's what gpui-kit wraps anyway, so it's our fallback.</p>
+      <div class="pills"><span class="pill">fallback</span><span class="pill warn">breaks often</span></div></div>
+    <div class="opt"><h3>gpui-ce</h3><div class="v">0.3.0 · community · 2026-10-20</div>
+      <p>A community fork for standalone apps, with its own cadence and RFCs. Promising, but young, with about 28k downloads.</p>
+      <div class="pills"><span class="pill">watch</span><span class="pill warn">young</span></div></div>
+  </div>
+  <div class="risks">
+    <div class="risk"><b>No scale on <code>div</code></b>Transforms exist only on <code>svg()</code>. Jelly and wobble need size animation or a tiny custom element. Spike #1.</div>
+    <div class="risk"><b>No spring easing</b>Easing is any <code>Fn(f32)→f32</code>, so <code>spring()</code> is ours and about 5 lines. Overshoot works.</div>
+    <div class="risk"><b>Film at 120 fps</b>The pixel meadow is about 35k cells a frame. Paint one image per frame. Spike #2.</div>
+    <div class="risk"><b>Mac chrome works</b>Transparent titlebar, traffic-light position, and blurred background are all supported.</div>
+  </div>
+</div></section>
+
+<section id="layers"><div class="wrap">
+  <div class="lab">02 · Layers</div>
+  <h2>Dependencies <span class="it">only point down</span></h2>
+  <p class="lead">The domain never sees the UI, and the design system never sees the domain. The app is the only place they meet.</p>
+  <div class="layers">
+    <div class="layer"><div class="nm">codedeck</div><div class="kind">binary · the app</div><ul><li>window, menus, actions, keymap</li><li>AppState entity</li><li>screens: onboarding, home, project, ⌘K, settings, license</li></ul></div>
+    <div class="arrow">→</div>
+    <div class="layer"><div class="nm">codedeck_ui</div><div class="kind">lib · the design system</div><ul><li>theme tokens light/dark, fonts</li><li>spring · squish · jelly</li><li>GelButton, Segmented, Pill, Badge, Card, EditorButton, Mascot</li><li>gallery example</li></ul></div>
+    <div class="arrow">→</div>
+    <div class="layer"><div class="nm">gpui-kit</div><div class="kind">external · pinned</div><ul><li>GPUI (rendering, layout, input, windows)</li><li>gpui-base (behavior only)</li><li>no styled components</li></ul></div>
+    <div class="under">codedeck also uses <b class="mono" style="margin:0 6px">codedeck_core</b>, plain Rust with no GPUI: scan, stack, git, agent sources, matcher, index, watch, launch, settings, license</div>
+  </div>
+</div></section>
+
+<section id="tree"><div class="wrap">
+  <div class="lab">03 · Folders</div>
+  <h2>The tree, <span class="it">file by file</span></h2>
+  <p class="lead">Click any folder or file to see what it's for, the rules it follows, and what's inside. Coloured tags show which crate it belongs to.</p>
+  <div class="explorer"><div class="tree" id="treeEl"><div class="hi" id="treeHi"></div></div><div class="detail" id="detailEl"></div></div>
+</div></section>
+
+<section id="patterns"><div class="wrap">
+  <div class="lab">04 · Patterns</div>
+  <h2>What a file looks like <span class="it">inside</span></h2>
+  <p class="lead">Every file of the same kind has the same order, so you always know where to look.</p>
+  <div class="seg ptabs" id="ptabs"><button class="on" data-p="view">Screen (view)</button><button data-p="piece">UI piece</button><button data-p="motion">Motion</button><button data-p="core">Core reader</button><button data-p="async">Background work</button><button data-p="cargo">Cargo.toml</button></div>
+  <div class="pgrid"><pre id="pcode"></pre><div class="note" id="pnote"></div></div>
+</div></section>
+
+<section id="rules"><div class="wrap">
+  <div class="lab">05 · Rules</div>
+  <h2>House style, <span class="it">borrowed from Zed</span></h2>
+  <p class="lead">Zed writes most of the GPUI code in the world, and these come from its contributor rules. Formatting is <code>cargo fmt</code>, lint is clippy with zero warnings.</p>
+  <div class="rgrid" id="rgrid"></div>
+  <div style="height:26px"></div>
+  <div class="lab" style="margin-bottom:12px">Files on the user's Mac</div>
+  <table><tr><th>What</th><th>Where</th><th>Format</th></tr>
+    <tr><td>Index cache</td><td class="mono">~/Library/Application Support/Codedeck/index.db</td><td>SQLite</td></tr>
+    <tr><td>Settings</td><td class="mono">~/Library/Application Support/Codedeck/settings.json</td><td>JSON, every field defaulted</td></tr>
+    <tr><td>License</td><td class="mono">~/Library/Application Support/Codedeck/license</td><td>signed token, verified offline</td></tr>
+    <tr><td>Logs</td><td class="mono">~/Library/Logs/Codedeck/codedeck.log</td><td>text</td></tr></table>
+</div></section>
+
+<section id="flow"><div class="wrap">
+  <div class="lab">06 · How data moves</div>
+  <h2>Scan off the main thread, <span class="it">render on it</span></h2>
+  <p class="lead">GPUI gives you a foreground executor (the UI thread) and a background one. Scanning never blocks a frame.</p>
+  <div class="flow">
+    <div class="lane fg"><div class="lab" style="margin-bottom:10px">Main thread · GPUI</div>
+      <div class="step"><b>1</b>Launch: AppState loads <code>index.db</code> and Home renders cached projects in under 200 ms</div>
+      <div class="step"><b>2</b><code>AppState::rescan</code> calls <code>cx.spawn</code> and hands the work to the background</div>
+      <div class="step"><b>5</b><code>this.update(cx, |state, cx| state.apply(result); cx.notify())</code></div>
+      <div class="step"><b>6</b>Views that <code>observe</code> AppState re-render, and new cards spring in</div></div>
+    <div class="lane"><div class="lab" style="margin-bottom:10px">Background executor · codedeck_core</div>
+      <div class="step"><b>3</b><code>scan::find_projects(roots)</code>, then <code>stack</code> and <code>git</code> for each root</div>
+      <div class="step"><b>4</b><code>sources::read_all()</code> (claude, opencode, codex), then <code>matcher::assign</code>, then <code>index::save</code></div>
+      <div class="step"><b>↻</b><code>watch</code> (FSEvents) sees a new session file and starts again from step 2</div></div>
+  </div>
+  <div style="height:30px"></div>
+  <div class="lab" style="margin-bottom:12px">Prototype v22 → GPUI</div>
+  <table id="maptable"><tr><th>In the prototype</th><th>Becomes</th></tr></table>
+</div></section>
+
+<section id="plan"><div class="wrap">
+  <div class="lab">07 · Plan</div>
+  <h2>Build order, <span class="it">each step runnable</span></h2>
+  <p class="lead">Spikes come first, so the riskiest design promises (jelly buttons, the film) are proven before real code depends on them.</p>
+  <div class="plan" id="planEl"></div>
+</div></section>
+
+<section id="decide"><div class="wrap">
+  <div class="lab">08 · Decide</div>
+  <h2>Your calls <span class="it">before I start</span></h2>
+  <p class="lead">My pick is pre-selected in each one. Change any you disagree with, then copy the summary into chat, or just tell me.</p>
+  <div class="qs" id="qsEl"></div>
+  <div class="copyout"><button class="gel" id="copy">Copy my answers</button><code id="copied"></code></div>
+</div></section>
+
+<footer><div class="wrap">
+  Sources: <a href="https://github.com/longbridge/gpui-kit">gpui-kit</a> · <a href="https://raw.githubusercontent.com/longbridge/gpui-kit/main/docs/ARCHITECTURE.md">gpui-kit ARCHITECTURE.md</a> · <a href="https://github.com/zed-industries/zed/blob/main/crates/gpui/README.md">Zed GPUI README</a> · <a href="https://github.com/zed-industries/zed/blob/main/AGENTS.md">Zed AGENTS.md</a> · <a href="https://gpui-ce.github.io/">GPUI-CE</a> · <a href="https://docs.rs/crate/gpui/0.2.2/source/src/elements/animation.rs">gpui animation.rs</a> · <a href="https://git.secluded.site/zed/commit/49144d94bf0f34c95d18d89c5e9bb18ac90bf08c">blur PR #9610</a> · <a href="https://github.com/MatthiasGrandl/Loungy">Loungy</a>. Written alongside <code>docs/gpui-architecture.md</code>.
+</div></footer>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+// tiny highlighter: comments, strings, keywords, types
+function hl(src) {
+  return esc(src).split("\n").map(line => {
+    const ci = line.indexOf("//"), hash = line.match(/^\s*#(?!\[)/);
+    let code = ci >= 0 ? line.slice(0, ci) : line, com = ci >= 0 ? line.slice(ci) : "";
+    if (hash) { com = code; code = ""; }
+    code = code.replace(/("[^"]*")/g, '<span class="s">$1</span>')
+      .replace(/\b(pub|fn|struct|impl|use|let|mut|self|Self|mod|enum|for|move|async|await|const|match|if|return|crate|in|where)\b/g, '<span class="k">$1</span>')
+      .replace(/\b([A-Z][A-Za-z0-9]+)\b(?![^<]*>)/g, '<span class="t">$1</span>');
+    return code + (com ? `<span class="c">${com}</span>` : "");
+  }).join("\n");
+}
+
+/* ---------- squish seg (stretch toward target, spring settle) ---------- */
+function placeKnob(seg, btn, animate) {
+  let k = seg.querySelector(".knob"); if (!k) { k = document.createElement("i"); k.className = "knob"; seg.prepend(k); }
+  const to = { l: btn.offsetLeft, w: btn.offsetWidth };
+  const from = { l: k.offsetLeft, w: k.offsetWidth || to.w };
+  if (!animate || !k.offsetWidth) { k.style.left = to.l + "px"; k.style.width = to.w + "px"; return; }
+  const minL = Math.min(from.l, to.l), maxR = Math.max(from.l + from.w, to.l + to.w);
+  k.animate([{ left: from.l + "px", width: from.w + "px" }, { left: minL + "px", width: (maxR - minL) + "px", offset: .4 },
+    { left: to.l + "px", width: to.w + "px" }], { duration: 480, easing: "cubic-bezier(.34,1.56,.64,1)" });
+  k.style.left = to.l + "px"; k.style.width = to.w + "px";
+}
+function initSeg(seg, onPick) {
+  const btns = [...seg.querySelectorAll("button")];
+  requestAnimationFrame(() => placeKnob(seg, seg.querySelector("button.on") || btns[0], false));
+  btns.forEach(b => b.addEventListener("click", () => { btns.forEach(x => x.classList.toggle("on", x === b)); placeKnob(seg, b, true); onPick && onPick(b); }));
+}
+document.addEventListener("pointermove", e => { const g = e.target.closest?.(".gel"); if (!g) return; const r = g.getBoundingClientRect(); g.style.setProperty("--mx", e.clientX - r.left + "px"); g.style.setProperty("--my", e.clientY - r.top + "px"); });
+document.addEventListener("pointerup", e => { const g = e.target.closest?.(".gel"); if (!g) return; g.dataset.m = ""; void g.offsetWidth; g.dataset.m = "jelly"; });
+
+initSeg($("#nav"), b => document.getElementById(b.dataset.to).scrollIntoView({ behavior: "smooth" }));
+const theme = () => document.documentElement.dataset.theme || "light";
+const syncThemeBtn = () => ($("#theme").textContent = theme() === "dark" ? "Light" : "Dark");
+$("#theme").onclick = () => { document.documentElement.dataset.theme = theme() === "dark" ? "light" : "dark"; syncThemeBtn(); };
+syncThemeBtn();
+
+/* ---------- tree data ---------- */
+const D = (name, info, kids) => ({ name, ...info, kids });
+const F = (name, info) => ({ name, ...info });
+const TREE = D("codedeck/", { tag: "repo", sum: "The repository root. A Cargo workspace with three crates, plus assets, packaging and the design history.",
+  rules: ["Versions live only in the root <code>Cargo.toml</code>; crates say <code>dep.workspace = true</code>.", "Nothing at the root is code except the workspace files.", "<code>design/</code> stays as the visual source of truth; the app should match it."] }, [
+  F("Cargo.toml", { tag: "repo", sum: "The workspace manifest: members, every shared dependency with its exact version, lint levels, release profile.", code: "cargo" }),
+  F("rust-toolchain.toml", { tag: "repo", sum: "Pins the Rust toolchain. GPUI needs the latest stable, so we pin the version we test on and bump it deliberately.", snippet: '[toolchain]\nchannel = "1.91"\ncomponents = ["rustfmt", "clippy"]' }),
+  F("rustfmt.toml", { tag: "repo", sum: "Formatting. Defaults plus two choices, so diffs stay small.", snippet: 'max_width = 100\nimports_granularity = "Crate"' }),
+  D("crates/", { tag: "repo", sum: "All Rust code. Folder name equals crate name.", rules: ["Three crates: app, ui, core. Add a fourth only when one of these really splits in two.", "<code>members = [\"crates/*\"]</code>, so a new folder joins the workspace on its own."] }, [
+    D("codedeck/", { tag: "app", sum: "The app binary. It owns the window, the menus, the actions, the one <code>AppState</code> entity, and every screen. It's the only crate that knows about both the UI and the domain.",
+      rules: ["Screens compose <code>codedeck_ui</code> pieces; no raw styling of buttons or pills in here.", "Never parse files or walk folders here; ask <code>codedeck_core</code> on the background executor.", "Binary name is <code>Codedeck</code>, which becomes the .app name."] }, [
+      F("Cargo.toml", { tag: "app", sum: "Binary manifest.", snippet: '[package]\nname = "codedeck"\nversion = "0.1.0"\nedition.workspace = true\n\n[[bin]]\nname = "Codedeck"\npath = "src/main.rs"\n\n[dependencies]\ncodedeck_core.workspace = true\ncodedeck_ui.workspace = true\ngpui-kit.workspace = true\nanyhow.workspace = true\n\n[lints]\nworkspace = true' }),
+      F("build.rs", { tag: "app", sum: "Tells Cargo to rebuild when <code>assets/</code> changes, so embedded fonts and icons stay fresh." }),
+      D("src/", { tag: "app", sum: "App sources. Flat files for app-wide plumbing, <code>screens/</code> for what you see." }, [
+        F("main.rs", { tag: "app", sum: "The entry point. Starts the Application, registers fonts and assets, installs the theme and keymap, builds the menus, creates <code>AppState</code>, and opens the window. Nothing else lives here.",
+          snippet: 'fn main() {\n    gpui_kit::application()\n        .with_assets(Assets)\n        .run(|cx| {\n            gpui_kit::init(cx);\n            codedeck_ui::init(cx);        // fonts + theme global\n            actions::bind_keys(cx);\n            menus::install(cx);\n            let state = cx.new(AppState::load);\n            window::open(state, cx).log_err();\n        });\n}' }),
+        F("app_state.rs", { tag: "app", sum: "The single source of truth while the app runs: projects, sessions, scan progress, settings. It's an <code>Entity&lt;AppState&gt;</code> that screens <code>observe</code>. It's also the only bridge to <code>codedeck_core</code>, and runs every core call on the background executor.", code: "async" }),
+        F("actions.rs", { tag: "app", sum: "Every command is a GPUI action, so the keyboard, the menu, and ⌘K all trigger the same thing.", snippet: 'actions!(codedeck, [OpenPalette, Rescan, OpenSettings, ToggleTheme, NewWindow]);\n\npub fn bind_keys(cx: &mut App) {\n    cx.bind_keys([\n        KeyBinding::new("cmd-k", OpenPalette, None),\n        KeyBinding::new("cmd-r", Rescan, None),\n        KeyBinding::new("cmd-,", OpenSettings, None),\n    ]);\n}' }),
+        F("menus.rs", { tag: "app", sum: "The native macOS menu bar (Codedeck, File, View, Window, Help), built from the same actions." }),
+        F("assets.rs", { tag: "app", sum: "Implements GPUI's <code>AssetSource</code> over the <code>assets/</code> folder, embedded into the binary with rust-embed, so there are no loose files in the .app." }),
+        F("window.rs", { tag: "app", sum: "Window options matching the prototype: 1180×740 default, transparent titlebar, traffic lights inset to line up with the sidebar, minimum size." ,
+          snippet: 'WindowOptions {\n    titlebar: Some(TitlebarOptions {\n        appears_transparent: true,\n        traffic_light_position: Some(point(px(18.), px(18.))),\n        ..Default::default()\n    }),\n    window_bounds: Some(WindowBounds::centered(size(px(1180.), px(740.)), cx)),\n    window_min_size: Some(size(px(900.), px(600.))),\n    ..Default::default()\n}' }),
+        F("shell.rs", { tag: "app", sum: "The root view: the sidebar on the left and the current screen on the right. It owns <code>Screen</code> routing and the crossfade between screens, which is the prototype's <code>show(id, fade)</code>." }),
+        F("sidebar.rs", { tag: "app", sum: "Navigation with the squish highlight that slides between items (the prototype's <code>initSideHi</code>), plus the Light/Dark segmented control." }),
+        F("screens.rs", { tag: "app", sum: "Declares the screen modules and the <code>Screen</code> enum. This file is what <code>mod.rs</code> would have been.", snippet: 'pub mod home;\npub mod license;\npub mod onboarding;\npub mod palette;\npub mod project;\npub mod project_card;\npub mod sessions;\npub mod settings;\n\n#[derive(Clone, Copy, PartialEq)]\npub enum Screen { Onboarding, Home, Project, Sessions, Settings, License }' }),
+        D("screens/", { tag: "app", sum: "One file per screen, matching the prototype's pages one to one." }, [
+          F("onboarding.rs", { tag: "app", sum: "Sequencer for first launch: film, then scan, then setup, then Home. It owns the timeline and the Skip button." }),
+          D("onboarding/", { tag: "app", sum: "The three first-launch scenes." }, [
+            F("film.rs", { tag: "app", sum: "The pixel meadow from the prototype: Bayer-dithered sky, hills, grass, petals, birds, the bot, and 24 lights rising into its eye. It paints a 236×148 buffer each frame and draws it scaled with nearest-neighbour. Story lines use Instrument Sans with Fraunces italic accents.", rules: ["Same timings as <code>PSTORY</code> in the prototype (17 s).", "<code>FT</code> freeze-frame becomes a debug env var <code>CODEDECK_FILM_T</code>."] }),
+            F("scan.rs", { tag: "app", sum: "The kshvbgde scanner on white: a canvas pixel bar with lit segment edges, a bright leading edge with glow, scrambling path text, a 3×3 legend with hover-to-inspect, and the Continue gel. It's driven by real scan progress from AppState." }),
+            F("setup.rs", { tag: "app", sum: "Sentences with pill choices: which folders, which agents, which editor. The choices go into settings." }),
+          ]),
+          F("home.rs", { tag: "app", sum: "The painting banner chosen by time of day, with a greeting and glass stats; three continue tiles; filters on the squish seg; and the project grid.", code: "view" }),
+          F("project_card.rs", { tag: "app", sum: "The v22 card exactly: name, path, time at the top right, a green Running badge on the outline, filled 20px pills (branch, uncommitted), stack icons at the end of the pills row, a hairline footer with Open with circles, and the italic note \"3 sessions · open to continue\"." }),
+          F("project.rs", { tag: "app", sum: "Single project page: header with editor circles and terminal, sessions grouped by day, and \"used here\" (agents, editors, tooling, git, languages)." }),
+          F("sessions.rs", { tag: "app", sum: "Every session across projects: Running, Today, Earlier." }),
+          F("palette.rs", { tag: "app", sum: "⌘K. The text input comes from gpui-base; results are ranked with nucleo and shown in a <code>uniform_list</code>, so 5,000 sessions stay smooth. Enter opens or resumes." }),
+          F("settings.rs", { tag: "app", sum: "Grouped rows from the prototype: General, Folders, Apps, Agents, Appearance (theme, painting), Privacy, with jelly toggles." }),
+          F("license.rs", { tag: "app", sum: "The ticket: perforation, masked key, seats bar, activated Macs." }),
+        ]),
+      ]),
+    ]),
+    D("codedeck_ui/", { tag: "ui", sum: "The design system as a library. Everything you can see in the prototype that isn't a whole screen lives here, in light and dark, with the motion.",
+      rules: ["Pieces are <code>RenderOnce</code> builders: <code>Pill::new(\"main\").icon(Icon::Branch)</code>.", "Colours only come from <code>cx.theme()</code>. No hex values outside <code>theme.rs</code>.", "Never imports <code>codedeck_core</code>. It takes strings and numbers, not Projects."] }, [
+      F("Cargo.toml", { tag: "ui", sum: "Library manifest with the named root.", snippet: '[package]\nname = "codedeck_ui"\nversion = "0.1.0"\nedition.workspace = true\n\n[lib]\npath = "src/codedeck_ui.rs"\n\n[dependencies]\ngpui-kit.workspace = true\n\n[[example]]\nname = "gallery"' }),
+      D("src/", { tag: "ui", sum: "One file per piece." }, [
+        F("codedeck_ui.rs", { tag: "ui", sum: "Crate root. Declares modules, exposes <code>init(cx)</code> (fonts + theme global), and a <code>prelude</code> so screens import one line.", snippet: 'pub mod avatar;\npub mod card;\npub mod editor_button;\npub mod gel_button;\npub mod mascot;\npub mod motion;\npub mod pill;\npub mod segmented;\npub mod stack_icon;\npub mod theme;\npub mod toggle;\npub mod typography;\n\npub mod prelude {\n    pub use crate::{card::Card, gel_button::GelButton, pill::{Badge, Pill},\n        segmented::Segmented, theme::ActiveTheme};\n    pub use gpui_kit::*;\n}\n\npub fn init(cx: &mut App) {\n    typography::load_fonts(cx);\n    theme::init(cx);\n}' }),
+        F("theme.rs", { tag: "ui", sum: "The CSS tokens from the prototype become a <code>Theme</code> global with <code>light()</code> and <code>dark()</code>. It follows the macOS appearance unless the setting overrides it.", snippet: 'pub struct Theme {\n    pub bg: Hsla, pub card: Hsla, pub soft: Hsla, pub soft_2: Hsla,\n    pub ink: Hsla, pub ink_2: Hsla, pub ink_3: Hsla, pub ink_4: Hsla,\n    pub line: Hsla, pub line_2: Hsla,\n    pub live: Hsla, pub warn_bg: Hsla, pub amber: Hsla, pub brand: Hsla,\n}\n\nimpl Theme {\n    pub fn light() -> Self { … }   // --bg #fff …\n    pub fn dark() -> Self { … }\n}' }),
+        F("typography.rs", { tag: "ui", sum: "Loads Instrument Sans, Fraunces italic and Geist Mono from assets, and defines the text styles (title, body, mono label, italic accent). Fraunces needs static cuts, because variable axes like SOFT and opsz may not be supported." }),
+        F("motion.rs", { tag: "ui", sum: "The motion language: <code>spring()</code>, the squish helper, jelly keyframes as a function of t, standard durations, and a reduce-motion switch read from macOS.", code: "motion" }),
+        F("gel_button.rs", { tag: "ui", sum: "Gel buttons: a pointer-light highlight following the cursor, a wobble on hover, jelly on release, ink or paper variants. There's no outer shadow. Depends on spike #1 for how the squash is drawn." }),
+        F("segmented.rs", { tag: "ui", sum: "The segmented control with the squish knob: it stretches toward the target and springs back to size. It's used by filters, the theme switch and settings." }),
+        F("toggle.rs", { tag: "ui", sum: "The springy toggle from settings." }),
+        F("pill.rs", { tag: "ui", sum: "<code>Pill</code> is the tight 20px filled pill in soft or warn tones. <code>Badge</code> is the solid Running badge that sits on a card outline.", code: "piece" }),
+        F("card.rs", { tag: "ui", sum: "The card container: hairline border, 20px radius, 16px padding, and the live tint when something is running. It holds no data." }),
+        F("editor_button.rs", { tag: "ui", sum: "The round \"Open with\" circles (Cursor, VS Code, Zed): a green dot for the default editor, a tooltip on hover, jelly on press, and Cursor inverted in dark mode." }),
+        F("stack_icon.rs", { tag: "ui", sum: "Language and framework icons from <code>assets/icons/stack</code> by name." }),
+        F("mascot.rs", { tag: "ui", sum: "The original red robot as SVG parts (face, visor, slit, grill), with moods: idle, scan sweep, talk, hop. It's used in the film, the scanner and empty states." }),
+        F("avatar.rs", { tag: "ui", sum: "Per-project bot avatars. The DiceBear avatars are pre-rendered to SVG at build time, so there are no network calls." }),
+      ]),
+      D("examples/", { tag: "ui", sum: "Runnable examples for this crate." }, [
+        F("gallery.rs", { tag: "ui", sum: "Every piece on one window, in light and dark, with motion sliders. Run it with <code>cargo run -p codedeck_ui --example gallery</code>. This is where motion gets tuned without clicking through the app." }),
+      ]),
+    ]),
+    D("codedeck_core/", { tag: "core", sum: "The domain, in plain Rust with no GPUI. It finds projects, reads agent sessions, matches them, caches them, watches for changes, and launches editors. You can unit test it and learn Rust on it.",
+      rules: ["Functions in, data out. No global state, no threads of its own; the app decides where it runs.", "Agent formats are undocumented: skip bad lines, count them, never panic.", "No <code>trait Source</code> until a fourth agent proves the shape."] }, [
+      F("Cargo.toml", { tag: "core", sum: "Library manifest; no GPUI here.", snippet: '[package]\nname = "codedeck_core"\nversion = "0.1.0"\nedition.workspace = true\n\n[lib]\npath = "src/codedeck_core.rs"\n\n[dependencies]\nanyhow.workspace = true\nserde.workspace = true\nserde_json.workspace = true\nrusqlite.workspace = true\nignore.workspace = true\nnotify.workspace = true\ndirs.workspace = true\njiff.workspace = true\nlog.workspace = true' }),
+      D("src/", { tag: "core", sum: "One file per job." }, [
+        F("codedeck_core.rs", { tag: "core", sum: "Crate root: modules, plus <code>scan_all(&Settings) -> Snapshot</code>, the one call the app makes on rescan." }),
+        F("model.rs", { tag: "core", sum: "The data types every other file shares, all <code>serde</code>.", snippet: 'pub struct Project {\n    pub root: PathBuf,\n    pub name: String,\n    pub stacks: Vec<Stack>,\n    pub git: Option<GitInfo>,     // branch, dirty count\n    pub sessions: Vec<SessionId>,\n}\n\npub struct Session {\n    pub agent: Agent,             // Claude | OpenCode | Codex\n    pub id: String,\n    pub cwd: PathBuf,\n    pub title: String,\n    pub updated: Timestamp,\n    pub message_count: u32,\n    pub live: bool,\n}' }),
+        F("scan.rs", { tag: "core", sum: "Walks the configured roots with the <code>ignore</code> crate (skips node_modules, target, anything gitignored). A folder with <code>.git</code> or a manifest is a project; it stops descending there. Default depth 4." }),
+        F("stack.rs", { tag: "core", sum: "A table of marker files mapped to stacks (<code>Cargo.toml</code> is Rust, <code>package.json</code> plus a refining file is Next or Vite, and so on). Data, not heuristics." }),
+        F("git.rs", { tag: "core", sum: "Reads <code>.git/HEAD</code> for the branch and counts uncommitted files. It needs no libgit2." }),
+        F("sources.rs", { tag: "core", sum: "<code>read_all()</code> calls each agent reader and collects their errors into a count for \"couldn't read N sessions\"." }),
+        D("sources/", { tag: "core", sum: "One reader per agent, all with the same signature." }, [
+          F("claude.rs", { tag: "core", sum: "<code>~/.claude/projects/**/*.jsonl</code>. It streams lines, takes <code>cwd</code> from inside the file (the folder name encoding loses information), and takes the title from the summary or the first user message.", code: "core" }),
+          F("opencode.rs", { tag: "core", sum: "<code>~/.local/share/opencode/opencode.db</code>, opened read-only because OpenCode may be writing to it." }),
+          F("codex.rs", { tag: "core", sum: "<code>~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl</code>; the first line has the cwd. To be verified against a real install." }),
+        ]),
+        F("matcher.rs", { tag: "core", sum: "Assigns each session to the project with the longest root that prefixes its cwd. A session with no match becomes its own project." }),
+        F("index.rs", { tag: "core", sum: "The SQLite cache, so launch renders instantly. It stores file mtimes, so a rescan only re-reads what changed." }),
+        F("watch.rs", { tag: "core", sum: "FSEvents via <code>notify</code> on scan roots and agent folders. It emits plain change events for the app to act on." }),
+        F("launch.rs", { tag: "core", sum: "Opens a project in Cursor, VS Code or Zed (each only if it's in /Applications), and opens a terminal in the project for continuing a session." }),
+        F("settings.rs", { tag: "core", sum: "The <code>Settings</code> struct, saved to settings.json. Every field has <code>#[serde(default)]</code>, so old files never break a new version." }),
+        F("license.rs", { tag: "core", sum: "Activates once online, stores a signed token, and verifies it offline. This is the only network code in the app." }),
+      ]),
+      D("tests/", { tag: "core", sum: "Integration tests over real-shaped data." }, [
+        D("fixtures/", { tag: "core", sum: "Small anonymised samples copied from real agent folders: a Claude jsonl with odd lines, an OpenCode db, a Codex rollout. When a format changes, add a fixture and a failing test first." }, []),
+      ]),
+    ]),
+  ]),
+  D("assets/", { tag: "repo", sum: "Everything embedded into the binary. File names are kebab-case and stable, because code refers to them by name.", rules: ["Every third-party asset keeps its licence next to it (CREDITS.md / LICENSE).", "SVG for icons, WebP or JPEG for paintings, TTF/OTF for fonts."] }, [
+    F("fonts/", { tag: "repo", sum: "Instrument Sans, Fraunces (static italic cuts), Geist Mono. All OFL." }),
+    D("icons/", { tag: "repo", sum: "SVG icons by group." }, [
+      F("ide/", { tag: "repo", sum: "cursor.svg, vscode.svg, zed.svg, copied from <code>design/assets/ide</code>." }),
+      F("stack/", { tag: "repo", sum: "Simple Icons (CC0) for languages and frameworks." }),
+      F("ui/", { tag: "repo", sum: "Small UI glyphs: branch, terminal, search, chevron." }),
+    ]),
+    F("art/", { tag: "repo", sum: "Public-domain paintings for the home banner, with CREDITS.md carried over from the design folder." }),
+    F("mascot/", { tag: "repo", sum: "mascot.svg and the pre-rendered project avatars." }),
+  ]),
+  D("bundle/", { tag: "repo", sum: "macOS packaging inputs: Info.plist (bundle id, min macOS, no App Store sandbox), entitlements, AppIcon.icns." }, []),
+  D("script/", { tag: "repo", sum: "Small shell scripts for things you run often.", rules: ["<code>script/clippy</code>: clippy on the workspace with warnings as errors.", "<code>script/bundle</code>: release build into Codedeck.app.", "<code>script/notarize</code>: codesign, notarytool, staple, dmg."] }, []),
+  F("design/", { tag: "repo", sum: "The HTML prototypes, unchanged. <code>29-prototype-v22.html</code> is the reference the app is built against." }),
+  F("docs/", { tag: "repo", sum: "<code>architecture.md</code> (the Tauri plan, superseded for the UI layer), <code>gpui-architecture.md</code> and this page." }),
+  F("spike/", { tag: "repo", sum: "The old Tauri spike. I propose deleting it once the GPUI window opens; your call." }),
+]);
+
+/* ---------- tree render ---------- */
+const icon = dir => dir
+  ? '<svg class="ic" viewBox="0 0 16 16"><path d="M1.5 4.2c0-.7.5-1.2 1.2-1.2h3.2l1.4 1.5h6c.7 0 1.2.5 1.2 1.2v6.6c0 .7-.5 1.2-1.2 1.2H2.7c-.7 0-1.2-.5-1.2-1.2z" fill="currentColor" opacity=".28"/></svg>'
+  : '<svg class="ic" viewBox="0 0 16 16"><path d="M3.5 1.5h6l3 3v10h-9z" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".55"/></svg>';
+let uid = 0; const NODES = {};
+function build(node, depth, path) {
+  const id = "n" + uid++, dir = !!node.kids || node.name.endsWith("/"); node.id = id; node.path = path + node.name; NODES[id] = node;
+  const open = depth < 2 || (depth === 2 && node.name !== "icons/");
+  const tag = { app: "app", ui: "ui", core: "core" }[node.tag];
+  let h = `<div class="row ${dir && open ? "open" : ""}" data-id="${id}" style="padding-left:${8 + depth * 16}px">
+    <span class="car">${node.kids && node.kids.length ? "›" : ""}</span>${icon(dir)}<span>${node.name}</span>${tag && depth <= 2 && dir ? `<span class="tag ${tag}">${tag}</span>` : ""}</div>`;
+  if (node.kids && node.kids.length) h += `<div class="kids" data-for="${id}" style="${open ? "" : "display:none"}">${node.kids.map(k => build(k, depth + 1, node.path)).join("")}</div>`;
+  return h;
+}
+$("#treeEl").insertAdjacentHTML("beforeend", build(TREE, 0, ""));
+const PCODE = {};
+function select(id, animate) {
+  const n = NODES[id], row = document.querySelector(`.row[data-id="${id}"]`);
+  $$(".row").forEach(r => r.classList.toggle("on", r === row));
+  const hi = $("#treeHi"), to = row.offsetTop;
+  if (animate && hi.style.opacity === "1") {
+    const from = hi.offsetTop, top = Math.min(from, to), h = Math.abs(to - from) + 28;
+    hi.animate([{ top: from + "px", height: "28px" }, { top: top + "px", height: h + "px", offset: .4 }, { top: to + "px", height: "28px" }], { duration: 460, easing: "cubic-bezier(.34,1.56,.64,1)" });
+  }
+  hi.style.top = to + "px"; hi.style.opacity = "1";
+  const crate = { app: "crate · codedeck", ui: "crate · codedeck_ui", core: "crate · codedeck_core", repo: "repository" }[n.tag];
+  const kids = n.kids && n.kids.length ? `<div class="lab" style="margin:18px 0 8px">Inside</div><div class="pills">${n.kids.map(k => `<span class="pill" style="cursor:default" data-go="${k.id}">${k.name}</span>`).join("")}</div>` : "";
+  const code = n.snippet ? n.snippet : n.code ? PCODE[n.code] : "";
+  $("#detailEl").innerHTML = `<div class="fade-in"><div class="path">${n.path} · ${crate}</div><h3>${n.name.replace(/\/$/, "")}</h3><p>${n.sum}</p>
+    ${n.rules ? `<ul class="rules">${n.rules.map(r => `<li>${r}</li>`).join("")}</ul>` : ""}
+    ${code ? `<div class="lab" style="margin:16px 0 8px">${n.snippet ? "Looks like" : "Pattern"}</div><pre>${hl(code)}</pre>` : ""}${kids}</div>`;
+  $$("#detailEl [data-go]").forEach(p => p.onclick = () => { reveal(p.dataset.go); select(p.dataset.go, true); });
+}
+function reveal(id) { let el = document.querySelector(`.row[data-id="${id}"]`).parentElement; while (el && el.classList.contains("kids")) { el.style.display = ""; document.querySelector(`.row[data-id="${el.dataset.for}"]`).classList.add("open"); el = el.parentElement; } }
+$("#treeEl").addEventListener("click", e => {
+  const row = e.target.closest(".row"); if (!row) return; const id = row.dataset.id, kids = document.querySelector(`.kids[data-for="${id}"]`);
+  if (kids && (row.classList.contains("on") || e.target.closest(".car"))) { const open = kids.style.display === "none"; kids.style.display = open ? "" : "none"; row.classList.toggle("open", open); }
+  select(id, true);
+});
+
+/* ---------- patterns ---------- */
+const PAT = {
+  view: { code: `//! Home: painting banner, continue tiles, project grid.
+
+use crate::{app_state::AppState, screens::project_card::ProjectCard};
+use codedeck_ui::prelude::*;
+
+pub struct Home {
+    state: Entity<AppState>,
+    filter: Filter,
+    _subscriptions: Vec<Subscription>,   // keeps observers alive
+}
+
+impl Home {
+    pub fn new(state: Entity<AppState>, window: &mut Window, cx: &mut Context<Self>) -> Self {
+        let observe = cx.observe(&state, |_, _, cx| cx.notify());
+        Self { state, filter: Filter::All, _subscriptions: vec![observe] }
+    }
+
+    fn set_filter(&mut self, filter: Filter, cx: &mut Context<Self>) {
+        self.filter = filter;
+        cx.notify();
+    }
+}
+
+impl Render for Home {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let theme = cx.theme();
+        v_flex()
+            .size_full()
+            .bg(theme.bg)
+            .child(self.render_banner(cx))
+            .child(self.render_grid(cx))
+    }
+}
+
+// private render_* helpers, then #[cfg(test)] mod tests`,
+    note: "<h4>Order inside every screen</h4><ol><li>Doc comment: one line, what the screen is</li><li>Imports: crate, then <code>codedeck_ui::prelude::*</code></li><li>The struct: state handles, then UI state, then <code>_subscriptions</code></li><li><code>new</code>, then the methods that change state (each ends in <code>cx.notify()</code>)</li><li><code>impl Render</code>, kept short</li><li>Private <code>render_*</code> helpers</li><li>Tests</li></ol>" },
+  piece: { code: `#[derive(IntoElement)]
+pub struct Pill {
+    label: SharedString,
+    tone: Tone,
+    icon: Option<Icon>,
+}
+
+impl Pill {
+    pub fn new(label: impl Into<SharedString>) -> Self {
+        Self { label: label.into(), tone: Tone::Soft, icon: None }
+    }
+    pub fn warn(mut self) -> Self { self.tone = Tone::Warn; self }
+    pub fn icon(mut self, icon: Icon) -> Self { self.icon = Some(icon); self }
+}
+
+impl RenderOnce for Pill {
+    fn render(self, _window: &mut Window, cx: &mut App) -> impl IntoElement {
+        let theme = cx.theme();
+        h_flex()
+            .h(px(20.)).px(px(7.)).gap(px(4.)).rounded(px(6.))
+            .bg(self.tone.fill(theme))
+            .text_color(self.tone.ink(theme))
+            .text_size(px(11.5))
+            .when_some(self.icon, |pill, icon| pill.child(icon.size(px(10.))))
+            .child(self.label)
+    }
+}
+
+// at the call site, it reads like the prototype:
+// Pill::new("3 uncommitted").warn()`,
+    note: "<h4>Design-system pieces</h4><ol><li><code>RenderOnce</code>: built fresh each frame, no state of their own</li><li>A <code>new()</code> with the required bits, then chained options</li><li>Sizes come straight from the prototype CSS (20px, radius 6, 11.5px)</li><li>Colours only from <code>cx.theme()</code>, so dark mode is free</li><li>Anything with state that must survive frames (squish knob position) uses keyed element state or an Entity</li></ol>" },
+  motion: { code: `/// Under-damped spring as an easing curve:
+/// overshoots past 1.0, settles at 1.0.
+pub fn spring(damping: f32, frequency: f32) -> impl Fn(f32) -> f32 {
+    move |t| 1.0 - (-damping * t).exp() * (frequency * t).cos()
+}
+
+pub const SQUISH: Duration = Duration::from_millis(420);
+pub const JELLY: Duration = Duration::from_millis(600);
+
+// Segmented knob: stretch toward the target, then spring to size.
+knob.with_animation(
+    ("knob", selected),
+    Animation::new(SQUISH).with_easing(spring(6., 14.)),
+    move |knob, t| {
+        let left = lerp(from.left, to.left, t);
+        let stretch = (1.0 - (t * 2.0 - 1.0).abs()) * gap;   // widest mid-flight
+        knob.left(px(left)).w(px(lerp(from.width, to.width, t) + stretch))
+    },
+)`,
+    note: "<h4>How the jelly survives the move</h4><ol><li>Easing in GPUI is any <code>Fn(f32) → f32</code>, so the spring is ours</li><li>Squish knob and sidebar highlight animate position and width, which GPUI already supports</li><li>Gel squash needs scale, which <code>div</code> lacks, so <b>spike #1</b> tries painting the button background at a scaled size</li><li>One <code>reduce_motion()</code> check turns all of it into plain fades</li></ol>" },
+  core: { code: `// codedeck_core/src/sources/claude.rs
+
+/// Reads every Claude Code session under ~/.claude/projects.
+/// Bad lines are skipped and counted, never fatal.
+pub fn read(home: &Path) -> anyhow::Result<Read> {
+    let mut read = Read::default();
+    for file in session_files(&home.join(".claude/projects"))? {
+        match read_session(&file) {
+            Ok(Some(session)) => read.sessions.push(session),
+            Ok(None) => {}                       // empty file
+            Err(error) => {
+                log::warn!("claude {}: {error:#}", file.display());
+                read.skipped += 1;
+            }
+        }
+    }
+    Ok(read)
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn takes_cwd_from_inside_the_file() { … }   // fixture: tests/fixtures/claude
+}`,
+    note: "<h4>Core readers</h4><ol><li>Same signature for every agent: path in, sessions plus a skipped count out</li><li><code>anyhow::Result</code> everywhere; context on every <code>?</code></li><li>Stream files line by line, never load a whole jsonl</li><li>A failing fixture test comes before every format fix</li></ol>" },
+  async: { code: `impl AppState {
+    pub fn rescan(&mut self, cx: &mut Context<Self>) {
+        self.scan = ScanStatus::Running { found: 0 };
+        cx.notify();
+
+        let settings = self.settings.clone();
+        self.scan_task = Some(cx.spawn(async move |this, cx| {
+            let snapshot = cx
+                .background_spawn(async move { codedeck_core::scan_all(&settings) })
+                .await?;
+            this.update(cx, |state, cx| {
+                state.apply(snapshot);
+                cx.notify();
+            })
+        }));
+    }
+}`,
+    note: "<h4>Two executors</h4><ol><li><code>cx.spawn</code> runs on the UI thread and may await</li><li><code>cx.background_spawn</code> does the heavy work off-thread</li><li>The <code>Task</code> is stored in <code>scan_task</code>; dropping it cancels the scan, which is what we want on quit or a new rescan</li><li>Errors come back to the UI as a quiet banner, never swallowed</li></ol>" },
+  cargo: { code: `[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+gpui-kit = { version = "=0.10.0", default-features = false }
+codedeck_core = { path = "crates/codedeck_core" }
+codedeck_ui = { path = "crates/codedeck_ui" }
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+ignore = "0.4"
+notify = "6"
+nucleo = "0.5"
+dirs = "5"
+jiff = "0.1"
+rust-embed = "8"
+log = "0.4"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+dbg_macro = "deny"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true`,
+    note: "<h4>One place for versions</h4><ol><li><code>gpui-kit</code> pinned with <code>=</code>, since GPUI breaks between releases; we bump it on purpose</li><li>Styled components off: we only take GPUI and behavior</li><li>Crates use <code>dep.workspace = true</code></li><li>Exact versions get confirmed with <code>cargo add</code> in step 1</li><li>That's the whole dependency list. Nothing joins it without a reason.</li></ol>" },
+};
+Object.entries(PAT).forEach(([k, v]) => (PCODE[k] = v.code));
+function showPat(k) { $("#pcode").innerHTML = hl(PAT[k].code); $("#pnote").innerHTML = PAT[k].note; $("#pcode").classList.remove("fade-in"); void $("#pcode").offsetWidth; $("#pcode").classList.add("fade-in"); }
+initSeg($("#ptabs"), b => showPat(b.dataset.p)); showPat("view");
+select(NODES.n0 ? "n0" : Object.keys(NODES)[0], false);
+
+/* ---------- rules ---------- */
+const RULES = [
+  ["Modules", "No <code>mod.rs</code>. A folder module is a file plus a folder.", "screens.rs + screens/home.rs", "screens/mod.rs"],
+  ["Crate root", "Named after the crate, set with <code>[lib] path</code>.", "src/codedeck_ui.rs", "src/lib.rs"],
+  ["Errors", "Propagate with <code>?</code> or log them. Never drop them silently.", "file.read()?; task.detach_and_log_err(cx)", "let _ = file.read(); .unwrap()"],
+  ["Names", "Full words. The context argument is always <code>cx</code>.", "for project in projects", "for p in ps"],
+  ["Argument order", "<code>window</code> before <code>cx</code>, callbacks last.", "fn new(state, window, cx)", "fn new(cx, window, state)"],
+  ["Comments", "Say why, not what.", "// cwd from inside: folder name is lossy", "// loop over the lines"],
+  ["Conditionals", "Use <code>.when()</code> and <code>.when_some()</code> on elements.", ".when(project.live, |card| card.child(Badge::running()))", "if live { card.child(..) } else { card }"],
+  ["Lifetimes", "Store subscriptions and tasks, or detach them on purpose.", "_subscriptions: Vec<Subscription>", "cx.observe(..); // dropped, dead"],
+  ["Files", "One logical component per file, not many tiny files.", "project_card.rs (card + its helpers)", "card_header.rs, card_footer.rs, …"],
+];
+$("#rgrid").innerHTML = RULES.map(([l, t, d, x]) => `<div class="rcard"><div class="lab">${l}</div><div style="font-size:14px;color:var(--ink-2)">${t}</div><div class="do">${esc(d)}</div><div class="dont">${esc(x)}</div></div>`).join("");
+
+/* ---------- map table ---------- */
+const MAP = [
+  ["#win 1180×740 window", "window.rs: transparent titlebar, traffic lights inset"],
+  ["show(id, fade) + SCREENS", "shell.rs: enum Screen, opacity crossfade"],
+  [".gel · squish() · .tog · sidebar highlight", "gel_button.rs · segmented.rs · toggle.rs · sidebar.rs"],
+  ["CSS tokens + [data-theme=dark]", "theme.rs: Theme global, light() / dark(), follows macOS"],
+  ["Pixel film canvas 236×148", "film.rs: paint buffer, one image per frame, nearest-neighbour (spike #2)"],
+  ["Scanner canvas bar + glow", "scan.rs: canvas() + paint_quad per segment"],
+  ["Painting banner by time of day", "home.rs: img() from assets/art + greeting overlay"],
+  ["v22 project card", "project_card.rs: Card + Badge + Pill + StackIcon + EditorButton"],
+  ["⌘K palette", "palette.rs: gpui-base input + nucleo + uniform_list"],
+];
+$("#maptable").insertAdjacentHTML("beforeend", MAP.map(([a, b]) => `<tr><td class="mono">${a}</td><td>${b}</td></tr>`).join(""));
+
+/* ---------- plan ---------- */
+const PLAN = [
+  ["0", "Spikes", "spike-gpui/, throwaway: transparent window, one gel button with jelly, one squish seg, the film at 120 fps. This settles the three risks before real code.", true],
+  ["1", "Skeleton", "Three crates compile, an empty window opens, fonts and theme load, the gallery runs."],
+  ["2", "Core, no UI", "scan + claude + opencode + matcher, dumped as JSON from an example and checked against your real ~/codes."],
+  ["3", "Design system", "Every piece in the gallery, in light and dark, with motion tuned to match the prototype."],
+  ["4", "Home and project", "Real data on the v22 cards, the project page, and Open with that actually opens."],
+  ["5", "Onboarding", "Film, then scan driven by the real scan, then setup."],
+  ["6", "⌘K, sessions, settings, license", "The remaining screens."],
+  ["7", "Ship", "Index + watcher for instant start, then bundle, sign, notarize, .dmg."],
+];
+$("#planEl").innerHTML = PLAN.map(([n, h, d, s]) => `<div class="pstep ${s ? "spike" : ""}"><div class="n">${n}</div><h4>${h}</h4><div class="d">${d}</div></div>`).join("");
+
+/* ---------- decisions ---------- */
+const QS = [
+  ["Library", "Which GPUI?", ["gpui-kit", "gpui", "gpui-ce"], 0, "gpui-kit with styled components off."],
+  ["Crates", "How many crates?", ["Three", "One"], 0, "App, ui and core. One crate with folders also works, but core then compiles with GPUI."],
+  ["Crate root", "Root file name?", ["codedeck_ui.rs", "lib.rs"], 0, "Zed style; tabs stay readable."],
+  ["Settings", "Settings file format?", ["JSON", "TOML"], 0, "JSON, since serde_json is already in for the agent formats."],
+  ["Old spike", "The Tauri spike/ folder?", ["Delete later", "Delete now", "Keep"], 0, "Delete once the GPUI window opens."],
+  ["Scope", "Platforms for v1?", ["macOS only", "Mac + Win + Linux"], 0, "GPUI can do the others later."],
+];
+$("#qsEl").innerHTML = QS.map(([l, h, opts, pick, note], i) => `<div class="q"><div class="lab">${String(i + 1).padStart(2, "0")} · ${l}</div><h4>${h}</h4>
+  <div class="seg" data-q="${i}">${opts.map((o, j) => `<button class="${j === pick ? "on" : ""}">${o}</button>`).join("")}</div><small>${note}</small></div>`).join("");
+$$("#qsEl .seg").forEach(s => initSeg(s));
+$("#copy").onclick = () => {
+  const txt = QS.map(([l], i) => `${l}: ${document.querySelector(`#qsEl .seg[data-q="${i}"] button.on`).textContent}`).join("\n");
+  navigator.clipboard?.writeText(txt).then(() => ($("#copied").textContent = "copied: paste it in chat"), () => ($("#copied").textContent = txt.replace(/\n/g, " · ")));
+};
+
+/* nav follows scroll */
+const navBtns = $$("#nav button");
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  const b = navBtns.find(x => x.dataset.to === e.target.id);
+  if (b && !b.classList.contains("on")) { navBtns.forEach(x => x.classList.toggle("on", x === b)); placeKnob($("#nav"), b, true); }
+}), { rootMargin: "-45% 0px -50% 0px" });
+navBtns.forEach(b => io.observe(document.getElementById(b.dataset.to)));
+document.fonts.ready.then(() => $$(".seg").forEach(seg => placeKnob(seg, seg.querySelector("button.on"), false)));
+</script>
+</body>
+</html>

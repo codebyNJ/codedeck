@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Codedeck — Colour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f3ef; color: #1d1b18; font: 14px/1.5 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; -webkit-font-smoothing: antialiased; font-synthesis: none; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 64px 40px 120px; }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+  .disp { font-family: "Fraunces", serif; font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; }
+  header h1 { font-weight: 600; font-size: 52px; line-height: 1.04; letter-spacing: -.025em; margin: 0 0 14px; }
+  header h1 em { color: #e5602a; }
+  header p { color: #7d786e; font-size: 16px; max-width: 700px; margin: 0; }
+  .how { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 36px 0 20px; }
+  .how div { background: #fff; border: 1px solid rgba(0,0,0,.07); border-radius: 14px; padding: 16px 18px; font-size: 12.5px; color: #6f6a61; }
+  .how b { display: block; color: #1d1b18; font-size: 13px; margin-bottom: 4px; }
+
+  /* ---------- palette section ---------- */
+  .pal { margin-top: 64px; padding-top: 28px; border-top: 1px solid rgba(0,0,0,.08); }
+  .pal-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .pal-head .n { color: #8b867c; font-size: 12px; }
+  .pal-head h2 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -.02em; }
+  .pal-head .tag { font-size: 11.5px; padding: 3px 10px; border-radius: 99px; background: #1d1b18; color: #fff; }
+  .pal-head .mood { color: #7d786e; font-size: 13.5px; flex-basis: 100%; margin-top: 4px; }
+  .sw { display: flex; gap: 8px; margin: 16px 0 18px; flex-wrap: wrap; }
+  .sw div { display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border-radius: 10px; background: #fff; border: 1px solid rgba(0,0,0,.06); font-size: 11.5px; }
+  .sw i { width: 24px; height: 24px; border-radius: 7px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .sw span { color: #8b867c; }
+  .sw .aa { margin-left: auto; }
+  .stage { display: grid; grid-template-columns: 1fr 1.35fr 0.95fr; gap: 14px; align-items: stretch; }
+
+  /* All colours inside .t come from per-palette CSS variables */
+  .t { color: var(--ink); }
+  .frame { position: relative; border-radius: 16px; overflow: hidden; background: var(--wash); border: 1px solid var(--line); min-height: 340px; padding: 0 9%; display: flex; flex-direction: column; justify-content: center; }
+  .lights { position: absolute; top: 13px; left: 13px; display: flex; gap: 6px; }
+  .lights i { width: 10px; height: 10px; border-radius: 50%; background: var(--line2); }
+  .frame h3 { margin: 0 0 10px; font-weight: 600; font-size: 34px; line-height: 1.05; letter-spacing: -.02em; }
+  .frame h3 em { color: var(--accent); }
+  .frame p { margin: 0; color: var(--muted); font-size: 13px; }
+  .scan { margin-top: 14px; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11.5px; }
+  .scan i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .btn { margin-top: 18px; align-self: flex-start; padding: 8px 16px; border-radius: 99px; background: var(--ink); color: var(--bg); font-weight: 500; font-size: 12.5px; }
+  .dots { position: absolute; bottom: 16px; left: 0; right: 0; display: flex; gap: 5px; justify-content: center; }
+  .dots i { width: 5px; height: 5px; border-radius: 9px; background: var(--line2); }
+  .dots i.on { width: 16px; background: var(--ink); }
+
+  .app { display: flex; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--bg); min-height: 340px; font-size: 12.5px; }
+  .side { width: 34%; background: var(--side); padding: 38px 8px 10px; border-right: 1px solid var(--line); position: relative; }
+  .side .lights { top: 13px; left: 12px; }
+  .sec { font-size: 10.5px; font-weight: 600; color: var(--muted); margin: 12px 8px 4px; }
+  .nav { display: flex; align-items: center; gap: 8px; height: 26px; padding: 0 8px; border-radius: 7px; }
+  .nav.on { background: var(--accent-soft); color: var(--accent-ink); font-weight: 500; }
+  .nav .d { width: 7px; height: 7px; border-radius: 50%; }
+  .nav .c { margin-left: auto; color: var(--muted); font-size: 11px; }
+  .nav.on .c { color: var(--accent-ink); }
+  .main { flex: 1; padding: 14px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .tb { display: flex; justify-content: space-between; align-items: center; height: 26px; }
+  .tb b { font-size: 14px; }
+  .kbd { font-size: 10.5px; padding: 3px 8px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 11px; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+  .card.hi { border-color: var(--line2); }
+  .top { display: flex; gap: 9px; align-items: center; }
+  .ico { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-weight: 700; color: #fff; font-size: 12px; }
+  .top b { display: block; font-size: 12.5px; }
+  .path { color: var(--muted); font-size: 10.5px; }
+  .when { margin-left: auto; align-self: flex-start; color: var(--muted); font-size: 10.5px; }
+  .chips { display: flex; gap: 4px; margin-top: 9px; }
+  .chip { font-size: 10.5px; padding: 1px 7px; border-radius: 6px; background: var(--chip); color: var(--muted); }
+  .sess { display: flex; align-items: center; gap: 8px; margin-top: 9px; padding: 6px 8px; border-radius: 8px; background: var(--side); }
+  .sess span:nth-child(2) { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .res { padding: 3px 9px; border-radius: 7px; background: var(--ink); color: var(--bg); font-size: 11px; font-weight: 500; }
+
+  .darkcol { display: flex; flex-direction: column; gap: 8px; }
+  .darkcol .lbl { font-size: 11px; color: #8b867c; }
+  .darkcol .app { min-height: 0; flex: 1; font-size: 11px; }
+  .darkcol .side { padding-top: 30px; }
+  .darkcol .card:nth-of-type(3) { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="disp">
+  <h1>Colour, <em>light first</em></h1>
+  <p style="font-family:-apple-system,system-ui">Eight palettes for a white-first app with an optional dark mode. Each one is shown three ways: an onboarding screen, the app itself, and a small dark-mode version.</p>
+</header>
+
+<div class="how">
+  <div><b>Mostly neutral, one accent</b>About 90% warm whites and greys, one accent colour for emphasis, and black for primary buttons (like Dia's black pills).</div>
+  <div><b>Accent ≠ button text</b>Bright accents fail contrast with white text, so buttons stay ink. The accent goes on the italic word, the active sidebar item, the scan dot and the mascot.</div>
+  <div><b>Stack colours stay loud</b>Rust orange, TypeScript blue and so on come from each language. The app colour should be calm enough not to fight them.</div>
+  <div><b>Dark is derived</b>Same accent hue, slightly lighter; warm near-black instead of pure #000. It's designed second and should never look like a different app.</div>
+</div>
+
+<div id="pals"></div>
+</div>
+
+<script>
+// Light tokens + dark tokens per palette.
+const P = [
+  { name: "Paper & Persimmon", tag: "Current", mood: "Warm off-white with a burnt-orange accent. Cosy and crafted, like a well-loved notebook. Closest to what we have now.",
+    L: { bg:"#faf8f4", surface:"#ffffff", side:"#f3f0ea", ink:"#1f1b16", muted:"#857e72", line:"rgba(31,27,22,.08)", line2:"rgba(31,27,22,.16)", chip:"#f1ede6", accent:"#e5602a", accentSoft:"#fbe3d6", accentInk:"#b8461a", wash:"linear-gradient(160deg,#fcf1e5,#f8e4e0)" },
+    D: { bg:"#171512", surface:"#201d19", side:"#1b1916", ink:"#f1ece4", muted:"#8f877b", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#2a2621", accent:"#f47e4a", accentSoft:"rgba(244,126,74,.16)", accentInk:"#f6a07a", wash:"" } },
+  { name: "Snow & Tomato", mood: "Pure white with a bright tomato red. Crisp, energetic and modern, the most \"software-y\" of the warm options.",
+    L: { bg:"#ffffff", surface:"#ffffff", side:"#f6f6f5", ink:"#141414", muted:"#80807c", line:"rgba(0,0,0,.08)", line2:"rgba(0,0,0,.15)", chip:"#f2f2f0", accent:"#f2482a", accentSoft:"#fde3dd", accentInk:"#c7321a", wash:"linear-gradient(160deg,#ffffff,#fff1ec)" },
+    D: { bg:"#121212", surface:"#1b1b1b", side:"#161616", ink:"#f3f3f1", muted:"#8a8a86", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#262626", accent:"#ff6a4d", accentSoft:"rgba(255,106,77,.16)", accentInk:"#ff8c75", wash:"" } },
+  { name: "Linen & Cobalt", tag: "My pick", mood: "Warm linen with a deep cobalt blue, plus butter yellow saved for the mascot. Trustworthy, classic, and it reads as \"tool\" without being cold. Blue also contrasts well with the orange and yellow stack colours.",
+    L: { bg:"#f9f8f4", surface:"#ffffff", side:"#f1efe9", ink:"#161a2b", muted:"#7c7b75", line:"rgba(22,26,43,.08)", line2:"rgba(22,26,43,.16)", chip:"#efede7", accent:"#2f54eb", accentSoft:"#e2e8fd", accentInk:"#2442c4", wash:"linear-gradient(160deg,#f3f1ea,#e7ecfb)" },
+    D: { bg:"#13141a", surface:"#1b1d25", side:"#16171e", ink:"#eeefe9", muted:"#8a8b92", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#252833", accent:"#6c88ff", accentSoft:"rgba(108,136,255,.16)", accentInk:"#93a8ff", wash:"" } },
+  { name: "Milk & Moss", mood: "Creamy white with a mossy green. Calm, natural, \"everything is fine\"; it would make the app feel quiet and unhurried.",
+    L: { bg:"#fafaf6", surface:"#ffffff", side:"#f1f2ea", ink:"#1c211b", muted:"#7b8076", line:"rgba(28,33,27,.08)", line2:"rgba(28,33,27,.16)", chip:"#eef0e7", accent:"#3d7a4c", accentSoft:"#e0eedf", accentInk:"#2f6640", wash:"linear-gradient(160deg,#f2f5ea,#fbf1e2)" },
+    D: { bg:"#131512", surface:"#1b1e1a", side:"#161915", ink:"#eef0e9", muted:"#878c82", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#252923", accent:"#6dbb7e", accentSoft:"rgba(109,187,126,.15)", accentInk:"#93d1a1", wash:"" } },
+  { name: "Cream & Teal", mood: "Cream with a deep teal and apricot washes. Fresh but grown-up, sitting between the blue and green options.",
+    L: { bg:"#fbf9f3", surface:"#ffffff", side:"#f2efe6", ink:"#17221f", muted:"#7b7f78", line:"rgba(23,34,31,.08)", line2:"rgba(23,34,31,.16)", chip:"#efece3", accent:"#0e7c74", accentSoft:"#d9efec", accentInk:"#0b665f", wash:"linear-gradient(160deg,#e6f3f0,#fcefe1)" },
+    D: { bg:"#111615", surface:"#1a201e", side:"#151a19", ink:"#ecf0ed", muted:"#86908c", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#232b29", accent:"#3fbcb0", accentSoft:"rgba(63,188,176,.15)", accentInk:"#6fd2c8", wash:"" } },
+  { name: "Oat & Plum", mood: "Oat-coloured background with a plum accent and rose washes. Soft and distinctive; nobody in dev tools looks like this.",
+    L: { bg:"#faf7f3", surface:"#ffffff", side:"#f2ede7", ink:"#231a22", muted:"#837a7d", line:"rgba(35,26,34,.08)", line2:"rgba(35,26,34,.16)", chip:"#f0eae5", accent:"#8e3a66", accentSoft:"#f4e1ea", accentInk:"#77304f", wash:"linear-gradient(160deg,#f8ebee,#f3ecf8)" },
+    D: { bg:"#161215", surface:"#1f1a1e", side:"#1a1519", ink:"#f2ecef", muted:"#918790", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#2a2329", accent:"#d77aa8", accentSoft:"rgba(215,122,168,.16)", accentInk:"#e6a0c2", wash:"" } },
+  { name: "Butter & Grape", mood: "Butter-white with a violet accent and yellow washes. The most playful option, made for a mascot-led brand. It risks feeling young.",
+    L: { bg:"#fffdf6", surface:"#ffffff", side:"#f7f3e6", ink:"#1d1830", muted:"#827d8c", line:"rgba(29,24,48,.08)", line2:"rgba(29,24,48,.16)", chip:"#f3efe2", accent:"#6a4cf0", accentSoft:"#ebe6fe", accentInk:"#5638d6", wash:"linear-gradient(160deg,#fff6d6,#efe9ff)" },
+    D: { bg:"#14121b", surface:"#1d1a26", side:"#18151f", ink:"#f0eef6", muted:"#8d8898", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#282434", accent:"#9a85ff", accentSoft:"rgba(154,133,255,.16)", accentInk:"#b6a8ff", wash:"" } },
+  { name: "Paper & Ink", mood: "Almost no colour: black, white and warm greys, with the mascot, stacks and agents providing all the colour. Very Dia/Linear. The most premium and the least memorable on its own.",
+    L: { bg:"#fbfbfa", surface:"#ffffff", side:"#f3f3f1", ink:"#111110", muted:"#81817c", line:"rgba(0,0,0,.08)", line2:"rgba(0,0,0,.16)", chip:"#f0f0ee", accent:"#111110", accentSoft:"#ececea", accentInk:"#111110", wash:"linear-gradient(160deg,#f7f7f5,#eeeeeb)" },
+    D: { bg:"#121211", surface:"#1b1b1a", side:"#161615", ink:"#f2f2ef", muted:"#8a8a85", line:"rgba(255,255,255,.07)", line2:"rgba(255,255,255,.14)", chip:"#262625", accent:"#f2f2ef", accentSoft:"rgba(255,255,255,.1)", accentInk:"#f2f2ef", wash:"" } },
+];
+
+// WCAG contrast, to label how the accent can be used.
+const lum = h => { const c = h.match(/\w\w/g).map(x => parseInt(x, 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+const vars = t => Object.entries(t).map(([k, v]) => `--${k.replace(/[A-Z]/g, m => "-" + m.toLowerCase())}:${v}`).join(";");
+
+const frame = `<div class="frame"><div class="lights"><i></i><i></i><i></i></div>
+  <h3 class="disp">Codedeck <em>finds</em> all of it.</h3><p>One local scan. Nothing ever leaves your Mac.</p>
+  <div class="scan mono"><i></i>24 projects · 61 sessions</div><span class="btn">Continue</span>
+  <div class="dots"><i></i><i class="on"></i><i></i></div></div>`;
+
+const app = (full) => `<div class="app"><div class="side"><div class="lights"><i></i><i></i><i></i></div>
+  <div class="nav on">All projects<span class="c">24</span></div><div class="nav">Recent<span class="c">8</span></div>
+  <div class="sec">Stacks</div>
+  <div class="nav"><i class="d" style="background:#e0814f"></i>Rust<span class="c">5</span></div>
+  <div class="nav"><i class="d" style="background:#3b82f6"></i>TypeScript<span class="c">9</span></div>
+  ${full ? `<div class="nav"><i class="d" style="background:#eab308"></i>Python<span class="c">4</span></div>` : ""}</div>
+  <div class="main"><div class="tb"><b>All projects</b><span class="kbd">⌘K</span></div>
+  <div class="card hi"><div class="top"><div class="ico" style="background:#e0814f">R</div><div><b>ledger-cli</b><div class="path mono">~/codes/ledger-cli</div></div><span class="when">2h</span></div>
+    <div class="chips"><span class="chip">Rust</span><span class="chip">main</span></div>
+    <div class="sess"><span style="color:#d97757">✻</span><span>Explain this lifetime error</span><span class="res">Resume</span></div></div>
+  <div class="card"><div class="top"><div class="ico" style="background:#3b82f6">T</div><div><b>murai-site</b><div class="path mono">~/codes/murai-site</div></div><span class="when">1d</span></div></div>
+  </div></div>`;
+
+document.getElementById("pals").innerHTML = P.map((p, i) => {
+  const r = ratio(p.L.accent, p.L.bg), ok = r >= 4.5 ? "text ✓" : r >= 3 ? "large text only" : "decor only";
+  const sw = [["bg", p.L.bg], ["side", p.L.side], ["ink", p.L.ink], ["muted", p.L.muted], ["accent", p.L.accent], ["accent soft", p.L.accentSoft]]
+    .map(([n, c]) => `<div><i style="background:${c}"></i>${n} <span class="mono">${c}</span></div>`).join("");
+  return `<section class="pal"><div class="pal-head"><span class="n mono">0${i + 1}</span><h2 class="disp">${p.name}</h2>${p.tag ? `<span class="tag">${p.tag}</span>` : ""}<span class="mood">${p.mood}</span></div>
+    <div class="sw">${sw}<div class="aa">accent on bg <span class="mono">${r.toFixed(1)}:1</span>&nbsp;· ${ok}</div></div>
+    <div class="stage">
+      <div class="t" style="${vars(p.L)}">${frame}</div>
+      <div class="t" style="${vars(p.L)}">${app(true)}</div>
+      <div class="darkcol"><span class="lbl">Dark (optional)</span><div class="t" style="${vars(p.D)};height:100%;display:flex">${app(false)}</div></div>
+    </div></section>`;
+}).join("");
+</script>
+</body>
+</html>

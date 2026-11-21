@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Codedeck — Calm, monotone, grain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* Film grain: SVG noise tiled once; static, so it costs nothing in the real app. */
+  :root {
+    --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --grain: .09;
+    --sys: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 var(--sys); -webkit-font-smoothing: antialiased; font-synthesis: none; background: #ebe9e4; color: #2a2824; transition: background .6s, color .6s; }
+  body.dark { background: #1a1917; color: #e4e1da; }
+  .grainy { position: relative; isolation: isolate; }
+  .grainy::after { content: ""; position: absolute; inset: 0; background: var(--noise); opacity: var(--grain); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; z-index: 3; }
+  body.dark .grainy::after { mix-blend-mode: screen; opacity: calc(var(--grain) * .7); filter: invert(1); }
+  body.grainy::after { position: fixed; }
+  .disp { font-family: "Fraunces", serif; font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 72px 40px 140px; position: relative; z-index: 1; }
+
+  header h1 { font-weight: 400; font-size: 64px; line-height: 1.02; letter-spacing: -.03em; margin: 0 0 18px; max-width: 900px; }
+  header h1 em { font-weight: 400; }
+  header p { font-size: 16px; opacity: .65; max-width: 640px; margin: 0; }
+  .bar { display: flex; gap: 22px; align-items: center; margin: 32px 0 0; font-size: 12.5px; }
+  .bar label { display: flex; align-items: center; gap: 10px; opacity: .8; }
+  .bar input[type=range] { width: 160px; accent-color: currentColor; }
+  .seg { display: flex; padding: 3px; border-radius: 99px; background: rgba(127,127,127,.14); }
+  .seg button { font: 500 12px var(--sys); color: inherit; border: 0; background: none; padding: 6px 14px; border-radius: 99px; opacity: .6; }
+  .seg button.on { background: rgba(255,255,255,.75); opacity: 1; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  body.dark .seg button.on { background: rgba(255,255,255,.12); }
+  .rules { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 30px; font-size: 13px; opacity: .7; }
+  .rules span::before { content: "— "; opacity: .5; }
+
+  /* ---------- mood ---------- */
+  .mood { margin-top: 88px; }
+  .mood-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .mood-head .n { font-size: 12px; opacity: .5; }
+  .mood-head h2 { margin: 0; font-weight: 450; font-size: 30px; letter-spacing: -.02em; }
+  .mood-head .tag { font-size: 11.5px; padding: 3px 11px; border-radius: 99px; border: 1px solid currentColor; opacity: .7; }
+  .mood-head p { flex-basis: 100%; margin: 2px 0 0; opacity: .62; font-size: 13.5px; max-width: 760px; }
+  .tones { display: flex; margin-left: auto; border-radius: 99px; overflow: hidden; height: 22px; }
+  .tones i { width: 34px; }
+  .stage { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; }
+
+  /* Everything inside a palette reads its own tokens */
+  .t { color: var(--ink); }
+  .story { border-radius: 22px; background: var(--bg); min-height: 440px; padding: 56px 9% 40px; display: flex; flex-direction: column; }
+  .story .lights { display: flex; gap: 7px; position: absolute; top: 18px; left: 18px; }
+  .lights i { width: 10px; height: 10px; border-radius: 50%; background: var(--tone2); }
+  .kick { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--soft); margin-top: auto; }
+  .story h3 { margin: 14px 0 18px; font-weight: 400; font-size: 50px; line-height: 1.02; letter-spacing: -.03em; }
+  .story h3 em { color: var(--accent); }
+  .story p { margin: 0; color: var(--soft); font-size: 14.5px; max-width: 400px; }
+  .pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 22px; }
+  .pill { font-size: 12px; padding: 4px 11px; border-radius: 99px; border: 1px solid var(--tone2); color: var(--soft); }
+  .foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 36px; }
+  .btn { padding: 10px 20px; border-radius: 99px; background: var(--ink); color: var(--bg); font-weight: 500; font-size: 13px; }
+  .step { font-size: 11px; color: var(--soft); }
+
+  .app { border-radius: 22px; background: var(--bg); display: flex; overflow: hidden; min-height: 440px; font-size: 12.5px; }
+  .side { width: 36%; background: var(--tone1); padding: 46px 10px 12px; position: relative; }
+  .side .lights { position: absolute; top: 18px; left: 16px; display: flex; gap: 7px; }
+  .sec { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--soft); margin: 18px 10px 6px; }
+  .nav { display: flex; align-items: center; gap: 9px; height: 28px; padding: 0 10px; border-radius: 9px; color: var(--soft); }
+  .nav.on { background: var(--bg); color: var(--ink); }
+  .nav .c { margin-left: auto; font-size: 11px; opacity: .7; }
+  .gl { width: 18px; height: 18px; border-radius: 5px; background: var(--tone2); color: var(--ink); display: grid; place-items: center; font-size: 9.5px; font-weight: 700; }
+  .main { flex: 1; padding: 18px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .tb { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .tb .disp { font-size: 22px; letter-spacing: -.02em; }
+  .search { font-size: 11px; color: var(--soft); background: var(--tone1); padding: 5px 10px; border-radius: 99px; }
+  .card { background: var(--surface); border-radius: 14px; padding: 12px; }
+  .top { display: flex; gap: 10px; align-items: center; }
+  .ico { width: 30px; height: 30px; border-radius: 9px; background: var(--tone1); color: var(--ink); display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+  .top b { display: block; font-weight: 600; font-size: 13px; }
+  .path { color: var(--soft); font-size: 10.5px; }
+  .when { margin-left: auto; align-self: flex-start; color: var(--soft); font-size: 10.5px; }
+  .sess { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 7px 9px; border-radius: 10px; background: var(--bg); }
+  .sess span:nth-child(2) { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .res { padding: 4px 11px; border-radius: 99px; background: var(--ink); color: var(--bg); font-size: 11px; font-weight: 500; }
+  .tags { display: flex; gap: 5px; margin-top: 10px; }
+  .tags span { font-size: 10.5px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--tone2); color: var(--soft); }
+</style>
+</head>
+<body class="grainy">
+<div class="wrap">
+<header>
+  <h1 class="disp">Calm, <em>one colour</em>, a little grain.</h1>
+  <p>Each mood uses a single hue in five tones, with no gradients and no borders: surfaces separate by tone alone, like paper on paper. A fine film grain sits over everything, the way mymind and printed matter feel.</p>
+  <div class="bar">
+    <div class="seg" id="theme"><button class="on" data-v="light">Light</button><button data-v="dark">Dark</button></div>
+    <label>Grain <input type="range" id="grain" min="0" max="0.22" step="0.01" value="0.09" /></label>
+  </div>
+  <div class="rules"><span>one hue, five tones</span><span>tone instead of borders</span><span>ink is a deep shade of the hue, never black</span><span>stack &amp; agent colours muted to the palette</span><span>serif speaks, system font works</span></div>
+</header>
+<div id="moods"></div>
+</div>
+
+<script>
+// tone ramp per mood: bg (page) → tone1 (sidebar) → tone2 (pills/dots) → soft (secondary text) → ink. surface = lifted card. accent = mid-dark of the same hue.
+const M = [
+  { name: "Sage", tag: "My pick", note: "Grey-green, like dried herbs on linen. The most relaxing; feels like a quiet studio.",
+    L: { bg:"#eef0e8", surface:"#f7f8f3", tone1:"#e3e6da", tone2:"#cdd2c2", soft:"#6f7765", ink:"#262c22", accent:"#5a6e4c" },
+    D: { bg:"#1c201a", surface:"#242920", tone1:"#171a15", tone2:"#353b30", soft:"#97a08c", ink:"#e5e9dd", accent:"#a7bb94" } },
+  { name: "Clay", note: "Warm terracotta dust. Earthy and handmade, like a ceramics shop.",
+    L: { bg:"#f3ebe4", surface:"#faf6f2", tone1:"#eadfd5", tone2:"#d9c6b7", soft:"#86705f", ink:"#3a2a20", accent:"#a2583a" },
+    D: { bg:"#211a16", surface:"#2a221d", tone1:"#1b1512", tone2:"#3e332c", soft:"#ab9686", ink:"#f0e5dc", accent:"#dc9172" } },
+  { name: "Fog", note: "Cool blue-grey, like an early morning by the sea. The most focused and \"tool-like\".",
+    L: { bg:"#ecf0f2", surface:"#f7f9fa", tone1:"#e1e6ea", tone2:"#c9d1d8", soft:"#66727d", ink:"#1f2830", accent:"#3f6582" },
+    D: { bg:"#181d21", surface:"#20262b", tone1:"#14181b", tone2:"#323a41", soft:"#909ca6", ink:"#e3e9ee", accent:"#8fb4d1" } },
+  { name: "Oat", note: "Warm sand and unbleached paper. Neutral and bookish; closest to plain white but softer on the eyes.",
+    L: { bg:"#f3efe6", surface:"#faf8f3", tone1:"#e9e3d6", tone2:"#d6cdbb", soft:"#7d7462", ink:"#2c271e", accent:"#8a6a33" },
+    D: { bg:"#1e1b16", surface:"#26231d", tone1:"#181611", tone2:"#38332a", soft:"#a49b88", ink:"#efe9dd", accent:"#d1b07a" } },
+  { name: "Lilac dusk", note: "Faded lavender, like the sky an hour after sunset. Dreamy and unusual for a dev tool.",
+    L: { bg:"#efecf2", surface:"#f8f7fa", tone1:"#e5e0ea", tone2:"#d0c8d9", soft:"#736b7e", ink:"#28232f", accent:"#6c5a85" },
+    D: { bg:"#1c1a20", surface:"#242129", tone1:"#16141a", tone2:"#36323d", soft:"#9d95a8", ink:"#ebe6f0", accent:"#b8a5d4" } },
+  { name: "Stone", note: "Warm grey, like river pebbles. The most minimal; colour comes only from the grain and the type.",
+    L: { bg:"#efeeeb", surface:"#f8f8f6", tone1:"#e5e4e0", tone2:"#d1cfc9", soft:"#74716a", ink:"#262521", accent:"#57544c" },
+    D: { bg:"#1b1b19", surface:"#232321", tone1:"#161614", tone2:"#353531", soft:"#9b9890", ink:"#ebe9e4", accent:"#c4c0b6" } },
+  { name: "Honey", note: "Pale ochre, like old paper in sunlight. The warmest and most nostalgic.",
+    L: { bg:"#f5eedd", surface:"#fbf7ec", tone1:"#ece3cc", tone2:"#dccdaa", soft:"#7f714e", ink:"#2f2814", accent:"#9a7420" },
+    D: { bg:"#1f1c13", surface:"#28241a", tone1:"#19170f", tone2:"#3a3424", soft:"#ab9e7c", ink:"#f2ead6", accent:"#e0bd6a" } },
+];
+const vars = t => Object.entries(t).map(([k, v]) => `--${k}:${v}`).join(";");
+
+const story = `<div class="story grainy"><div class="lights"><i></i><i></i><i></i></div>
+  <span class="kick mono">Codedeck</span>
+  <h3 class="disp">Every project,<br><em>quietly</em> remembered.</h3>
+  <p>Codedeck finds the code on your Mac and every conversation you've had with an agent about it, and keeps them where you can always find them.</p>
+  <div class="pills"><span class="pill">projects</span><span class="pill">claude</span><span class="pill">codex</span><span class="pill">opencode</span></div>
+  <div class="foot"><span class="btn">Begin</span><span class="step mono">1 of 3</span></div></div>`;
+
+const app = `<div class="app grainy"><div class="side"><div class="lights"><i></i><i></i><i></i></div>
+  <div class="nav on">Everything<span class="c">24</span></div><div class="nav">Recently touched<span class="c">8</span></div>
+  <div class="sec">Stacks</div>
+  <div class="nav"><span class="gl">R</span>Rust<span class="c">5</span></div>
+  <div class="nav"><span class="gl">T</span>TypeScript<span class="c">9</span></div>
+  <div class="nav"><span class="gl">P</span>Python<span class="c">4</span></div>
+  <div class="sec">Agents</div>
+  <div class="nav"><span class="gl">✻</span>Claude<span class="c">38</span></div></div>
+  <div class="main"><div class="tb"><span class="disp">Everything</span><span class="search">Search your code… ⌘K</span></div>
+    <div class="card"><div class="top"><div class="ico">R</div><div><b>ledger-cli</b><div class="path mono">~/codes/ledger-cli</div></div><span class="when">2h</span></div>
+      <div class="tags"><span>rust</span><span>main</span></div>
+      <div class="sess"><span class="dot"></span><span>Explain this lifetime error</span><span class="res">Resume</span></div></div>
+    <div class="card"><div class="top"><div class="ico">T</div><div><b>murai-site</b><div class="path mono">~/codes/murai-site</div></div><span class="when">1d</span></div></div>
+    <div class="card"><div class="top"><div class="ico">G</div><div><b>pocket-api</b><div class="path mono">~/codes/pocket-api</div></div><span class="when">3d</span></div></div>
+  </div></div>`;
+
+function render(mode) {
+  document.getElementById("moods").innerHTML = M.map((m, i) => {
+    const t = m[mode === "dark" ? "D" : "L"];
+    const tones = ["bg", "tone1", "tone2", "soft", "accent", "ink"].map(k => `<i style="background:${t[k]}" title="${k} ${t[k]}"></i>`).join("");
+    return `<section class="mood"><div class="mood-head"><span class="n mono">0${i + 1}</span><h2 class="disp">${m.name}</h2>${m.tag ? `<span class="tag">${m.tag}</span>` : ""}<div class="tones">${tones}</div><p>${m.note}</p></div>
+      <div class="stage t" style="${vars(t)}">${story}${app}</div></section>`;
+  }).join("");
+}
+render("light");
+
+document.querySelectorAll("#theme button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#theme button").forEach(x => x.classList.toggle("on", x === b));
+  document.body.classList.toggle("dark", b.dataset.v === "dark");
+  render(b.dataset.v);
+});
+document.getElementById("grain").oninput = e => document.documentElement.style.setProperty("--grain", e.target.value);
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Codedeck — Brand &amp; Motion Kit v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400..600&family=Fraunces:ital,opsz,wght,SOFT@1,9..144,300..600,0..100&display=swap" rel="stylesheet" />
+<style>
+:root { --paper: #f1efea; --ink: #111; --ink-2: #55534e; --ink-3: #8c8a84; --rule: rgba(17,17,17,.14); --red: #e45e4d; --f: "Geist", system-ui, sans-serif; --m: "Geist Mono", monospace; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f); -webkit-font-smoothing: antialiased; }
+.cap { font-size: 10px; font-weight: 700; letter-spacing: -.01em; line-height: 1.05; text-transform: uppercase; }
+.mono { font-family: var(--m); }
+.page { max-width: 1240px; margin: 0 auto; padding: 0 40px 120px; }
+section { position: relative; border-top: 1px solid var(--rule); padding: 26px 0 60px; }
+.sh { display: grid; grid-template-columns: 90px 1fr 260px; gap: 20px; align-items: start; margin-bottom: 30px; }
+.sh .no { font: 11px var(--m); }
+.sh h2 { font-size: 46px; font-weight: 600; letter-spacing: -.055em; line-height: .95; }
+.sh h2 i { font-family: "Fraunces"; font-weight: 400; font-variation-settings: "SOFT" 100; letter-spacing: -.03em; }
+.sh p { font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+/* crop-handle frames (from Aarzoo) */
+.fr { position: relative; outline: 1px solid rgba(17,17,17,.55); }
+.fr::before, .fr::after, .fr > .h1, .fr > .h2 { content: ""; position: absolute; width: 5px; height: 5px; background: var(--paper); outline: 1px solid var(--ink); z-index: 3; }
+.fr::before { left: -3px; top: -3px; } .fr::after { right: -3px; top: -3px; } .fr > .h1 { left: -3px; bottom: -3px; } .fr > .h2 { right: -3px; bottom: -3px; }
+/* cover */
+.cover { position: relative; height: 640px; border-top: 0; }
+.cover .rl { position: absolute; left: -40px; right: -40px; border-top: 1px solid var(--rule); }
+.cover .t { position: absolute; }
+.cover .big { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); }
+.cover h1 { position: absolute; left: 0; bottom: 34px; font-size: 92px; font-weight: 700; letter-spacing: -.07em; line-height: .85; }
+.cover h1 i { font-family: "Fraunces"; font-weight: 300; font-variation-settings: "SOFT" 100; letter-spacing: -.04em; }
+/* mascot */
+.sb { display: block; overflow: visible; }
+.sb .eyes { transform-box: fill-box; transform-origin: center; }
+.sb.blink .eyes { animation: blink 4.2s infinite; }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+.sb.look .gaze { animation: look 3.6s ease-in-out infinite; }
+@keyframes look { 0%, 20% { transform: translateX(0); } 30%, 55% { transform: translateX(-7px); } 65%, 85% { transform: translateX(7px); } 100% { transform: translateX(0); } }
+.sb.scan .gaze { animation: scan .55s ease-in-out infinite alternate; }
+@keyframes scan { from { transform: translateX(-9px); } to { transform: translateX(9px); } }
+.sb .visorEye { animation: scan 1.6s ease-in-out infinite alternate; }
+.sb.bob { animation: bob 2.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-5px) rotate(-1deg); } }
+.sb .zz { animation: zz 2.4s ease-in-out infinite; }
+@keyframes zz { 0% { opacity: 0; transform: translate(0, 4px); } 30%, 70% { opacity: 1; } 100% { opacity: 0; transform: translate(6px, -10px); } }
+.sb .dots circle { animation: dot 1.2s infinite; } .sb .dots circle:nth-child(2) { animation-delay: .2s; } .sb .dots circle:nth-child(3) { animation-delay: .4s; }
+@keyframes dot { 50% { transform: translateY(-2px); opacity: .4; } }
+.ab { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--rule); }
+.ab > div { position: relative; height: 420px; display: grid; place-items: center; }
+.ab > div + div { border-left: 1px solid var(--rule); }
+.ab .lab { position: absolute; left: 16px; top: 14px; } .ab .lab2 { position: absolute; right: 16px; bottom: 14px; text-align: right; color: var(--ink-2); }
+.grid8 { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); }
+.grid8 > div { position: relative; height: 230px; display: grid; place-items: center; border-bottom: 1px solid var(--rule); }
+.grid8 > div:not(:nth-child(4n+1)) { border-left: 1px solid var(--rule); }
+.grid8 .lab { position: absolute; left: 12px; top: 11px; } .grid8 .lab2 { position: absolute; left: 12px; bottom: 11px; font: 10px var(--m); color: var(--ink-3); }
+.mats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule); }
+.mats > div { position: relative; height: 300px; display: grid; place-items: center; border-bottom: 1px solid var(--rule); }
+.mats > div:not(:nth-child(3n+1)) { border-left: 1px solid var(--rule); }
+.mats .lab { position: absolute; left: 12px; top: 11px; } .mats .lab2 { position: absolute; left: 12px; bottom: 11px; font: 10px var(--m); color: var(--ink-3); }
+.icon { width: 150px; height: 150px; border-radius: 34px; background: #fbfaf7; display: grid; place-items: center; outline: 1px solid var(--rule); }
+.mb { display: flex; align-items: center; gap: 14px; height: 30px; padding: 0 14px; border-radius: 8px; background: rgba(255,255,255,.7); outline: 1px solid var(--rule); font-size: 12.5px; }
+.mb.dk { background: #1c1c1e; color: #fff; outline: none; }
+/* motion pieces */
+.stagebox { position: relative; background: #fbfaf7; height: 480px; display: grid; place-items: center; overflow: hidden; }
+.stagebox.dk { background: #0c0c0d; }
+.stagebox .lab { position: absolute; left: 14px; top: 12px; z-index: 2; } .stagebox .lab2 { position: absolute; right: 14px; bottom: 12px; z-index: 2; text-align: right; font: 10.5px var(--m); color: var(--ink-3); }
+.stagebox.dk .lab { color: #f1efea; }
+.swl { position: absolute; left: 0; right: 0; bottom: 34px; text-align: center; font-size: 22px; font-weight: 600; letter-spacing: -.045em; }
+.swl i { font-family: "Fraunces"; font-weight: 400; font-variation-settings: "SOFT" 100; }
+/* waffle (from Elia) */
+.waf { width: 620px; padding: 18px 20px; background: #fff; border-radius: 14px; outline: 1px solid var(--rule); }
+.waf .wh { display: flex; align-items: flex-start; justify-content: space-between; }
+.waf .wh b { font-size: 13px; font-weight: 600; letter-spacing: -.02em; } .waf .wh span { display: block; font: 10.5px var(--m); color: var(--ink-3); margin-top: 3px; }
+.tabs { display: flex; gap: 2px; padding: 3px; border-radius: 9px; background: #f1efea; }
+.tabs button { border: 0; background: none; font: 11px var(--m); padding: 4px 9px; border-radius: 6px; cursor: pointer; color: var(--ink-3); }
+.tabs button.on { background: #fff; color: var(--ink); outline: 1px solid var(--rule); }
+.wb { display: flex; gap: 26px; margin-top: 16px; align-items: center; }
+.wg { display: grid; grid-template-columns: repeat(10, 16px); gap: 4px; }
+.wg i { width: 16px; height: 16px; border-radius: 4px; background: #e6e4de; transition: background .45s cubic-bezier(.2,.8,.2,1), transform .45s cubic-bezier(.3,1.4,.5,1); }
+.wl { flex: 1; } .wl div { display: flex; align-items: center; gap: 9px; height: 25px; font-size: 12px; border-bottom: 1px dashed var(--rule); }
+.wl .sw { width: 9px; height: 9px; border-radius: 2.5px; } .wl em { margin-left: auto; font: 11px var(--m); font-style: normal; font-variant-numeric: tabular-nums; }
+/* palette + type */
+.pal { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--rule); }
+.pal div { height: 190px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+.pal div + div { border-left: 1px solid var(--rule); }
+.typ { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule); }
+.typ > div { padding: 16px 16px 26px; } .typ > div + div { border-left: 1px solid var(--rule); }
+.typ .sp { margin: 34px 0 12px; line-height: .95; }
+.foot { display: flex; justify-content: space-between; padding-top: 18px; border-top: 1px solid var(--rule); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- COVER (Aarzoo's scattered editorial) -->
+<section class="cover">
+  <div class="rl" style="top:0"></div><div class="rl" style="top:150px"></div><div class="rl" style="top:420px"></div>
+  <span class="t cap" style="left:0;top:14px">002</span>
+  <span class="t cap" style="right:0;top:14px;text-align:right">Codedeck<br>brand &amp; motion<br>kit — v1</span>
+  <span class="t cap" style="left:22%;top:178px">A deck for<br>every codebase<br>on your Mac</span>
+  <span class="t cap" style="right:14%;top:300px">0.1<br>The stamp</span>
+  <span class="t cap" style="left:6%;top:446px">Local only.<br>No account.<br>No cloud. No AI.</span>
+  <span class="t cap mono" style="right:0;top:446px;text-align:right;font-weight:500" id="cdate"></span>
+  <div class="big fr" style="padding:34px 44px;background:#fbfaf7"><i class="h1"></i><i class="h2"></i><span id="coverBot"></span></div>
+  <h1>codedeck<i>, kept.</i></h1>
+</section>
+
+<section>
+  <div class="sh"><span class="no">01</span><h2>The mascot,<br><i>redrawn.</i></h2><p>Learning from Alex Socoloff: one simple silhouette, and all the character in two eyes. Our silhouette is a stamp, because every project gets one when it's indexed. Two directions; pick one.</p></div>
+  <div class="ab">
+    <div><span class="lab cap">A — Stamp &amp; pill eyes</span><span id="mA"></span><span class="lab2 cap">New. Friendlier,<br>reads at 16px</span></div>
+    <div><span class="lab cap">B — Stamp &amp; visor</span><span id="mB"></span><span class="lab2 cap">Evolution of today's bot.<br>Keeps the red sweeping eye</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="no">02</span><h2>Eight<br><i>moods.</i></h2><p>Each one has a job in the app. The body never changes; only the eyes do. Hover nothing — they're alive.</p></div>
+  <div class="grid8" id="moods"></div>
+</section>
+
+<section>
+  <div class="sh"><span class="no">03</span><h2>One shape,<br><i>many materials.</i></h2><p>The same stamp as a flat mark, a pixel sprite, a knitted patch, a die-cut sticker, the app icon and the menu bar glyph.</p></div>
+  <div class="mats" id="mats"></div>
+</section>
+
+<section>
+  <div class="sh"><span class="no">04</span><h2>The scan,<br><i>as a swarm.</i></h2><p>From JACK's swarm: every dot is one file being read. They gather into a folder, become the stamp, then a card, then the count. This replaces the progress bar on first launch.</p></div>
+  <div class="stagebox fr"><i class="h1"></i><i class="h2"></i><span class="lab cap">Motion 04 — swarm</span><canvas id="swarm" width="1100" height="440"></canvas><div class="swl" id="swl">&nbsp;</div><span class="lab2">520 particles · one per file batch</span></div>
+</section>
+
+<section>
+  <div class="sh"><span class="no">05</span><h2>Monet,<br><i>in characters.</i></h2><p>From Dhruv's shrine: Draft 1's painting rendered in mono glyphs, coloured from the real image. A loading state that still looks like the brand.</p></div>
+  <div class="stagebox dk fr" style="height:685px"><i class="h1"></i><i class="h2"></i><span class="lab cap">Motion 05 — ASCII</span><canvas id="ascii" width="2320" height="1370" style="width:1160px;height:685px"></canvas><span class="lab2" style="color:#8c8a84">Stacks of Wheat, 1890–91 · AIC, public domain</span></div>
+</section>
+
+<section>
+  <div class="sh"><span class="no">06</span><h2>Languages,<br><i>as a waffle.</i></h2><p>From Elia's chart: one hundred squares, real numbers from the scan (lines of code per language). Switch the project and the squares re-colour in place.</p></div>
+  <div class="stagebox fr" style="height:400px"><i class="h1"></i><i class="h2"></i><span class="lab cap">Data 06 — waffle</span>
+    <div class="waf"><div class="wh"><div><b>Languages by lines of code</b><span id="wsub">24 projects · 312k lines</span></div><div class="tabs" id="wtabs"></div></div>
+      <div class="wb"><div class="wg" id="wg"></div><div class="wl" id="wl"></div></div></div></div>
+</section>
+
+<section>
+  <div class="sh"><span class="no">07</span><h2>Colour<br><i>&amp; type.</i></h2><p>One red, from the stamp. Everything else is paper and ink. Language colours appear only inside data.</p></div>
+  <div class="pal">
+    <div style="background:#e45e4d;color:#fff"><span class="cap">Stamp red</span><span class="mono" style="font-size:11px">#E45E4D</span></div>
+    <div style="background:#111;color:#f1efea"><span class="cap">Ink</span><span class="mono" style="font-size:11px">#111111</span></div>
+    <div style="background:#f1efea"><span class="cap">Paper</span><span class="mono" style="font-size:11px">#F1EFEA</span></div>
+    <div style="background:#fff"><span class="cap">White</span><span class="mono" style="font-size:11px">#FFFFFF</span></div>
+    <div style="background:#fbe3dd"><span class="cap">Stamp tint</span><span class="mono" style="font-size:11px">#FBE3DD</span></div>
+  </div>
+  <div class="typ">
+    <div><span class="cap">Display — Geist 600</span><div class="sp" style="font-size:54px;font-weight:600;letter-spacing:-.06em">Every stack.</div><span class="mono" style="font-size:11px;color:var(--ink-3)">−6% tracking · headlines</span></div>
+    <div><span class="cap">Accent — Fraunces italic</span><div class="sp" style="font-family:Fraunces;font-style:italic;font-weight:400;font-variation-settings:'SOFT' 100;font-size:56px;letter-spacing:-.03em">one deck.</div><span class="mono" style="font-size:11px;color:var(--ink-3)">2–3 words, never body</span></div>
+    <div><span class="cap">Data — Geist Mono</span><div class="sp mono" style="font-size:30px;letter-spacing:-.02em">~/codes · 24</div><span class="mono" style="font-size:11px;color:var(--ink-3)">paths, counts, dates</span></div>
+  </div>
+</section>
+
+<div class="foot"><span class="cap">Codedeck — kit v1</span><span class="cap">References: Socoloff · JACKⒿ · Dhruv · Elia · Aarzoo · kshvbgde, via designeer.xyz</span></div>
+</div>
+
+<script src="assets/art/layers/ascii.js"></script>
+<script>
+/* ============================================================
+   The stamp mascot
+   ============================================================ */
+let uid = 0;
+const RED = "#e45e4d";
+// perforations: circles sitting on the edges of a 100×100 body at (10,10)
+const perfs = () => { const o = []; for (let i = 0; i <= 8; i++) { const p = 10 + 12.5 * i; o.push([p, 10], [p, 110], [10, p], [110, p]); } return o; };
+const EYES = {
+  idle: `<g class="eyes"><g class="gaze"><rect x="38" y="40" width="16" height="34" rx="8" fill="#fff8f1"/><rect x="66" y="40" width="16" height="34" rx="8" fill="#fff8f1"/></g></g>`,
+  look: `<g class="eyes"><g class="gaze"><rect x="38" y="40" width="16" height="34" rx="8" fill="#fff8f1"/><rect x="66" y="40" width="16" height="34" rx="8" fill="#fff8f1"/></g></g>`,
+  scan: `<g class="eyes"><g class="gaze"><rect x="38" y="46" width="16" height="24" rx="8" fill="#fff8f1"/><rect x="66" y="46" width="16" height="24" rx="8" fill="#fff8f1"/></g></g>`,
+  happy: `<g fill="none" stroke="#fff8f1" stroke-width="8" stroke-linecap="round"><path d="M38 62 Q46 48 54 62"/><path d="M66 62 Q74 48 82 62"/></g>`,
+  sleep: `<g stroke="#fff8f1" stroke-width="7" stroke-linecap="round"><path d="M38 60 h16"/><path d="M66 60 h16"/></g><g class="zz"><text x="92" y="30" font-family="Geist" font-weight="800" font-size="20" fill="#111">z</text></g>`,
+  talk: `<g class="eyes"><rect x="38" y="44" width="16" height="30" rx="8" fill="#fff8f1"/><rect x="66" y="44" width="16" height="30" rx="8" fill="#fff8f1"/></g><g transform="translate(78 -4)"><rect width="40" height="24" rx="8" fill="#111"/><path d="M8 24 l4 7 l5 -7z" fill="#111"/><g class="dots" fill="#fff"><circle cx="11" cy="12" r="2.6"/><circle cx="20" cy="12" r="2.6"/><circle cx="29" cy="12" r="2.6"/></g></g>`,
+  focus: `<g fill="#fff8f1"><path d="M36 50 L56 56 L56 72 Q46 76 38 70z"/><path d="M84 50 L64 56 L64 72 Q74 76 82 70z"/></g>`,
+  error: `<g stroke="#fff8f1" stroke-width="7" stroke-linecap="round"><path d="M38 48 l16 18 M54 48 l-16 18"/><path d="M66 48 l16 18 M82 48 l-16 18"/></g>`,
+};
+const VISOR = n => `<rect x="24" y="42" width="72" height="30" rx="15" fill="#111" fill-opacity=".86"/><clipPath id="vc${n}"><rect x="28" y="46" width="64" height="22" rx="11"/></clipPath>
+  <g clip-path="url(#vc${n})"><g class="visorEye"><rect x="50" y="49" width="20" height="16" rx="8" fill="#ff3d3d"/><rect x="47" y="46" width="26" height="22" rx="11" fill="#ff3d3d" opacity=".35"/></g></g>
+  <g transform="translate(40 82)">${[0, 9, 18, 27, 36].map(x => `<rect x="${x}" width="4" height="8" rx="2" fill="#111" fill-opacity=".5"/>`).join("")}</g>`;
+function stamp({ size = 160, mood = "idle", v = "A", fill = RED, knit = false, sticker = false, mono = false, cls = "", tilt = -4 } = {}) {
+  const n = ++uid;
+  const body = `<rect x="10" y="10" width="100" height="100" rx="6"/>`;
+  return `<svg class="sb ${cls}" width="${size}" height="${size}" viewBox="-12 -12 144 144" aria-hidden="true">
+    <defs><mask id="pf${n}"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${perfs().map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.4" fill="#000"/>`).join("")}</mask>
+      ${knit ? `<pattern id="kn${n}" width="6" height="7" patternUnits="userSpaceOnUse"><rect width="6" height="7" fill="${fill}"/><path d="M0.6 0.5 L3 5.6 M5.4 0.5 L3 5.6" stroke="#000" stroke-opacity=".22" stroke-width="1.6" stroke-linecap="round"/><path d="M1 0.2 L3 4.6 M5 0.2 L3 4.6" stroke="#fff" stroke-opacity=".22" stroke-width=".8" stroke-linecap="round"/></pattern>` : ""}</defs>
+    <g transform="rotate(${tilt} 60 60)">
+      ${sticker ? `<g mask="url(#pf${n})"><rect x="10" y="10" width="100" height="100" rx="6" fill="#fff" stroke="#fff" stroke-width="18" stroke-linejoin="round"/></g>` : ""}
+      <g mask="url(#pf${n})" fill="${mono ? "#111" : knit ? `url(#kn${n})` : fill}">${body}</g>
+      ${mono ? `<g fill="${mono === "dk" ? "#1c1c1e" : "#fbfaf7"}"><rect x="38" y="40" width="16" height="34" rx="8"/><rect x="66" y="40" width="16" height="34" rx="8"/></g>` : v === "B" ? VISOR(n) : EYES[mood]}
+    </g></svg>`;
+}
+// pixel sprite: the same rules on a 16×16 grid
+function pixel(size = 160) {
+  const N = 16, px = []; for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const edge = x === 1 || x === 14 || y === 1 || y === 14, inside = x >= 1 && x <= 14 && y >= 1 && y <= 14;
+    const perf = edge && ((x + y) % 2 === 0); const eye = (x === 5 || x === 6 || x === 9 || x === 10) && y >= 5 && y <= 9;
+    const shade = inside && !perf && (x === 13 || y === 13);
+    if (inside && !perf) px.push(`<rect x="${x}" y="${y}" width="1" height="1" fill="${eye ? (y === 5 && (x === 5 || x === 9) ? "#fff" : "#fff8f1") : shade ? "#c94c3c" : RED}"/>`);
+    if (eye && y === 9) px.push(`<rect x="${x}" y="${y}" width="1" height="1" fill="#f0d9cf"/>`);
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" shape-rendering="crispEdges" style="transform:rotate(-4deg)">${px.join("")}</svg>`;
+}
+document.getElementById("cdate").textContent = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase();
+document.getElementById("coverBot").innerHTML = stamp({ size: 220, mood: "look", cls: "look blink bob" });
+document.getElementById("mA").innerHTML = stamp({ size: 250, mood: "look", cls: "look blink bob" });
+document.getElementById("mB").innerHTML = stamp({ size: 250, v: "B", cls: "bob" });
+const MOODS = [["idle", "Idle", "home, nothing to do", "blink"], ["look", "Looking", "hover a project", "look blink"], ["scan", "Scanning", "first launch, rescan", "scan"], ["happy", "Done", "scan finished", "bob"],
+  ["talk", "Talking", "an agent is running", "blink"], ["focus", "Focused", "search open, ⌘K", ""], ["sleep", "Asleep", "no changes in a week", ""], ["error", "Oops", "a folder went missing", ""]];
+document.getElementById("moods").innerHTML = MOODS.map(([m, n, use, c]) => `<div><span class="lab cap">${n}</span>${stamp({ size: 130, mood: m, cls: c })}<span class="lab2">${use}</span></div>`).join("");
+document.getElementById("mats").innerHTML = [
+  ["Flat mark", stamp({ size: 170, cls: "blink" }), "svg · any size"],
+  ["Pixel sprite", pixel(170), "16 × 16 · loading, easter eggs"],
+  ["Knitted patch", stamp({ size: 180, knit: true, cls: "look blink" }), "merch · stickers · launch"],
+  ["Die-cut sticker", stamp({ size: 170, sticker: true, mood: "happy", tilt: 6 }), "white kiss-cut border"],
+  ["App icon", `<div class="icon">${stamp({ size: 120, tilt: -6 })}</div>`, "macOS · 1024 squircle"],
+  ["Menu bar", `<div style="display:grid;gap:10px"><div class="mb">${stamp({ size: 18, mono: true, tilt: 0 })}<span>Codedeck</span><span style="color:#8c8a84">⌘ ⇧ K</span></div><div class="mb dk">${stamp({ size: 18, mono: "dk", tilt: 0 })}<span>Codedeck</span><span style="color:#8c8a84">⌘ ⇧ K</span></div></div>`, "template glyph · light & dark"],
+].map(([n, art, use]) => `<div><span class="lab cap">${n}</span>${art}<span class="lab2">${use}</span></div>`).join("");
+
+/* ============================================================
+   04 Swarm: particles gather into shapes drawn off-screen
+   ============================================================ */
+(() => {
+  const cv = document.getElementById("swarm"), g = cv.getContext("2d"), W = cv.width, H = cv.height, N = 520, lbl = document.getElementById("swl");
+  const off = document.createElement("canvas"); off.width = W; off.height = H; const o = off.getContext("2d");
+  const sample = draw => { o.clearRect(0, 0, W, H); o.save(); draw(o); o.restore(); const d = o.getImageData(0, 0, W, H).data, pts = [];
+    for (let y = 0; y < H; y += 7) for (let x = 0; x < W; x += 7) if (d[(y * W + x) * 4 + 3] > 128) pts.push([x, y]);
+    for (let i = pts.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [pts[i], pts[j]] = [pts[j], pts[i]]; }
+    return Array.from({ length: N }, (_, i) => pts[i % pts.length]); };
+  const cx = W / 2, cy = H / 2 - 20;
+  const SHAPES = [
+    ["Reading your folders…", c => { c.translate(cx - 120, cy - 95); c.scale(15, 15); c.fill(new Path2D("M1.8 4.5c0-.8.6-1.4 1.4-1.4h3l1.4 1.6h5.2c.8 0 1.4.6 1.4 1.4v5.6c0 .8-.6 1.4-1.4 1.4H3.2c-.8 0-1.4-.6-1.4-1.4z")); }],
+    ["found <i>you.</i>", c => { c.translate(cx, cy); c.rotate(-.07); c.fillRect(-90, -90, 180, 180); c.globalCompositeOperation = "destination-out"; for (let i = 0; i <= 8; i++) { const p = -90 + 22.5 * i; for (const [x, y] of [[p, -90], [p, 90], [-90, p], [90, p]]) { c.beginPath(); c.arc(x, y, 8, 0, 7); c.fill(); } }
+      c.beginPath(); c.roundRect(-38, -32, 26, 58, 13); c.roundRect(12, -32, 26, 58, 13); c.fill(); }],
+    ["every project, <i>a card.</i>", c => { c.translate(cx, cy); c.beginPath(); c.roundRect(-80, -115, 160, 230, 16); c.roundRect(-64, -99, 128, 198, 8); c.fill("evenodd"); c.fillRect(-50, -82, 100, 60); c.fillRect(-50, 0, 80, 12); c.fillRect(-50, 22, 54, 8); for (let i = 0; i < 14; i++) c.fillRect(-50 + i * 7, 56, i % 3 ? 3 : 5, 24); }],
+    ["<i>twenty-four</i> projects.", c => { c.font = "800 230px Geist, sans-serif"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("24", cx, cy + 10); }],
+  ];
+  const targets = SHAPES.map(s => sample(s[1]));
+  const P = Array.from({ length: N }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0, r: 4.2 + Math.random() * 2.6, c: ["#151515", "#1f1d1a", "#2b2721", "#191919", "#e45e4d"][Math.random() < .05 ? 4 : Math.random() * 4 | 0] }));
+  let si = 0, t0 = 0;
+  const setShape = i => { si = i; lbl.innerHTML = SHAPES[i][0]; lbl.animate([{ opacity: 0, transform: "translateY(8px)", filter: "blur(6px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { duration: 700, easing: "cubic-bezier(.2,.8,.2,1)" });
+    // stagger: particles leave in waves so the swarm flows rather than jumps
+    P.forEach((p, k) => (p.d = performance.now() + (k % 60) * 9)); };
+  setShape(0); setInterval(() => setShape((si + 1) % SHAPES.length), 2900);
+  (function tick(t) {
+    g.clearRect(0, 0, W, H);
+    P.forEach((p, k) => { const [tx, ty] = targets[si][k]; const on = t > p.d;
+      const ax = on ? (tx - p.x) * .06 : 0, ay = on ? (ty - p.y) * .06 : 0;
+      p.vx = (p.vx + ax + Math.sin(t / 400 + k) * .25) * .78; p.vy = (p.vy + ay + Math.cos(t / 470 + k * 1.3) * .25) * .78; p.x += p.vx; p.y += p.vy;
+      g.fillStyle = p.c; g.beginPath(); g.arc(p.x, p.y, p.r, 0, 7); g.fill(); });
+    requestAnimationFrame(tick);
+  })(0);
+})();
+
+/* ============================================================
+   05 ASCII Monet, coloured from the real image data
+   ============================================================ */
+(() => {
+  const cv = document.getElementById("ascii"), g = cv.getContext("2d"), DOTS = ASC, W = DOTS.w, H = DOTS.h, CH = " .`:-=+*cox%#&@";
+  const cw = cv.width / W, chh = cv.height / H;
+  const cells = []; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const o = (y * W + x) * 6, hx = DOTS.c.substr(o, 6), r = parseInt(hx.slice(0, 2), 16), gg = parseInt(hx.slice(2, 4), 16), b = parseInt(hx.slice(4), 16);
+    const L = (r * .3 + gg * .59 + b * .11) / 255, up = v => Math.min(255, v * .7 + 90) | 0; cells.push({ x, y, bg: `rgba(${r},${gg},${b},.42)`, col: `rgb(${up(r)},${up(gg)},${up(b)})`, l: L, j: 0 }); }
+  g.font = `700 ${Math.round(chh * 1.12)}px "Geist Mono", monospace`; g.textBaseline = "top";
+  const t0 = performance.now();
+  (function tick(t) {
+    const rev = Math.min(1, (t - t0) / 2600);
+    g.fillStyle = "#0c0c0d"; g.fillRect(0, 0, cv.width, cv.height);
+    cells.forEach(c => { if (c.x / W > rev * 1.15 - .15 * (c.y / H)) return;
+      if (Math.random() < .015) c.j = (Math.random() * 4 | 0) - 2;
+      const k = Math.max(0, Math.min(CH.length - 1, Math.round(c.l * (CH.length - 1)) + c.j));
+      g.fillStyle = c.bg; g.fillRect(c.x * cw, c.y * chh, cw + .5, chh + .5); g.fillStyle = c.col; g.fillText(CH[k], c.x * cw + cw * .12, c.y * chh); });
+    requestAnimationFrame(tick);
+  })(t0);
+})();
+
+/* ============================================================
+   06 Waffle chart
+   ============================================================ */
+(() => {
+  const LC = { Rust: "#de6a3c", TypeScript: "#3d74c9", Go: "#21a3bd", Python: "#e0b33a", Swift: "#ef6a4a", CSS: "#8a5ad1", Other: "#b9b6ae" };
+  const SETS = { "All": [["TypeScript", 34], ["Rust", 27], ["Go", 14], ["Python", 12], ["Swift", 6], ["CSS", 4], ["Other", 3]], "codedeck": [["Rust", 58], ["TypeScript", 34], ["CSS", 8]], "ledger-cli": [["Rust", 96], ["Other", 4]], "murai-site": [["TypeScript", 71], ["CSS", 29]] };
+  const SUB = { "All": "24 projects · 312k lines", "codedeck": "~/codes/codedeck · 38k lines", "ledger-cli": "~/codes/ledger-cli · 91k lines", "murai-site": "~/codes/murai-site · 22k lines" };
+  const wg = document.getElementById("wg"), wl = document.getElementById("wl"), tabs = document.getElementById("wtabs");
+  wg.innerHTML = "<i></i>".repeat(100); const sq = [...wg.children];
+  tabs.innerHTML = Object.keys(SETS).map((k, i) => `<button class="${i ? "" : "on"}">${k}</button>`).join("");
+  const show = k => { const s = SETS[k], cols = s.flatMap(([l, v]) => Array(v).fill(LC[l]));
+    // column-major fill, like Elia's chart
+    sq.forEach((c, i) => { const col = i % 10, row = i / 10 | 0, idx = col * 10 + row; c.style.transitionDelay = idx * 6 + "ms"; c.style.background = cols[idx] || "#e6e4de"; });
+    wl.innerHTML = s.map(([l, v]) => `<div><span class="sw" style="background:${LC[l]}"></span>${l}<em>${v}%</em></div>`).join(""); document.getElementById("wsub").textContent = SUB[k];
+    [...tabs.children].forEach(b => b.classList.toggle("on", b.textContent === k)); };
+  tabs.onclick = e => e.target.closest("button") && show(e.target.textContent);
+  setTimeout(() => show("All"), 300);
+  let i = 0; setInterval(() => { i = (i + 1) % 4; show(Object.keys(SETS)[i]); }, 3200);
+})();
+</script>
+</body>
+</html>
