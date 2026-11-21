@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Codedeck Brand Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Fraunces:ital,opsz,wght@1,9..144,350;1,9..144,420&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #ffffff; --linen: #f5f5f3; --linen-2: #ededea; --ink: #111112; --ink-2: #4f4f55; --ink-3: #8a8a90; --ink-4: #c4c4c7;
+  --line: #ebebe8; --line-2: #dfdfdb; --stamp: #e45e4d; --slate: #4e6a88; --live: #2ea56a; --amber: #9a5c17; --warm: #fbf0e1;
+  --meadow: #4caf50; --petal: #ff7eb6; --sky: #76b6f0; --sun: #ffd166;
+  --s: "Fraunces", Georgia, serif; --m: "Geist Mono", ui-monospace, monospace; --spring: cubic-bezier(.3, 1.4, .5, 1);
+}
+:root[data-theme="dark"] { --paper: #121214; --linen: #202024; --linen-2: #2a2a2f; --ink: #f2f2f3; --ink-2: #b5b5bb; --ink-3: #7f7f87; --ink-4: #4b4b52; --line: #24242a; --line-2: #313138; --amber: #e3a55c; --warm: #33261a; --slate: #8fb0d3; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.it { font-family: var(--s); font-style: italic; font-weight: 350; letter-spacing: -.01em; }
+.mono { font-family: var(--m); }
+.cap { font: 500 10.5px/1.2 var(--m); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
+
+/* index rail */
+.rail { position: fixed; left: 0; top: 0; bottom: 0; width: 230px; padding: 28px 22px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 22px; background: var(--paper); z-index: 5; }
+.rail .id { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
+.rail .id img { width: 30px; height: 30px; border-radius: 9px; }
+.rail nav { position: relative; display: flex; flex-direction: column; }
+.rail nav a { position: relative; z-index: 1; display: flex; gap: 12px; padding: 6px 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 13.5px; }
+.rail nav a span { font: 500 11px/20px var(--m); color: var(--ink-4); width: 18px; }
+.rail nav a.on { color: var(--ink); font-weight: 500; }
+.rail nav a.on span { color: var(--stamp); }
+.rail nav .hi { position: absolute; left: 0; right: 0; height: 32px; border-radius: 8px; background: var(--linen); transition: top .55s var(--spring), height .3s; }
+.rail .foot { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.tog { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--linen); width: fit-content; }
+.tog button { border: 0; background: none; font: 500 12px "Instrument Sans"; color: var(--ink-3); padding: 5px 11px; border-radius: 7px; cursor: default; }
+.tog button.on { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); }
+
+main { margin-left: 230px; }
+.plate { position: relative; padding: 64px 64px 72px; border-bottom: 1px solid var(--line); }
+.plate > .head { display: grid; grid-template-columns: 90px 1fr auto; align-items: baseline; gap: 18px; margin-bottom: 34px; }
+.plate > .head .no { font: 500 13px var(--m); color: var(--stamp); }
+.plate > .head h2 { margin: 0; font-size: 40px; line-height: 1.05; letter-spacing: -.03em; font-weight: 500; }
+.plate > .head .cap { text-align: right; }
+.lead { max-width: 640px; color: var(--ink-2); font-size: 17px; margin: -14px 0 34px 108px; }
+.body { margin-left: 108px; }
+@media (max-width: 1000px) { .rail { display: none; } main { margin-left: 0; } .plate { padding: 44px 20px; } .plate > .head { grid-template-columns: 50px 1fr; } .plate > .head .cap { display: none; } .lead, .body { margin-left: 0; } }
+
+/* cover */
+.cover { min-height: min(92vh, 820px); display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: end; padding: 64px; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+.cover h1 { font-size: clamp(48px, 5.6vw, 88px); line-height: .92; letter-spacing: -.05em; font-weight: 500; margin: 18px 0 22px; }
+.cover h1 .it { color: var(--slate); font-size: .86em; }
+.cover p { color: var(--ink-2); max-width: 460px; font-size: 17px; margin: 0; }
+.cover .meta { display: flex; gap: 22px; margin-top: 30px; }
+.cover .meta div { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.cover .art { position: relative; width: 100%; max-width: 560px; justify-self: center; align-self: center; }
+.cover canvas { display: block; width: 100%; aspect-ratio: 236/148; image-rendering: pixelated; border-radius: 22px; }
+.cover .bot { position: absolute; width: 20%; bottom: 12%; border-radius: 26%; left: 50%; transform: translateX(-50%); animation: hop 3.2s var(--spring) infinite; filter: drop-shadow(0 0 0 transparent); }
+@keyframes hop { 0%, 70%, 100% { transform: translate(-50%, 0) scale(1); } 76% { transform: translate(-50%, 4%) scale(1.06, .92); } 84% { transform: translate(-50%, -16%) scale(.95, 1.06); } 92% { transform: translate(-50%, 2%) scale(1.04, .96); } }
+@media (max-width: 1000px) { .cover { grid-template-columns: 1fr; padding: 44px 20px; } }
+
+/* essence */
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 1000px) { .grid3, .grid2, .grid4 { grid-template-columns: 1fr; } }
+.card { border-radius: 18px; padding: 20px; box-shadow: inset 0 0 0 1px var(--line-2); background: var(--paper); }
+.card h3 { margin: 8px 0 6px; font-size: 19px; font-weight: 500; letter-spacing: -.01em; }
+.card p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.state { font-size: 30px; line-height: 1.15; letter-spacing: -.025em; max-width: 900px; margin: 0 0 30px; }
+.state .it { color: var(--slate); }
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--line); }
+.vs div { padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.vs div:nth-child(odd) { color: var(--ink); padding-right: 20px; }
+.vs div:nth-child(even) { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+
+/* mark */
+.markbox { position: relative; border-radius: 20px; background: var(--linen); display: grid; place-items: center; min-height: 260px; }
+.markbox.dark { background: #111112; }
+.markbox.red { background: var(--stamp); }
+.lock { display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 600; letter-spacing: -.03em; }
+.lock img { width: 56px; height: 56px; border-radius: 16px; }
+.lock.stack { flex-direction: column; gap: 10px; font-size: 26px; }
+.clear { position: relative; padding: 28px; outline: 1px dashed var(--stamp); outline-offset: 0; }
+.clear::after { content: "x = visor height"; position: absolute; right: 8px; bottom: -22px; font: 500 10px var(--m); color: var(--stamp); }
+.crop { position: absolute; width: 7px; height: 7px; background: var(--ink); }
+.donts .markbox { min-height: 150px; }
+.donts .x { position: absolute; top: 10px; right: 12px; font: 600 11px var(--m); color: var(--stamp); }
+.moods { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.mood { text-align: center; }
+.mood .face { aspect-ratio: 1; border-radius: 16px; background: var(--linen); display: grid; place-items: center; }
+.mood svg { width: 64%; }
+
+/* palette */
+.sw { border-radius: 18px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-2); display: flex; flex-direction: column; }
+.sw .chip { height: 150px; position: relative; }
+.sw .chip canvas { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 44px; image-rendering: pixelated; }
+.sw .chip .nm { position: absolute; left: 14px; top: 12px; font: 500 11px var(--m); letter-spacing: .06em; text-transform: uppercase; }
+.sw .info { padding: 12px 14px 14px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; font-size: 12.5px; }
+.sw .info b { font-size: 15px; font-weight: 500; grid-column: 1 / -1; }
+.sw .info .k { color: var(--ink-3); font-family: var(--m); font-size: 11.5px; }
+.sw .info .v { font-family: var(--m); font-size: 11.5px; text-align: right; }
+.sw .info .role { grid-column: 1 / -1; color: var(--ink-2); margin-top: 6px; font-size: 13px; }
+.aa { display: inline-flex; gap: 4px; }
+.aa i { font-style: normal; font: 600 10px/16px var(--m); padding: 0 5px; border-radius: 4px; background: var(--linen); color: var(--ink-2); }
+.aa i.ok { background: color-mix(in srgb, var(--live) 16%, transparent); color: var(--live); }
+.ratio { display: flex; height: 56px; border-radius: 14px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-2); margin: 10px 0 8px; }
+.ratio div { display: flex; align-items: flex-end; padding: 8px 10px; font: 500 10.5px var(--m); }
+.sub { margin: 40px 0 14px; display: flex; align-items: baseline; gap: 14px; }
+.sub h4 { margin: 0; font-size: 20px; font-weight: 500; letter-spacing: -.015em; }
+.ladder { display: grid; grid-template-columns: repeat(9, 1fr); border-radius: 14px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-2); }
+.ladder div { height: 64px; display: flex; align-items: flex-end; padding: 6px 8px; font: 500 10px var(--m); }
+.pairs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.pair { border-radius: 14px; padding: 16px; font-size: 14px; display: flex; flex-direction: column; gap: 22px; }
+.pair .r { font: 500 11px var(--m); }
+
+/* type */
+.spec { border-top: 1px solid var(--line); padding: 22px 0; display: grid; grid-template-columns: 220px 1fr; gap: 30px; align-items: baseline; }
+.spec .big { font-size: 64px; line-height: 1; letter-spacing: -.04em; }
+.scale > div { display: grid; grid-template-columns: 120px 1fr; gap: 20px; align-items: baseline; border-top: 1px solid var(--line); padding: 12px 0; }
+
+/* motion */
+.demo { border-radius: 18px; background: var(--linen); min-height: 200px; display: grid; place-items: center; position: relative; }
+.gel { position: relative; border: 0; border-radius: 10px; padding: 0 16px; height: 36px; font: 500 13.5px "Instrument Sans"; background: var(--ink); color: var(--paper); transition: transform .5s var(--spring); cursor: default; }
+.gel:hover { animation: wob .7s var(--spring); } .gel:active { transform: scale(.94, .88); transition-duration: .08s; } .gel.j { animation: jelly .6s; }
+@keyframes wob { 30% { transform: scale(1.05, .96); } 60% { transform: scale(.98, 1.02); } }
+@keyframes jelly { 30% { transform: scale(1.12, .86); } 45% { transform: scale(.92, 1.08); } 65% { transform: scale(1.04, .97); } 100% { transform: none; } }
+.seg { position: relative; display: inline-flex; padding: 3px; border-radius: 11px; background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.seg button { position: relative; z-index: 1; border: 0; background: none; font: 500 13px "Instrument Sans"; color: var(--ink-3); padding: 6px 12px; cursor: default; }
+.seg button.on { color: var(--ink); }
+.seg .knob { position: absolute; top: 3px; bottom: 3px; border-radius: 8px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); }
+.curve { width: 100%; height: 120px; }
+
+/* imagery */
+.paint { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; }
+.paint img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.paint .cr { position: absolute; left: 12px; right: 12px; bottom: 10px; color: #fff; font-size: 11.5px; text-shadow: 0 1px 6px rgba(0,0,0,.4); }
+
+/* portfolio */
+.mock { border-radius: 20px; overflow: hidden; position: relative; box-shadow: inset 0 0 0 1px var(--line-2); }
+.icon { width: 168px; height: 168px; border-radius: 38px; background: linear-gradient(#ef6d5c, #d9503f); display: grid; place-items: center; position: relative; }
+.icon .v { width: 74%; height: 28%; border-radius: 99px; background: #17171a; display: grid; place-items: center; margin-top: -14%; }
+.icon .v i { width: 58%; height: 16%; border-radius: 99px; background: #ff7a68; box-shadow: 0 0 10px #ff6a58; }
+.icon .g { position: absolute; bottom: 20%; display: flex; gap: 6%; width: 40%; justify-content: center; }
+.icon .g i { width: 9%; aspect-ratio: 1/2.4; border-radius: 9px; background: #17171a; opacity: .75; }
+.menubar { display: flex; align-items: center; gap: 14px; height: 26px; padding: 0 12px; border-radius: 8px; background: rgba(240,240,240,.9); font-size: 12.5px; color: #111; width: fit-content; }
+.tweet { aspect-ratio: 1200/675; background: var(--paper); position: relative; padding: 7% 7%; display: flex; flex-direction: column; justify-content: space-between; }
+.tweet h5 { margin: 0; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.08; letter-spacing: -.03em; font-weight: 500; }
+.og { aspect-ratio: 1200/630; position: relative; overflow: hidden; color: #fff; }
+.og img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.og .in { position: absolute; inset: 0; padding: 6%; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(0deg, rgba(0,0,0,.55), transparent 70%); }
+.sticker { display: inline-grid; place-items: center; width: 120px; height: 120px; border-radius: 30px; background: #fff; box-shadow: 0 0 0 6px #fff, 0 0 0 7px var(--line-2); transform: rotate(-6deg); }
+.sticker img { width: 88px; border-radius: 22px; }
+.ticket { border-radius: 16px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); display: grid; grid-template-columns: 1fr 130px; overflow: hidden; }
+.ticket .l { padding: 18px; border-right: 1px dashed var(--line-2); }
+.ticket .r { padding: 18px; display: flex; flex-direction: column; justify-content: space-between; background: var(--linen); }
+
+/* marketing */
+.steps { display: grid; gap: 0; }
+.step { display: grid; grid-template-columns: 130px 1fr 1fr; gap: 24px; padding: 18px 0; border-top: 1px solid var(--line); }
+.step h4 { margin: 0 0 4px; font-size: 17px; font-weight: 500; }
+.step ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 14px; }
+.step li { margin: 3px 0; }
+.chan { display: grid; grid-template-columns: 170px 1fr 120px; gap: 18px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 14px; align-items: baseline; }
+.chan b { font-weight: 500; }
+.chan span:last-child { text-align: right; font: 500 11px var(--m); color: var(--ink-3); }
+.pill { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 6px; background: var(--linen); color: var(--ink-2); font-size: 11.5px; }
+.pill.hot { background: color-mix(in srgb, var(--stamp) 14%, transparent); color: var(--stamp); }
+.post { border-radius: 16px; padding: 16px; box-shadow: inset 0 0 0 1px var(--line-2); display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.post .top { display: flex; justify-content: space-between; }
+.post q { quotes: none; color: var(--ink); }
+.post small { color: var(--ink-3); }
+.kpi { border-radius: 16px; padding: 18px; background: var(--linen); }
+.kpi .n { font-size: 34px; letter-spacing: -.03em; line-height: 1; margin: 10px 0 6px; }
+footer { padding: 40px 64px 70px; color: var(--ink-3); font-size: 13px; margin-left: 230px; }
+@media (max-width: 1000px) { footer { margin-left: 0; padding: 30px 20px; } .moods { grid-template-columns: repeat(3, 1fr); } .ladder { grid-template-columns: repeat(3, 1fr); } .pairs { grid-template-columns: 1fr 1fr; } .step, .chan, .spec { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<aside class="rail">
+  <div class="id"><img src="assets/mascot/codedeck-mascot.svg" alt="">Codedeck <span class="cap" style="margin-left:auto">Brand</span></div>
+  <nav id="nav"><i class="hi" id="navhi"></i></nav>
+  <div class="foot">
+    <span class="cap">Viewing</span>
+    <div class="tog" id="theme"><button class="on" data-t="light">Light</button><button data-t="dark">Dark</button></div>
+    <span class="cap" style="margin-top:8px">Edition 1 · Nov 2026</span>
+  </div>
+</aside>
+
+<main>
+<section class="cover" id="p0" data-name="Cover">
+  <div>
+    <span class="cap">Codedeck · Brand book · Field guide edition</span>
+    <h1>One deck for<br>all your code <span class="it">and every<br>agent in it.</span></h1>
+    <p>How Codedeck looks, sounds and moves, and how it gets in front of the developers it's for. Every colour, face and line below comes from the product itself.</p>
+    <div class="meta"><div><span class="cap">Product</span>macOS app, Rust + GPUI</div><div><span class="cap">For</span>Developers who code with agents</div><div><span class="cap">Model</span>15-day trial, one-time license</div></div>
+  </div>
+  <div class="art"><canvas id="meadow" width="236" height="148"></canvas><img class="bot" src="assets/mascot/codedeck-mascot.svg" alt="Codedeck mascot"></div>
+</section>
+
+<section class="plate" id="p1" data-name="Essence">
+  <div class="head"><span class="no">01</span><h2>Essence</h2><span class="cap">Why it exists</span></div>
+  <p class="lead">Developers now work across dozens of folders and hundreds of agent sessions. Codedeck is the calm place where all of it shows up, already sorted.</p>
+  <div class="body">
+    <p class="state">Codedeck finds every project on your Mac and every <span class="it">Claude Code, Codex and OpenCode</span> session that belongs to it, so you always know where you left off.</p>
+    <div class="grid3">
+      <div class="card"><span class="cap">Promise</span><h3>Nothing to set up</h3><p>Point it at a folder. It finds the projects, the branches, the uncommitted files and the conversations by itself.</p></div>
+      <div class="card"><span class="cap">Belief</span><h3>Your work stays yours</h3><p>No account, no cloud, no AI. It reads local history and never sends it anywhere.</p></div>
+      <div class="card"><span class="cap">Feeling</span><h3>A calm room</h3><p>White space, a painting in the morning and soft motion. The opposite of a dashboard shouting at you.</p></div>
+    </div>
+    <div class="sub"><h4>Personality</h4><span class="cap">We are / we are not</span></div>
+    <div class="vs">
+      <div>Calm, plain-spoken</div><div>Hype, urgency, "10x"</div>
+      <div>Playful in motion</div><div>Playful in copy (jokes, puns)</div>
+      <div>Precise: real counts, real names</div><div>Vague: "boost productivity"</div>
+      <div>Crafted, native Mac</div><div>Web wrapper, generic SaaS</div>
+      <div>Private by default</div><div>Account walls, telemetry</div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p2" data-name="Mark & mascot">
+  <div class="head"><span class="no">02</span><h2>Mark <span class="it" style="color:var(--slate)">&amp; mascot</span></h2><span class="cap">The red robot</span></div>
+  <p class="lead">The mark is the robot: a stamp-red face with a black visor and a lit slit. The wordmark is Instrument Sans Semibold, set tight. The robot is the logo, the app icon and the character.</p>
+  <div class="body">
+    <div class="grid3">
+      <div class="markbox"><div class="lock clear"><img src="assets/mascot/codedeck-mascot.svg" alt="">Codedeck</div></div>
+      <div class="markbox dark"><div class="lock" style="color:#fff"><img src="assets/mascot/codedeck-mascot.svg" alt="">Codedeck</div></div>
+      <div class="markbox red"><div class="lock stack" style="color:#111112"><img src="assets/mascot/codedeck-mascot.svg" alt="" style="box-shadow:0 0 0 3px #111112">Codedeck</div></div>
+    </div>
+    <div class="grid4" style="margin-top:12px">
+      <div class="card"><span class="cap">Clear space</span><p style="margin-top:6px">One visor height on every side. Nothing enters it.</p></div>
+      <div class="card"><span class="cap">Minimum size</span><p style="margin-top:6px">Robot 16px on screen (menu bar), 8mm in print. The wordmark drops out below 24px.</p></div>
+      <div class="card"><span class="cap">Lockups</span><p style="margin-top:6px">Horizontal by default; stacked on square formats (stickers, avatars).</p></div>
+      <div class="card"><span class="cap">Project bots</span><p style="margin-top:6px">Every project gets its own DiceBear bot. Only Codedeck itself is red.</p></div>
+    </div>
+    <div class="sub"><h4>Moods</h4><span class="cap">The robot reacts; it never talks in copy</span></div>
+    <div class="moods" id="moods"></div>
+    <div class="sub"><h4>Don't</h4><span class="cap">Misuse</span></div>
+    <div class="grid4 donts">
+      <div class="markbox"><span class="x">✕ RECOLOUR</span><img src="assets/mascot/codedeck-mascot.svg" style="width:70px;filter:hue-rotate(160deg)" alt=""></div>
+      <div class="markbox"><span class="x">✕ STRETCH</span><img src="assets/mascot/codedeck-mascot.svg" style="width:100px;height:60px" alt=""></div>
+      <div class="markbox"><span class="x">✕ SHADOW</span><img src="assets/mascot/codedeck-mascot.svg" style="width:70px;filter:drop-shadow(6px 8px 6px rgba(0,0,0,.45))" alt=""></div>
+      <div class="markbox"><span class="x">✕ BUSY GROUND</span><div style="width:100%;height:100%;position:absolute;inset:0;border-radius:20px;background:repeating-linear-gradient(45deg,#e45e4d33 0 8px,#4caf5033 8px 16px)"></div><img src="assets/mascot/codedeck-mascot.svg" style="width:70px;position:relative" alt=""></div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p3" data-name="Palette">
+  <div class="head"><span class="no">03</span><h2>Palette</h2><span class="cap">Paper, ink, one red, a meadow</span></div>
+  <p class="lead">White paper and ink do almost all the work. Stamp red is the only brand colour. The meadow colours come from the onboarding film and belong to marketing and moments, never to everyday UI. The dithered strip under each swatch is its tint ladder, drawn the way the pixel film is.</p>
+  <div class="body">
+    <div class="sub" style="margin-top:0"><h4>Core</h4><span class="cap">Every surface</span></div>
+    <div class="grid3" id="core"></div>
+    <div class="sub"><h4>Meadow</h4><span class="cap">Film, marketing, illustration</span></div>
+    <div class="grid4" id="meadowsw"></div>
+    <div class="sub"><h4>Signal</h4><span class="cap">Product states only</span></div>
+    <div class="grid4" id="signal"></div>
+    <div class="sub"><h4>Proportion</h4><span class="cap">How much of each, on any surface</span></div>
+    <div class="ratio" id="ratio"></div>
+    <p style="color:var(--ink-3);font-size:13px;margin:0">Paper dominates. If a screen or post looks colourful, take colour out.</p>
+    <div class="sub"><h4>Neutrals</h4><span class="cap">Text, lines, fills (light → dark mode values)</span></div>
+    <div class="ladder" id="ladder"></div>
+    <div class="sub"><h4>Pairings</h4><span class="cap">Contrast checked live (WCAG 2.2)</span></div>
+    <div class="pairs" id="pairs"></div>
+  </div>
+</section>
+
+<section class="plate" id="p4" data-name="Type">
+  <div class="head"><span class="no">04</span><h2>Type</h2><span class="cap">Three voices</span></div>
+  <p class="lead">A plain sans does the talking, a soft italic serif lands on one or two words, and a mono labels things. Never more than one italic phrase per heading.</p>
+  <div class="body">
+    <div class="spec"><div><span class="cap">Primary</span><h3 style="margin:6px 0 0;font-weight:500">Instrument Sans</h3><span class="cap">400 · 500 · 600 · OFL</span></div><div class="big">Every project, sorted.</div></div>
+    <div class="spec"><div><span class="cap">Accent, italic only</span><h3 style="margin:6px 0 0;font-weight:500">Fraunces Italic</h3><span class="cap">350 · opsz 144 · OFL</span></div><div class="big it" style="color:var(--slate)">where you left off</div></div>
+    <div class="spec"><div><span class="cap">Labels &amp; paths</span><h3 style="margin:6px 0 0;font-weight:500">Geist Mono</h3><span class="cap">400 · 500 · OFL</span></div><div class="big mono" style="font-size:40px">~/codes/codedeck · main</div></div>
+    <div class="sub"><h4>Scale</h4><span class="cap">App and web</span></div>
+    <div class="scale">
+      <div><span class="cap">Display 56/-0.04</span><span style="font-size:56px;letter-spacing:-.04em;line-height:1">Good morning.</span></div>
+      <div><span class="cap">Title 30/-0.02</span><span style="font-size:30px;letter-spacing:-.02em">Settings</span></div>
+      <div><span class="cap">Heading 19/500</span><span style="font-size:19px;font-weight:500">Projects</span></div>
+      <div><span class="cap">Body 14/1.5</span><span style="font-size:14px">One agent is running right now. 163 files are waiting to be committed.</span></div>
+      <div><span class="cap">Note 12.5 italic</span><span class="it" style="font-size:12.5px;color:var(--ink-3)">3 sessions · open to continue</span></div>
+      <div><span class="cap">Label 10.5 mono caps</span><span class="cap" style="color:var(--ink-3)">Recent · Today · Earlier</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p5" data-name="Motion">
+  <div class="head"><span class="no">05</span><h2>Motion</h2><span class="cap">Things are soft and physical</span></div>
+  <p class="lead">Everything springs and nothing eases linearly. A button squashes when you press it and jellies when you let go; a selector stretches toward its target before it settles. Motion is the one place the brand gets playful.</p>
+  <div class="body">
+    <div class="grid3">
+      <div class="demo"><button class="gel" id="gel">Press me</button><span class="cap" style="position:absolute;left:16px;bottom:14px">Gel · squash 0.94×0.88, release overshoot</span></div>
+      <div class="demo"><div class="seg" id="seg"><button class="on">All</button><button>Rust</button><button>TypeScript</button><button>Go</button></div><span class="cap" style="position:absolute;left:16px;bottom:14px">Squish knob · lead edge fast, trail slow</span></div>
+      <div class="demo"><svg class="curve" viewBox="0 0 200 100" id="curve"></svg><span class="cap" style="position:absolute;left:16px;bottom:14px">Jelly spring · k 420 · c 9 · m 1</span></div>
+    </div>
+    <div class="grid4" style="margin-top:12px">
+      <div class="card"><span class="cap">Navigation</span><p style="margin-top:6px">Springs with overshoot: knobs, highlights, toggles.</p></div>
+      <div class="card"><span class="cap">Content</span><p style="margin-top:6px">Tight. Cards fade and rise 8px, 40ms stagger. No bounce on text.</p></div>
+      <div class="card"><span class="cap">Never</span><p style="margin-top:6px">Spinners, drop shadows, parallax on scroll, motion while typing.</p></div>
+      <div class="card"><span class="cap">Respect</span><p style="margin-top:6px">Reduce Motion turns every spring into a plain fade.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p6" data-name="Imagery">
+  <div class="head"><span class="no">06</span><h2>Imagery</h2><span class="cap">Paintings &amp; pixels</span></div>
+  <p class="lead">Two sources only: public-domain paintings (Monet, Seurat, Inness, via the Art Institute of Chicago, CC0), always credited; and the pixel meadow from the onboarding film. No stock photos, no 3D blobs, no AI art.</p>
+  <div class="body">
+    <div class="grid4">
+      <div class="paint"><img src="assets/art/wheat-day.jpg" alt=""><span class="cr">Morning · Monet, Stacks of Wheat (End of Day, Autumn)</span></div>
+      <div class="paint"><img src="assets/art/jatte.jpg" alt=""><span class="cr">Afternoon · Seurat, La Grande Jatte</span></div>
+      <div class="paint"><img src="assets/art/wheat-summer.jpg" alt=""><span class="cr">Evening · Monet, Stacks of Wheat (End of Summer)</span></div>
+      <div class="paint"><img src="assets/art/farm.jpg" alt=""><span class="cr">Night · Inness, The Lonely Farm, Nantucket</span></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card"><span class="cap">Rule</span><h3>The painting is the hero, never the background noise</h3><p>Full-bleed with one line of serif on it and a credit in the corner. Darken only the bottom third so the words read.</p></div>
+      <div class="card"><span class="cap">Rule</span><h3>Pixels are for moments</h3><p>The pixel meadow appears on first launch, in launch videos and on stickers. Daily UI stays clean vector.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p7" data-name="Voice">
+  <div class="head"><span class="no">07</span><h2>Voice</h2><span class="cap">How it writes</span></div>
+  <p class="lead">Short, specific, kind. Use numbers the product actually measured. Name the thing; skip the adjective.</p>
+  <div class="body">
+    <div class="grid2">
+      <div class="card"><span class="cap">In the product</span>
+        <p style="margin-top:10px;font-size:15px;color:var(--ink)">“One agent is running right now. 163 files are waiting to be committed.”</p>
+        <p style="margin-top:10px;font-size:15px;color:var(--ink)">“3 sessions · open to continue”</p>
+        <p style="margin-top:10px;font-size:15px;color:var(--ink)">“Codedeck reads agent history locally. Only project names leave, as avatar seeds.”</p></div>
+      <div class="card"><span class="cap">In marketing</span>
+        <p style="margin-top:10px;font-size:15px;color:var(--ink)">“I had 37 projects and 436 agent conversations. I couldn't find any of them.”</p>
+        <p style="margin-top:10px;font-size:15px;color:var(--ink)">“Every project on your Mac, and every Claude session that belongs to it.”</p>
+        <p style="margin-top:10px;font-size:15px;color:var(--ink)">“No account. No cloud. One price.”</p></div>
+    </div>
+    <div class="vs" style="margin-top:18px">
+      <div>“Open to continue”</div><div>“Unlock your full potential”</div>
+      <div>“163 files uncommitted”</div><div>“Tons of changes!”</div>
+      <div>“Your history stays on this Mac”</div><div>“Enterprise-grade security”</div>
+      <div>“Good morning.”</div><div>“Welcome back, superstar 🚀”</div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p8" data-name="Portfolio">
+  <div class="head"><span class="no">08</span><h2>Brand <span class="it" style="color:var(--slate)">portfolio</span></h2><span class="cap">The system, applied</span></div>
+  <p class="lead">The pieces a launch needs, built from the rules above. Use these as the templates.</p>
+  <div class="body">
+    <div class="grid3">
+      <div class="markbox" style="min-height:300px"><div class="icon"><div class="v"><i></i></div><div class="g"><i></i><i></i><i></i><i></i></div></div><span class="cap" style="position:absolute;left:16px;bottom:14px">App icon · macOS squircle</span></div>
+      <div class="markbox" style="min-height:300px;background:linear-gradient(160deg,#cfe3f7,#e9f2ec)"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><div class="menubar"><b></b><img src="assets/mascot/codedeck-mascot.svg" style="width:16px;border-radius:4px" alt=""><span>Codedeck</span><span style="opacity:.5">·</span><span>1 running</span></div><span class="cap">Menu bar glyph · 16px</span></div></div>
+      <div class="markbox" style="min-height:300px"><div style="display:flex;gap:26px"><span class="sticker"><img src="assets/mascot/codedeck-mascot.svg" alt=""></span><span class="sticker" style="transform:rotate(5deg);background:#e45e4d;box-shadow:0 0 0 6px #e45e4d,0 0 0 7px #c94a3a"><span style="font:600 15px/1.1 'Instrument Sans';color:#111;text-align:center">open to<br><i class="it" style="font-size:17px">continue</i></span></span></div><span class="cap" style="position:absolute;left:16px;bottom:14px">Die-cut stickers</span></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="mock"><div class="tweet"><div style="display:flex;justify-content:space-between"><span class="cap">Codedeck · day 12</span><img src="assets/mascot/codedeck-mascot.svg" style="width:30px;border-radius:8px" alt=""></div><h5>37 projects. 436 agent sessions.<br><span class="it" style="color:var(--slate)">I couldn't find any of them.</span></h5><span class="cap">codedeck.app</span></div></div>
+      <div class="mock og"><img src="assets/art/wheat-day.jpg" alt=""><div class="in"><span class="cap" style="color:rgba(255,255,255,.8)">codedeck.app</span><div style="font-size:clamp(24px,3vw,42px);letter-spacing:-.03em;line-height:1.05;margin-top:8px">Every project on your Mac,<br><span class="it">and every agent in it.</span></div></div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="ticket"><div class="l"><span class="cap">License</span><div style="font-size:22px;letter-spacing:-.02em;margin:8px 0 4px">Codedeck <span class="it" style="color:var(--slate)">for Mac</span></div><div class="mono" style="font-size:12.5px;color:var(--ink-3)">CDK-7F3A-••••-••••-91B2</div><div style="display:flex;gap:6px;margin-top:14px"><span class="pill">3 Macs</span><span class="pill">Lifetime updates to v1</span></div></div><div class="r"><img src="assets/mascot/codedeck-mascot.svg" style="width:44px;border-radius:12px" alt=""><span class="cap">Thank you</span></div></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:10px"><span class="cap">Launch email · subject</span><div style="font-size:18px;letter-spacing:-.01em">Your Codedeck key <span class="it" style="color:var(--slate)">is here</span></div><p>Paste it into Codedeck → License. It works on 3 Macs. Your projects and sessions never leave them. Reply to this email if anything's off; a person reads it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="plate" id="p9" data-name="Marketing">
+  <div class="head"><span class="no">09</span><h2>Taking it <span class="it" style="color:var(--slate)">to market</span></h2><span class="cap">Positioning · content · launch</span></div>
+  <p class="lead">Codedeck sells best to people who already feel the problem: developers running Claude Code, Codex or OpenCode across many repos. The plan is to show the problem with real numbers, show the craft in short clips, and launch where those developers already gather.</p>
+  <div class="body">
+    <div class="grid3">
+      <div class="card"><span class="cap">Who</span><h3>Agent-heavy developers on a Mac</h3><p>Indie hackers, freelancers, staff engineers juggling 10–50 repos with several coding agents.</p></div>
+      <div class="card"><span class="cap">Pain</span><h3>“Where was I?”</h3><p>Sessions buried in ~/.claude, branches forgotten, uncommitted work scattered across folders.</p></div>
+      <div class="card"><span class="cap">Offer</span><h3>15 days free, then one price</h3><p>No subscription, no account. That's a reason to share it, in a market tired of subscriptions.</p></div>
+    </div>
+
+    <div class="sub"><h4>Content pillars</h4><span class="cap">What to publish, repeatedly</span></div>
+    <div class="grid3" id="pillars"></div>
+
+    <div class="sub"><h4>Ready-to-post ideas</h4><span class="cap">First 10</span></div>
+    <div class="grid2" id="posts"></div>
+
+    <div class="sub"><h4>Channels</h4><span class="cap">Where these developers are</span></div>
+    <div id="channels"></div>
+
+    <div class="sub"><h4>The road to launch</h4><span class="cap">Six weeks</span></div>
+    <div class="steps" id="steps"></div>
+
+    <div class="sub"><h4>What to measure</h4><span class="cap">Weekly</span></div>
+    <div class="grid4" id="kpis"></div>
+  </div>
+</section>
+</main>
+<footer>Codedeck brand book, edition 1. Mascot: DiceBear bottts-neutral (Pablo Stanley's Bottts, free for commercial use). Fonts: Instrument Sans, Fraunces, Geist Mono (OFL). Paintings: Art Institute of Chicago, CC0. Contrast ratios are computed in this page from the colour values.</footer>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const lum = h => { const c = hexRgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+const mix = (a, b, t) => { const p = hexRgb(a), q = hexRgb(b); return "#" + p.map((v, i) => Math.round(v + (q[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
+const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+
+/* Bayer-dithered tint ladder from paper to the colour, like the pixel film */
+function ditherStrip(canvas, hex) {
+  const W = 72, H = 8; canvas.width = W; canvas.height = H; const g = canvas.getContext("2d");
+  const steps = [hex, mix(hex, "#ffffff", .25), mix(hex, "#ffffff", .5), mix(hex, "#ffffff", .75), "#ffffff"];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const f = (x / (W - 1)) * (steps.length - 1), i = Math.floor(f), fr = f - i;
+    g.fillStyle = fr * 16 > BAYER[y % 4][x % 4] ? steps[Math.min(steps.length - 1, i + 1)] : steps[i]; g.fillRect(x, y, 1, 1);
+  }
+}
+const aa = hex => { const w = contrast(hex, "#ffffff"), k = contrast(hex, "#111112"); const best = w >= k ? ["white", w] : ["ink", k];
+  return `<span class="aa"><i class="${best[1] >= 4.5 ? "ok" : ""}">${best[1].toFixed(1)}:1 ${best[0]}</i>${best[1] >= 7 ? '<i class="ok">AAA</i>' : best[1] >= 4.5 ? '<i class="ok">AA</i>' : best[1] >= 3 ? "<i>AA large</i>" : "<i>decor only</i>"}</span>`; };
+function swatch(name, hex, role, extra = "") {
+  const ink = contrast(hex, "#ffffff") >= contrast(hex, "#111112") ? "#fff" : "#111112";
+  const [r, g, b] = hexRgb(hex);
+  return `<div class="sw"><div class="chip" style="background:${hex}"><span class="nm" style="color:${ink}">${name}</span><canvas data-hex="${hex}"></canvas></div>
+    <div class="info"><b>${name}</b><span class="k">HEX</span><span class="v">${hex.toUpperCase()}</span><span class="k">RGB</span><span class="v">${r} ${g} ${b}</span>${extra}<span class="k">Best text</span><span class="v">${aa(hex)}</span><span class="role">${role}</span></div></div>`;
+}
+$("#core").innerHTML = [
+  ["Paper", "#ffffff", "The product background, light mode. Most of every surface.", `<span class="k">Dark</span><span class="v">#121214</span>`],
+  ["Ink", "#111112", "Text, the primary gel button, the visor.", `<span class="k">Dark</span><span class="v">#F2F2F3</span>`],
+  ["Stamp", "#e45e4d", "The robot's face. Brand moments only: icon, stickers, one accent per page.", `<span class="k">Dark</span><span class="v">#E45E4D</span>`],
+].map(s => swatch(...s)).join("");
+$("#meadowsw").innerHTML = [
+  ["Meadow", "#4caf50", "Grass in the film. Illustration and launch art."],
+  ["Petal", "#ff7eb6", "Petals on the wind. Small sparks, never fills."],
+  ["Sky", "#76b6f0", "The film's sky, Bayer-dithered to white."],
+  ["Sun", "#ffd166", "Flowers, sticker highlights, the 'new' dot in marketing."],
+].map(s => swatch(...s)).join("");
+$("#signal").innerHTML = [
+  ["Live", "#2ea56a", "Running badge, default-editor dot, active states."],
+  ["Amber", "#9a5c17", "Uncommitted files. Paired with Warm (#FBF0E1) fill."],
+  ["Slate", "#4e6a88", "The Fraunces italic accent colour. Words, never fills."],
+  ["Line", "#dfdfdb", "Hairlines and card outlines. Always 1px."],
+].map(s => swatch(...s)).join("");
+$$("canvas[data-hex]").forEach(c => ditherStrip(c, c.dataset.hex));
+
+$("#ratio").innerHTML = [["Paper", "#ffffff", 70], ["Ink", "#111112", 14], ["Neutrals", "#ededea", 8], ["Meadow", "#4caf50", 4], ["Stamp", "#e45e4d", 3], ["Signal", "#2ea56a", 1]]
+  .map(([n, c, p]) => `<div style="flex:${p};background:${c};color:${contrast(c, "#ffffff") > 3 ? "#fff" : "#111112"}">${p > 2 ? `${n} ${p}%` : ""}</div>`).join("");
+
+const NEUT = [["Ink", "#111112", "#f2f2f3"], ["Ink 2", "#4f4f55", "#b5b5bb"], ["Ink 3", "#8a8a90", "#7f7f87"], ["Ink 4", "#c4c4c7", "#4b4b52"], ["Line 2", "#dfdfdb", "#313138"], ["Line", "#ebebe8", "#24242a"], ["Linen 2", "#ededea", "#2a2a2f"], ["Linen", "#f5f5f3", "#202024"], ["Paper", "#ffffff", "#121214"]];
+const drawLadder = () => { const dark = document.documentElement.dataset.theme === "dark";
+  $("#ladder").innerHTML = NEUT.map(([n, l, d]) => { const c = dark ? d : l; return `<div style="background:${c};color:${contrast(c, "#ffffff") > 3 ? "#fff" : "#111112"}">${n}<br>${c.toUpperCase()}</div>`; }).join(""); };
+drawLadder();
+
+const PAIRS = [["#111112", "#ffffff", "Ink on Paper", "Body text"], ["#ffffff", "#111112", "Paper on Ink", "Gel buttons"], ["#4f4f55", "#ffffff", "Ink 2 on Paper", "Secondary text"], ["#8a8a90", "#ffffff", "Ink 3 on Paper", "Meta, ages"], ["#9a5c17", "#fbf0e1", "Amber on Warm", "Uncommitted pill"], ["#ffffff", "#2ea56a", "Paper on Live", "Running badge"], ["#4e6a88", "#ffffff", "Slate on Paper", "Italic accents"], ["#111112", "#e45e4d", "Ink on Stamp", "Stickers, icon"]];
+$("#pairs").innerHTML = PAIRS.map(([fg, bg, n, use]) => { const r = contrast(fg, bg);
+  return `<div class="pair" style="background:${bg};color:${fg};box-shadow:inset 0 0 0 1px #dfdfdb"><span>${n}<br><small style="opacity:.75">${use}</small></span><span class="r">${r.toFixed(2)}:1 · ${r >= 7 ? "AAA" : r >= 4.5 ? "AA" : r >= 3 ? "AA large" : "fails"}</span></div>`; }).join("");
+
+/* moods: the robot face drawn in SVG, varying visor and grill */
+const face = (visor, grill, slit = "#ff7a68") => `<svg viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="24" fill="#e45e4d"/>${visor}${grill}</svg>`;
+const V = (y = 34, h = 22, s = "") => `<rect x="18" y="${y}" width="64" height="${h}" rx="${h / 2}" fill="#17171a"/>${s}`;
+const G = (n = 4, h = 12) => Array.from({ length: n }, (_, i) => `<rect x="${32 + i * 10}" y="66" width="5" height="${h}" rx="2.5" fill="#17171a" opacity=".75"/>`).join("");
+const MOODS = [
+  ["Idle", face(V(34, 22, `<rect x="30" y="43" width="40" height="4" rx="2" fill="#ff7a68"/>`), G())],
+  ["Scanning", face(V(34, 22, `<rect x="52" y="42" width="20" height="6" rx="3" fill="#ffd166"/>`), G())],
+  ["Happy", face(V(34, 22, `<path d="M32 49q8-8 14 0M54 49q8-8 14 0" stroke="#ff7a68" stroke-width="4" fill="none" stroke-linecap="round"/>`), G(5, 8))],
+  ["Talking", face(V(34, 22, `<rect x="30" y="43" width="40" height="4" rx="2" fill="#ff7a68"/>`), G(4, 18))],
+  ["Focus", face(V(38, 14, `<rect x="34" y="43" width="32" height="4" rx="2" fill="#ff7a68"/>`), G(4, 6))],
+  ["Asleep", face(V(36, 18, `<path d="M32 45h14M54 45h14" stroke="#8a8a90" stroke-width="4" stroke-linecap="round"/>`), G(4, 4))],
+];
+$("#moods").innerHTML = MOODS.map(([n, svg]) => `<div class="mood"><div class="face">${svg}</div><span class="cap" style="display:block;margin-top:8px">${n}</span></div>`).join("");
+
+/* marketing content */
+$("#pillars").innerHTML = [
+  ["01", "The map", "Real numbers from your own Mac: projects, sessions, forgotten branches. Screenshots, not claims. “I had 436 agent sessions and couldn't find one.”"],
+  ["02", "The craft", "5–10 second clips of the jelly button, the squish knob, the pixel meadow, the morning painting. Designers and Mac people share these."],
+  ["03", "Build in public", "Rust + GPUI from the inside: springs without transforms, reading Claude's jsonl, a 0.6s rescan. Developers trust what they can see being built."],
+  ["04", "The robot", "The mascot reacting: scanning, happy, asleep. Stickers, a desk toy, GIFs. Gives the brand a face people remember."],
+  ["05", "Workflows", "How to find last Tuesday's Claude session. How to see every uncommitted repo before a trip. Searchable, evergreen, good for SEO and Reddit."],
+  ["06", "Calm software", "The argument: no account, no cloud, no AI, one price. A point of view people agree with and repost."],
+].map(([n, h, p]) => `<div class="card"><span class="cap" style="color:var(--stamp)">${n}</span><h3>${h}</h3><p>${p}</p></div>`).join("");
+
+$("#posts").innerHTML = [
+  ["X / LinkedIn", "Data story", "I scanned my Mac. 37 projects, 436 Claude & OpenCode sessions, 163 uncommitted files. So I built the thing that shows me where I left off.", "Screenshot of Home"],
+  ["X", "Craft clip", "GPUI can't scale a div. So the jelly button's fill is its own layer, and its edges are on a spring.", "6s screen recording"],
+  ["Show HN", "Launch", "Show HN: Codedeck – see every project on your Mac and the AI coding sessions that belong to it (Rust/GPUI, local-only)", "Link + first comment on how it reads each agent"],
+  ["r/ClaudeAI", "Workflow", "How I find old Claude Code sessions across 30 repos (and which project each one belongs to)", "Text post, app mentioned once at the end"],
+  ["r/rust", "Build in public", "Building a native Mac app on GPUI outside Zed: springs, squish, and what I'd do differently", "Long post + repo links"],
+  ["X", "The robot", "The scanner bot has moods now. This is it finding your 37th project.", "GIF"],
+  ["LinkedIn", "Founder story", "I'm building a one-time-purchase Mac app from Bengaluru in 2026, against every subscription instinct. Here's why.", "Photo + text"],
+  ["Product Hunt", "Launch", "Codedeck — Every project on your Mac, and every agent in it", "5 gallery images + 40s film"],
+  ["YouTube Short", "Demo", "From 400 lost sessions to one calm home screen in 30 seconds", "Vertical screen capture"],
+  ["Blog", "SEO", "Where does Claude Code store sessions? (and how to search them)", "Evergreen guide, links to the app"],
+].map(([ch, k, q, f]) => `<div class="post"><div class="top"><span class="pill hot">${ch}</span><span class="cap">${k}</span></div><q>${q}</q><small>${f}</small></div>`).join("");
+
+$("#channels").innerHTML = [
+  ["X (Twitter)", "Build in public 3–4×/week: clips, numbers, progress. Reply in Claude Code / Codex threads with screenshots, not links.", "Daily"],
+  ["Reddit", "r/ClaudeAI, r/ClaudeCode, r/macapps, r/rust, r/opensource. Value first, link last; one post per sub per launch.", "Weekly"],
+  ["Hacker News", "One Show HN at launch; one technical GPUI write-up a week or two later.", "2 posts"],
+  ["Product Hunt", "Launch on a Tuesday, 12:01am PT. Line up 20 people from the waitlist to try it that morning.", "Launch day"],
+  ["LinkedIn", "Founder story and India-dev community; the 'calm software' argument travels well here.", "Weekly"],
+  ["Newsletters", "Pitch Console.dev, TLDR Dev, This Week in Rust (GPUI post), Mac-focused newsletters.", "At launch"],
+  ["Directories", "AlternativeTo, MacUpdate, Indie Hackers products, awesome-gpui and awesome-claude-code lists.", "Once"],
+  ["YouTube", "One 2-minute demo, three Shorts. Send a free license to 5 dev YouTubers who cover Claude Code.", "Monthly"],
+].map(([c, d, f]) => `<div class="chan"><b>${c}</b><span style="color:var(--ink-2)">${d}</span><span>${f}</span></div>`).join("");
+
+$("#steps").innerHTML = [
+  ["Weeks 1–2", "Foundations", ["codedeck.app landing page: one painting, one line, a 30s clip, waitlist email", "X and LinkedIn handles; bio says what it does in 8 words", "Record the clip library: jelly, squish, meadow, home"], ["Done when: 100 waitlist signups"]],
+  ["Weeks 3–4", "Build in public", ["3–4 posts a week from the pillars", "One Reddit value post (session-finding workflow)", "Private beta: 20 people from the waitlist, free licenses for feedback"], ["Done when: 5 beta users say they'd pay"]],
+  ["Week 5", "Get ready", ["Signed, notarized .dmg; trial + Dodo checkout live", "Product Hunt page, 5 gallery images, 40s film", "Show HN draft + first comment; newsletter pitches sent"], ["Done when: a stranger can install and buy alone"]],
+  ["Week 6", "Launch", ["Tue: Product Hunt + X thread + LinkedIn", "Wed: Show HN; Thu: Reddit (macapps, ClaudeAI)", "Launch price: $12 for the first week, $15 after"], ["Done when: first 100 sales"]],
+  ["After", "Keep going", ["Changelog post every release, with a clip", "Windows waitlist (only after Mac is steady)", "Ask every buyer one question; turn answers into posts"], ["Rhythm: one ship + one story per week"]],
+].map(([w, h, a, b]) => `<div class="step"><div><span class="cap" style="color:var(--stamp)">${w}</span><h4 style="margin-top:6px">${h}</h4></div><ul>${a.map(x => `<li>${x}</li>`).join("")}</ul><ul style="list-style:none;padding:0">${b.map(x => `<li class="it" style="font-size:15px;color:var(--slate)">${x}</li>`).join("")}</ul></div>`).join("");
+
+$("#kpis").innerHTML = [["Waitlist", "500", "before launch"], ["Trial starts", "1,000", "first month"], ["Trial → paid", "8%", "target conversion"], ["Refunds", "< 3%", "of sales"]]
+  .map(([n, v, s]) => `<div class="kpi"><span class="cap">${n}</span><div class="n">${v}</div><span style="color:var(--ink-3);font-size:13px">${s}</span></div>`).join("");
+
+/* cover: the pixel meadow, small */
+(function meadow() {
+  const c = $("#meadow"), g = c.getContext("2d"), W = 236, H = 148;
+  const SKY = ["#76b6f0", "#a0cef6", "#c6e2fa", "#e4f2fd", "#f6fbff"];
+  const sky = () => { for (let y = 0; y < 112; y++) for (let x = 0; x < W; x++) { const f = Math.min(1, y / 112) * (SKY.length - 1), i = Math.floor(f), fr = f - i; g.fillStyle = SKY[fr * 16 > BAYER[y % 4][x % 4] ? Math.min(SKY.length - 1, i + 1) : i]; g.fillRect(x, y, 1, 1); } };
+  const hills = () => { for (let x = 0; x < W; x++) { const h1 = 84 + Math.sin(x / 26) * 6 + Math.sin(x / 9) * 2; g.fillStyle = "#b7dea3"; g.fillRect(x, h1, 1, H - h1); const h2 = 100 + Math.sin(x / 18 + 2) * 5; g.fillStyle = "#88c870"; g.fillRect(x, h2, 1, H - h2); } };
+  const blades = Array.from({ length: 420 }, () => ({ x: Math.random() * W, h: 5 + Math.random() * 12, c: ["#4caf50", "#3b9a45", "#6cc04a", "#2e7d38", "#7ccf5a"][Math.floor(Math.random() * 5)], p: Math.random() * 6 }));
+  const flowers = Array.from({ length: 26 }, () => ({ x: Math.random() * W, y: 122 + Math.random() * 22, c: ["#ff7eb6", "#ffd166", "#ffffff", "#ff5c9a"][Math.floor(Math.random() * 4)] }));
+  const petals = Array.from({ length: 14 }, () => ({ x: Math.random() * W, y: Math.random() * 110, s: .2 + Math.random() * .4 }));
+  function frame(t) {
+    sky(); hills();
+    g.fillStyle = "#ffffff"; [[30, 20], [150, 32], [205, 14]].forEach(([x, y], i) => { const cx = (x + t / (90 + i * 30)) % (W + 40) - 20; g.fillRect(cx, y, 22, 4); g.fillRect(cx + 4, y - 3, 12, 3); });
+    g.fillStyle = "#4caf50"; g.fillRect(0, 118, W, H - 118);
+    blades.forEach(b => { const sway = Math.round(Math.sin(t / 700 + b.p + b.x / 30) * 1.4); g.fillStyle = b.c; for (let k = 0; k < b.h; k++) g.fillRect(Math.round(b.x + sway * (k / b.h)), H - k, 1, 1); });
+    flowers.forEach(f => { g.fillStyle = f.c; g.fillRect(f.x, f.y, 2, 2); });
+    g.fillStyle = "#ff7eb6"; petals.forEach(p => { const x = (p.x + t * p.s / 30) % W, y = p.y + Math.sin(t / 500 + p.x) * 3; g.fillRect(x, y, 1, 1); });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* nav: built from plates, highlight springs, follows scroll */
+const plates = $$("[data-name]");
+$("#nav").insertAdjacentHTML("beforeend", plates.map((p, i) => `<a href="#${p.id}" data-for="${p.id}"><span>${String(i).padStart(2, "0")}</span>${p.dataset.name}</a>`).join(""));
+const moveHi = a => { $$("#nav a").forEach(x => x.classList.toggle("on", x === a)); $("#navhi").style.top = a.offsetTop + "px"; };
+moveHi($("#nav a"));
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) moveHi($(`#nav a[data-for="${e.target.id}"]`)); }), { rootMargin: "-45% 0px -50% 0px" });
+plates.forEach(p => io.observe(p));
+
+/* theme */
+$$("#theme button").forEach(b => b.onclick = () => { document.documentElement.dataset.theme = b.dataset.t; $$("#theme button").forEach(x => x.classList.toggle("on", x === b)); drawLadder(); });
+
+/* motion demos */
+$("#gel").addEventListener("pointerup", e => { const g = e.currentTarget; g.classList.remove("j"); void g.offsetWidth; g.classList.add("j"); });
+(function seg() {
+  const s = $("#seg"), k = document.createElement("i"); k.className = "knob"; s.prepend(k);
+  const place = (b, anim) => { const to = { l: b.offsetLeft, w: b.offsetWidth }; if (anim && k.offsetWidth) { const f = { l: k.offsetLeft, w: k.offsetWidth }, l = Math.min(f.l, to.l), r = Math.max(f.l + f.w, to.l + to.w);
+      k.animate([{ left: f.l + "px", width: f.w + "px" }, { left: l + "px", width: r - l + "px", offset: .4 }, { left: to.l + "px", width: to.w + "px" }], { duration: 520, easing: "cubic-bezier(.3,1.4,.5,1)" }); }
+    k.style.left = to.l + "px"; k.style.width = to.w + "px"; };
+  const btns = [...s.querySelectorAll("button")]; document.fonts.ready.then(() => place(btns[0], false));
+  btns.forEach(b => b.onclick = () => { btns.forEach(x => x.classList.toggle("on", x === b)); place(b, true); });
+})();
+(function curve() {
+  // jelly spring k=420, c=9, m=1 from 1 → 0, the gel release, sampled over 0.9s
+  const w0 = Math.sqrt(420), z = 9 / (2 * w0), wd = w0 * Math.sqrt(1 - z * z);
+  const pts = Array.from({ length: 120 }, (_, i) => { const t = i / 119 * .9, v = Math.exp(-z * w0 * t) * (Math.cos(wd * t) + z * w0 / wd * Math.sin(wd * t)); return `${(i / 119 * 196 + 2).toFixed(1)},${(50 - v * 38).toFixed(1)}`; });
+  $("#curve").innerHTML = `<line x1="0" y1="50" x2="200" y2="50" stroke="#dfdfdb" stroke-dasharray="3 3"/><polyline points="${pts.join(" ")}" fill="none" stroke="#e45e4d" stroke-width="2"/>`;
+})();
+</script>
+</body>
+</html>
