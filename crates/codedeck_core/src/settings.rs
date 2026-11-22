@@ -11,7 +11,20 @@ pub struct Settings {
     pub editor: String,
     pub terminal: String,
     pub theme: Theme,
+    pub layout: Layout,
     pub onboarded: bool,
+}
+
+/// How Home lays out the project list.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+pub enum Layout {
+    /// Two columns of full cards.
+    #[default]
+    Cards,
+    /// Three columns of small tiles.
+    Compact,
+    /// One row per project.
+    List,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
@@ -37,6 +50,7 @@ impl Default for Settings {
             editor: "Cursor".into(),
             terminal: "Terminal".into(),
             theme: Theme::Light,
+            layout: Layout::Cards,
             onboarded: false,
         }
     }

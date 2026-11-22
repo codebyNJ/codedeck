@@ -8,6 +8,7 @@ pub mod motion;
 pub mod pill;
 pub mod segmented;
 pub mod stack_icon;
+pub mod text_input;
 pub mod theme;
 pub mod toggle;
 pub mod typography;
@@ -21,6 +22,7 @@ pub mod prelude {
         pill::{Badge, Pill},
         segmented::Segmented,
         stack_icon::StackIcon,
+        text_input::{InputChanged, TextInput},
         theme::{ActiveTheme, Theme},
         toggle::Toggle,
         typography::{MONO, SANS, SERIF},

@@ -16,6 +16,7 @@ pub struct Shell {
     pub screen: Screen,
     pub filter: usize,
     pub sort: usize,
+    pub search: Entity<TextInput>,
     _subscriptions: Vec<Subscription>,
 }
 
@@ -28,7 +29,9 @@ const RECENT: usize = 6;
 impl Shell {
     pub fn new(state: Entity<AppState>, cx: &mut Context<Self>) -> Self {
         let observe = cx.observe(&state, |_, _, cx| cx.notify());
-        Self { state, screen: Screen::Home, filter: 0, sort: 0, _subscriptions: vec![observe] }
+        let search = cx.new(|cx| TextInput::new("Search projects", cx));
+        let on_search = cx.subscribe(&search, |_, _, _: &InputChanged, cx| cx.notify());
+        Self { state, screen: Screen::Home, filter: 0, sort: 0, search, _subscriptions: vec![observe, on_search] }
     }
 
     pub fn go(&mut self, screen: Screen, cx: &mut Context<Self>) {

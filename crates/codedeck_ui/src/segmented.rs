@@ -20,15 +20,21 @@ pub struct Segmented {
     options: Vec<SharedString>,
     selected: usize,
     small: bool,
+    icons: Option<Vec<&'static str>>,
     on_select: Option<crate::Handler<usize>>,
 }
 
 impl Segmented {
     pub fn new(id: impl Into<ElementId>, options: impl IntoIterator<Item = impl Into<SharedString>>) -> Self {
-        Self { id: id.into(), options: options.into_iter().map(Into::into).collect(), selected: 0, small: false, on_select: None }
+        Self { id: id.into(), options: options.into_iter().map(Into::into).collect(), selected: 0, small: false, icons: None, on_select: None }
     }
     pub fn selected(mut self, index: usize) -> Self {
         self.selected = index;
+        self
+    }
+    /// Draw these icons instead of the labels (labels stay as the option names).
+    pub fn icons(mut self, paths: impl IntoIterator<Item = &'static str>) -> Self {
+        self.icons = Some(paths.into_iter().collect());
         self
     }
     pub fn small(mut self) -> Self {
@@ -85,7 +91,10 @@ impl RenderOnce for Segmented {
                 .text_size(px(if self.small { 12. } else { 13. }))
                 .font_weight(FontWeight::MEDIUM)
                 .text_color(if index == selected { theme.ink } else { theme.ink_3 })
-                .child(label.clone())
+                .map(|item| match self.icons.as_ref().and_then(|icons| icons.get(index)) {
+                    Some(icon) => item.child(svg().path(*icon).size(px(14.)).text_color(if index == selected { theme.ink } else { theme.ink_3 })),
+                    None => item.child(label.clone()),
+                })
                 .when_some(on_select, |item, handler| item.on_click(move |_, window, cx| handler(&index, window, cx)))
         });
 
