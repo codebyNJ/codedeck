@@ -1,14 +1,16 @@
 use crate::shell::{Screen, Shell};
 use codedeck_ui::prelude::*;
 
-actions!(codedeck, [Quit, Rescan, GoHome, OpenSettings, ToggleTheme, FocusSearch]);
+actions!(codedeck, [Quit, Rescan, GoHome, OpenSettings, ToggleTheme, FocusSearch, OpenPalette]);
 
 /// Keybindings and the native menu bar. Shell handles the view actions.
 pub fn install(cx: &mut App) {
     cx.on_action(|_: &Quit, cx| cx.quit());
     codedeck_ui::text_input::bind_keys(cx);
+    crate::screens::palette::bind_keys(cx);
     cx.bind_keys([
         KeyBinding::new("cmd-f", FocusSearch, None),
+        KeyBinding::new("cmd-k", OpenPalette, None),
         KeyBinding::new("cmd-q", Quit, None),
         KeyBinding::new("cmd-r", Rescan, None),
         KeyBinding::new("cmd-1", GoHome, None),
@@ -24,6 +26,7 @@ pub fn install(cx: &mut App) {
         Menu::new("View").items([
             MenuItem::action("Home", GoHome),
             MenuItem::action("Search Projects", FocusSearch),
+            MenuItem::action("Jump To…", OpenPalette),
             MenuItem::action("Rescan", Rescan),
             MenuItem::action("Toggle Dark Mode", ToggleTheme),
         ]),
@@ -52,9 +55,22 @@ pub fn route_to(shell: WeakEntity<Shell>, cx: &mut App) {
             shell.search.clone()
         }).ok() else { return };
         let handle = input.read(cx).focus_handle(cx);
-        if let Some(window) = cx.active_window() {
+        let Some(window) = cx.active_window().or_else(|| cx.windows().first().copied()) else { return };
+        // Mid-dispatch the window is busy; focus once it's free.
+        cx.defer(move |cx| {
             window.update(cx, |_, window, cx| window.focus(&handle, cx)).ok();
-        }
+        });
+    });
+    let palette = shell.clone();
+    cx.on_action(move |_: &OpenPalette, cx| {
+        let Some(window) = cx.active_window().or_else(|| cx.windows().first().copied()) else { return };
+        // A key binding fires while the window is mid-dispatch; open once it's free.
+        let palette = palette.clone();
+        cx.defer(move |cx| {
+            if let Err(error) = window.update(cx, |_, window, cx| palette.update(cx, |shell, cx| shell.open_palette(window, cx))) {
+                log::warn!("palette: {error:#}");
+            }
+        });
     });
     let rescan = shell.clone();
     cx.on_action(move |_: &Rescan, cx| {

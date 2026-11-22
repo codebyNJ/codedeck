@@ -103,14 +103,14 @@ impl Shell {
             .gap(px(22.))
             .child(header)
             .child(facts)
-            .child(
+            .when(!project.sessions.is_empty(), |page| page.child(
                 div()
                     .font_family(SERIF)
                     .italic()
                     .text_size(px(14.))
                     .text_color(theme.ink_3)
                     .child("Open the project in your editor or terminal to continue any of these sessions."),
-            )
+            ))
             .child(if project.sessions.is_empty() {
                 div().text_color(theme.ink_3).child("No agent sessions here yet.").into_any_element()
             } else {

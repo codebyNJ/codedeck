@@ -1,4 +1,5 @@
 mod home;
+pub mod palette;
 mod project;
 mod settings;
 

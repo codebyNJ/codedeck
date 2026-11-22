@@ -17,6 +17,9 @@ pub struct Shell {
     pub filter: usize,
     pub sort: usize,
     pub search: Entity<TextInput>,
+    pub palette: bool,
+    pub palette_input: Entity<TextInput>,
+    pub palette_index: usize,
     _subscriptions: Vec<Subscription>,
 }
 
@@ -31,7 +34,22 @@ impl Shell {
         let observe = cx.observe(&state, |_, _, cx| cx.notify());
         let search = cx.new(|cx| TextInput::new("Search projects", cx));
         let on_search = cx.subscribe(&search, |_, _, _: &InputChanged, cx| cx.notify());
-        Self { state, screen: Screen::Home, filter: 0, sort: 0, search, _subscriptions: vec![observe, on_search] }
+        let palette_input = cx.new(|cx| TextInput::new("Jump to a project or session", cx));
+        let on_palette = cx.subscribe(&palette_input, |this, _, _: &InputChanged, cx| {
+            this.palette_index = 0;
+            cx.notify();
+        });
+        Self {
+            state,
+            screen: Screen::Home,
+            filter: 0,
+            sort: 0,
+            search,
+            palette: false,
+            palette_input,
+            palette_index: 0,
+            _subscriptions: vec![observe, on_search, on_palette],
+        }
     }
 
     pub fn go(&mut self, screen: Screen, cx: &mut Context<Self>) {
@@ -161,12 +179,15 @@ impl Render for Shell {
             Screen::Project(root) => self.render_project(&root, window, cx),
             Screen::Settings => self.render_settings(window, cx),
         };
+        let palette = self.palette.then(|| self.render_palette(cx));
         h_flex()
+            .relative()
             .size_full()
             .bg(theme.bg)
             .text_color(theme.ink)
             .font_family(SANS)
             .child(self.render_sidebar(cx))
             .child(div().id("content").flex_1().min_w_0().h_full().overflow_y_scroll().child(content))
+            .children(palette)
     }
 }
