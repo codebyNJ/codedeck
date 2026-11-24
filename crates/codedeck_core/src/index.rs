@@ -3,7 +3,7 @@
 use crate::{Snapshot, settings::support_dir};
 use std::path::PathBuf;
 
-fn path() -> PathBuf {
+pub fn path() -> PathBuf {
     support_dir().join("cache.json")
 }
 
@@ -18,4 +18,17 @@ pub fn save(snapshot: &Snapshot) -> anyhow::Result<()> {
     std::fs::write(&tmp, serde_json::to_vec(snapshot)?)?;
     std::fs::rename(tmp, path())?; // atomic: never a half-written cache
     Ok(())
+}
+
+/// Size of the cache file in bytes, 0 if there is none.
+pub fn size() -> u64 {
+    std::fs::metadata(path()).map_or(0, |m| m.len())
+}
+
+/// Deletes the cache; the next launch rebuilds it with a full scan.
+pub fn clear() -> anyhow::Result<()> {
+    match std::fs::remove_file(path()) {
+        Err(e) if e.kind() != std::io::ErrorKind::NotFound => Err(e.into()),
+        _ => Ok(()),
+    }
 }

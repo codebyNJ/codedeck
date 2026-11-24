@@ -48,13 +48,18 @@ fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
     });
     let mut title = None;
     let mut prompts = 0u32;
+    let mut last_prompt = String::new();
     for line in lines.map_while(Result::ok) {
         let Ok(value) = serde_json::from_str::<Value>(&line) else { continue };
         let item = if value["payload"].is_object() { &value["payload"] } else { &value };
         if item["type"] == "message" && item["role"] == "user" {
             prompts += 1;
+            let text = item["content"][0]["text"].as_str().filter(|t| !t.starts_with('<')).map(short_title);
             if title.is_none() {
-                title = item["content"][0]["text"].as_str().filter(|t| !t.starts_with('<')).map(short_title);
+                title = text.clone();
+            }
+            if let Some(text) = text {
+                last_prompt = text;
             }
         }
     }
@@ -65,5 +70,6 @@ fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
         title: title.unwrap_or_else(|| "Untitled session".into()),
         updated_ms: mtime_ms(path),
         prompts,
+        last_prompt,
     }))
 }

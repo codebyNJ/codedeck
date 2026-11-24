@@ -27,15 +27,20 @@ pub fn open_in_editor(editor: &str, path: &Path) -> anyhow::Result<()> {
     open_in(app, path)
 }
 
-/// Reopen an agent session in `terminal`: write a `.command` script and `open` it.
-// ponytail: relies on the terminal running .command files (Terminal, iTerm do); per-terminal AppleScript if Ghostty/Warp need it.
-pub fn resume(terminal: &str, session: &crate::Session) -> anyhow::Result<()> {
+/// The shell command that continues `session` in its agent's CLI.
+pub fn resume_command(session: &crate::Session) -> String {
     let id = quote(&session.id);
-    let command = match session.agent {
+    match session.agent {
         crate::Agent::Claude => format!("claude --resume {id}"),
         crate::Agent::OpenCode => format!("opencode --session {id}"),
         crate::Agent::Codex => format!("codex resume {id}"),
-    };
+    }
+}
+
+/// Reopen an agent session in `terminal`: write a `.command` script and `open` it.
+// ponytail: relies on the terminal running .command files (Terminal, iTerm do); per-terminal AppleScript if Ghostty/Warp need it.
+pub fn resume(terminal: &str, session: &crate::Session) -> anyhow::Result<()> {
+    let command = resume_command(session);
     let name: String = session.id.chars().filter(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_').collect();
     let script = std::env::temp_dir().join(format!("codedeck-resume-{name}.command"));
     std::fs::write(&script, format!("#!/bin/zsh -l\ncd {} && exec {command}\n", quote(&session.cwd.to_string_lossy())))?;

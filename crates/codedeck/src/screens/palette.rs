@@ -1,6 +1,6 @@
 use super::{ago, tilde};
 use crate::shell::{Screen, Shell};
-use codedeck_core::{Session, avatar, launch};
+use codedeck_core::{Session, avatar};
 use codedeck_ui::prelude::*;
 use std::path::PathBuf;
 
@@ -76,12 +76,7 @@ impl Shell {
         self.close_palette(window, cx);
         match hit {
             Hit::Project { root, .. } => self.go(Screen::Project(root), cx),
-            Hit::Session { session, .. } => {
-                let terminal = self.state.read(cx).settings.terminal.clone();
-                if let Err(error) = launch::resume(&terminal, &session) {
-                    log::warn!("{error:#}");
-                }
-            }
+            Hit::Session { session, .. } => self.resume(&session, cx),
         }
     }
 
@@ -105,7 +100,7 @@ impl Shell {
                     .child(div().flex_1().min_w_0().truncate().font_family(MONO).text_size(px(11.5)).text_color(theme.ink_3).child(tilde(root)))
                     .child(div().text_size(px(11.5)).text_color(theme.ink_3).child("Open")),
                 Hit::Session { session, project } => row
-                    .child(Pill::new(session.agent.label()))
+                    .child(super::agent_icon(session.agent, 15., cx))
                     .child(div().flex_1().min_w_0().truncate().text_size(px(13.5)).child(session.title.clone()))
                     .child(div().max_w(px(150.)).truncate().text_size(px(11.5)).text_color(theme.ink_3).child(project.clone()))
                     .child(div().w(px(30.)).text_size(px(11.5)).text_color(theme.ink_3).child(ago(session.updated_ms))),

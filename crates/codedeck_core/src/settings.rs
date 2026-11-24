@@ -12,6 +12,7 @@ pub struct Settings {
     pub terminal: String,
     pub theme: Theme,
     pub layout: Layout,
+    pub painting: Painting,
     pub onboarded: bool,
 }
 
@@ -25,6 +26,16 @@ pub enum Layout {
     Compact,
     /// One row per project.
     List,
+}
+
+/// Which public-domain painting tops Home. Auto follows the time of day.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+pub enum Painting {
+    #[default]
+    Auto,
+    Monet,
+    Seurat,
+    Inness,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
@@ -51,6 +62,7 @@ impl Default for Settings {
             terminal: "Terminal".into(),
             theme: Theme::Light,
             layout: Layout::Cards,
+            painting: Painting::Auto,
             onboarded: false,
         }
     }

@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 /// Folders never worth descending into.
-const SKIP: &[&str] = &["node_modules", "target", "dist", "build", "vendor", "Library", "Applications"];
+pub const SKIP: &[&str] = &["node_modules", "target", "dist", "build", "vendor", "Library", "Applications"];
 
 /// Every folder under `roots` that looks like a project. Stops descending at the
 /// first project, so nested packages of a monorepo stay one project.

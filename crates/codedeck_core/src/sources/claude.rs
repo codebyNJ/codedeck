@@ -60,6 +60,7 @@ pub fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
     let mut cwd = None;
     let mut ai_title = None;
     let mut first_prompt = None;
+    let mut last_prompt = String::new();
     let mut prompts = 0u32;
     for line in BufReader::new(file).lines() {
         let line = line?;
@@ -80,6 +81,7 @@ pub fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
                     if first_prompt.is_none() {
                         first_prompt = Some(short_title(&text));
                     }
+                    last_prompt = short_title(&text);
                 }
             }
             _ => {}
@@ -97,6 +99,7 @@ pub fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
         title: ai_title.or(first_prompt).unwrap_or_else(|| "Untitled session".into()),
         updated_ms: mtime_ms(path),
         prompts,
+        last_prompt,
     }))
 }
 
@@ -106,6 +109,23 @@ fn prompt_text(content: &Value) -> Option<String> {
         Value::Array(parts) => parts.iter().find_map(|p| p["text"].as_str())?.to_string(),
         _ => return None,
     };
-    // Skip harness-injected prompts like <command-name> or <local-command-stdout>.
-    (!text.trim_start().starts_with('<')).then_some(text)
+    // Skip harness-injected prompts: <command-name>, <local-command-stdout>,
+    // and the summary Claude Code writes when it continues a compacted session.
+    let lead = text.trim_start();
+    (!lead.starts_with('<') && !lead.starts_with("[Request interrupted") && !lead.starts_with("This session is being continued from a previous conversation")).then_some(text)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::prompt_text;
+    use serde_json::json;
+
+    #[test]
+    fn skips_injected_prompts() {
+        assert_eq!(prompt_text(&json!("fix the build")).as_deref(), Some("fix the build"));
+        assert_eq!(prompt_text(&json!([{ "type": "text", "text": "hi" }])).as_deref(), Some("hi"));
+        assert!(prompt_text(&json!("[Request interrupted by user]")).is_none());
+        assert!(prompt_text(&json!("<command-name>/clear</command-name>")).is_none());
+        assert!(prompt_text(&json!("This session is being continued from a previous conversation that ran out of context.")).is_none());
+    }
 }

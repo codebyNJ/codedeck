@@ -1,15 +1,25 @@
 use super::{ago, stack_label, tilde};
 use crate::shell::{Screen, Shell};
-use codedeck_core::{Agent, Project, avatar, now_ms, settings::Layout};
+use codedeck_core::{Project, avatar, now_ms, settings::{Layout, Painting}};
 use codedeck_ui::prelude::*;
 
 /// Painting by time of day: (asset, credit).
-fn painting(hour: i8) -> (&'static str, &'static str) {
+const MONET: (&str, &str) = ("art/wheat-summer.jpg", "Claude Monet, Stacks of Wheat (End of Summer), 1890–91");
+const SEURAT: (&str, &str) = ("art/jatte.jpg", "Georges Seurat, A Sunday on La Grande Jatte, 1884–86");
+const INNESS: (&str, &str) = ("art/farm.jpg", "George Inness, The Lonely Farm, Nantucket, 1892");
+
+fn painting(choice: Painting, hour: i8) -> (&'static str, &'static str) {
+    match choice {
+        Painting::Monet => return MONET,
+        Painting::Seurat => return SEURAT,
+        Painting::Inness => return INNESS,
+        Painting::Auto => {}
+    }
     match hour {
         5..=11 => ("art/wheat-day.jpg", "Claude Monet, Stacks of Wheat (End of Day, Autumn), 1890–91"),
-        12..=16 => ("art/jatte.jpg", "Georges Seurat, A Sunday on La Grande Jatte, 1884–86"),
-        17..=20 => ("art/wheat-summer.jpg", "Claude Monet, Stacks of Wheat (End of Summer), 1890–91"),
-        _ => ("art/farm.jpg", "George Inness, The Lonely Farm, Nantucket, 1892"),
+        12..=16 => SEURAT,
+        17..=20 => MONET,
+        _ => INNESS,
     }
 }
 
@@ -38,13 +48,13 @@ fn matches(project: &Project, query: &str) -> bool {
 }
 
 impl Shell {
-    pub fn render_home(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
+    pub fn render_home(&mut self, folder: Option<&std::path::Path>, _window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
         let theme = cx.theme().clone();
         let snapshot = self.state.read(cx).snapshot.clone();
         let now = now_ms();
         let hour = jiff::ZonedDateTime::now().hour();
-        let (art, credit) = painting(hour);
-        let running = snapshot.projects.iter().filter(|p| p.is_live(now)).count();
+        let (art, credit) = painting(self.state.read(cx).settings.painting, hour);
+        let running = snapshot.projects.iter().flat_map(|p| &p.sessions).chain(&snapshot.loose).filter(|s| s.is_live(now)).count();
         let dirty: u32 = snapshot.projects.iter().map(|p| p.dirty).sum();
 
         // Filters: All plus the five most common stacks.
@@ -68,6 +78,7 @@ impl Shell {
             .iter()
             .filter(|p| filters[self.filter].1.as_ref().is_none_or(|slug| p.stacks.contains(slug)))
             .filter(|p| matches(p, &query))
+            .filter(|p| folder.is_none_or(|f| p.root.starts_with(f)))
             .collect();
         match self.sort {
             1 => projects.sort_by_key(|p| p.name.to_lowercase()),
@@ -119,7 +130,7 @@ impl Shell {
                             .text_size(px(12.5))
                             .child(format!("{} projects", snapshot.projects.len()))
                             .child(div().w(px(1.)).h(px(12.)).bg(hsla(0., 0., 1., 0.35)))
-                            .child(format!("{} conversations", snapshot.session_count()))
+                            .child(format!("{} conversations", snapshot.session_count() + snapshot.loose.len()))
                             .when(running > 0, |row| {
                                 row.child(div().w(px(1.)).h(px(12.)).bg(hsla(0., 0., 1., 0.35))).child(
                                     h_flex().gap(px(6.)).child(div().size(px(6.)).rounded_full().bg(theme.live)).child(format!("{running} running")),
@@ -381,10 +392,18 @@ impl Shell {
         let now = now_ms();
         h_flex().gap(px(12.)).children(recent.into_iter().map(|(project, session)| {
             let root = project.root.clone();
-            let (letter, color) = match session.agent {
-                Agent::Claude => ("C", rgb(0xd97757)),
-                Agent::OpenCode => ("O", rgb(0x111112)),
-                Agent::Codex => ("X", rgb(0x10a37f)),
+            let live = session.is_live(now);
+            let resume = {
+                let session = session.clone();
+                let this = cx.entity().downgrade();
+                let button = GelButton::new(SharedString::from(format!("cres-{}", session.id)), "").small().icon("icons/ui/terminal.svg");
+                let button = if live { button } else { button.paper() };
+                button.on_click(move |_, _, cx| {
+                    cx.stop_propagation();
+                    if let Some(this) = this.upgrade() {
+                        this.read(cx).resume(&session, cx);
+                    }
+                })
             };
             h_flex()
                 .id(SharedString::from(format!("cont-{}", session.id)))
@@ -396,30 +415,15 @@ impl Shell {
                 .border_1()
                 .border_color(theme.line_2)
                 .hover(|s| s.bg(theme.soft))
-                .child(
-                    div()
-                        .relative()
-                        .size(px(30.))
-                        .flex_shrink_0()
-                        .rounded(px(9.))
-                        .bg(color)
-                        .flex()
-                        .items_center()
-                        .justify_center()
-                        .text_color(white())
-                        .text_size(px(13.))
-                        .font_weight(FontWeight::SEMIBOLD)
-                        .child(letter)
-                        .when(session.is_live(now), |d| {
-                            d.child(div().absolute().right(px(-2.)).top(px(-2.)).size(px(9.)).rounded_full().bg(theme.live).border_2().border_color(theme.bg))
-                        }),
-                )
+                .child(super::agent_mark(session.agent, live, cx))
                 .child(
                     v_flex()
+                        .flex_1()
                         .min_w_0()
                         .child(div().text_size(px(13.)).font_weight(FontWeight::MEDIUM).truncate().child(session.title.clone()))
                         .child(div().text_size(px(11.5)).text_color(theme.ink_3).truncate().child(format!("{} · {}", project.name, ago(session.updated_ms)))),
                 )
+                .child(resume)
                 .on_click(cx.listener(move |this, _, _, cx| this.go(Screen::Project(root.clone()), cx)))
         }))
         .into_any_element()

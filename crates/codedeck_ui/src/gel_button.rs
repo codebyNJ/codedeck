@@ -112,7 +112,7 @@ impl RenderOnce for GelButton {
             .when_some(self.icon, |button, icon| {
                 button.child(svg().path(icon).size(px(14.)).text_color(ink).relative())
             })
-            .child(div().relative().child(self.label))
+            .when(!self.label.is_empty(), |button| button.child(div().relative().child(self.label)))
             .when_some(on_click, |button, handler| button.on_click(move |event, window, cx| handler(event, window, cx)))
     }
 }

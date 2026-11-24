@@ -44,14 +44,14 @@ pub fn route_to(shell: WeakEntity<Shell>, cx: &mut App) {
             shell.update(cx, |shell, cx| shell.go(screen.clone(), cx)).ok();
         }
     };
-    let home = go(Screen::Home);
+    let home = go(Screen::Home(None));
     let settings = go(Screen::Settings);
     cx.on_action(move |_: &GoHome, cx| home(cx));
     cx.on_action(move |_: &OpenSettings, cx| settings(cx));
     let search = shell.clone();
     cx.on_action(move |_: &FocusSearch, cx| {
         let Some(input) = search.update(cx, |shell, cx| {
-            shell.go(Screen::Home, cx);
+            shell.go(Screen::Home(None), cx);
             shell.search.clone()
         }).ok() else { return };
         let handle = input.read(cx).focus_handle(cx);

@@ -27,6 +27,9 @@ pub struct Session {
     pub updated_ms: i64,
     /// Prompts the user typed (not tool results, not streamed chunks).
     pub prompts: u32,
+    /// The last thing the user typed, one line. Empty if unknown.
+    #[serde(default)]
+    pub last_prompt: String,
 }
 
 /// A session touched within this window counts as running.
