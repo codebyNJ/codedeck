@@ -62,8 +62,14 @@ pub fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
     let mut first_prompt = None;
     let mut last_prompt = String::new();
     let mut prompts = 0u32;
+    let mut last_activity = None;
     for line in BufReader::new(file).lines() {
         let line = line?;
+        // Claude Code also appends bookkeeping lines (away summaries, turn timings)
+        // to old sessions, so mtime lies; only real messages count as activity.
+        if line.contains("\"type\":\"user\"") || line.contains("\"type\":\"assistant\"") {
+            last_activity = timestamp_ms(&line).or(last_activity);
+        }
         // Cheap prefilter: most lines are large tool payloads we don't need.
         if !(line.contains("\"cwd\"") || line.contains("ai-title") || line.contains("\"type\":\"user\"")) {
             continue;
@@ -97,10 +103,18 @@ pub fn read_session(path: &Path) -> anyhow::Result<Option<Session>> {
         id,
         cwd,
         title: ai_title.or(first_prompt).unwrap_or_else(|| "Untitled session".into()),
-        updated_ms: mtime_ms(path),
+        updated_ms: last_activity.unwrap_or_else(|| mtime_ms(path)),
         prompts,
         last_prompt,
     }))
+}
+
+/// The line's `"timestamp":"…"` value, without parsing the (often huge) line.
+fn timestamp_ms(line: &str) -> Option<i64> {
+    const KEY: &str = "\"timestamp\":\"";
+    let start = line.rfind(KEY)? + KEY.len();
+    let end = start + line[start..].find('"')?;
+    line[start..end].parse::<jiff::Timestamp>().ok().map(|t| t.as_millisecond())
 }
 
 fn prompt_text(content: &Value) -> Option<String> {
@@ -117,7 +131,14 @@ fn prompt_text(content: &Value) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::prompt_text;
+    use super::{prompt_text, timestamp_ms};
+
+    #[test]
+    fn reads_timestamps() {
+        let line = r#"{"type":"assistant","message":{},"timestamp":"2026-11-10T14:08:50.764Z","uuid":"x"}"#;
+        assert_eq!(timestamp_ms(line), Some(1_794_319_730_764));
+        assert_eq!(timestamp_ms(r#"{"type":"user"}"#), None);
+    }
     use serde_json::json;
 
     #[test]

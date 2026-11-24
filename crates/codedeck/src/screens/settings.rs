@@ -162,20 +162,30 @@ impl Shell {
             let on = settings.agents.contains(&agent);
             let dir = history_dir(agent);
             let count = snapshot.projects.iter().flat_map(|p| &p.sessions).chain(&snapshot.loose).filter(|s| s.agent == agent).count();
-            let hint = if home.join(dir).exists() { format!("~/{dir} · {count} conversations") } else { format!("~/{dir} · not found") };
-            row(agent.label().into(), Some(hint)).child(agent_icon(agent, 16., cx)).child(
-                Toggle::new(SharedString::from(format!("agent-{agent:?}")), on).on_change(cx.listener(move |this, on, _, cx| {
-                    let on = *on;
-                    this.state.update(cx, |state, cx| {
-                        state.update_settings(cx, |s| {
-                            s.agents.retain(|a| *a != agent);
-                            if on {
-                                s.agents.push(agent);
-                            }
-                        })
-                    });
-                })),
-            )
+            let found = home.join(dir).exists();
+            let hint = match (found, on) {
+                (false, _) => format!("~/{dir} · not found"),
+                (true, false) => format!("~/{dir} · off"),
+                (true, true) => format!("~/{dir} · {count} conversations"),
+            };
+            let control = if found {
+                Toggle::new(SharedString::from(format!("agent-{agent:?}")), on)
+                    .on_change(cx.listener(move |this, on, _, cx| {
+                        let on = *on;
+                        this.state.update(cx, |state, cx| {
+                            state.update_settings(cx, |s| {
+                                s.agents.retain(|a| *a != agent);
+                                if on {
+                                    s.agents.push(agent);
+                                }
+                            })
+                        });
+                    }))
+                    .into_any_element()
+            } else {
+                div().text_size(px(12.)).text_color(theme.ink_3).child("Not installed").into_any_element()
+            };
+            row(agent.label().into(), Some(hint)).child(agent_icon(agent, 16., cx)).child(control)
         }));
 
         let scanned = if snapshot.scanned_ms > 0 { match ago(snapshot.scanned_ms).as_str() {
