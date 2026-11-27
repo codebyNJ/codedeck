@@ -1,11 +1,11 @@
-# Codedeck
+# Repobox
 
 A macOS app that maps every codebase on your Mac and the Claude Code, OpenCode and Codex sessions that belong to each one. Built in Rust on GPUI (via `gpui-kit`).
 
 ```sh
 cargo run -p codedeck        # the app
 cargo test -p codedeck_core  # logic tests
-./packaging/bundle.sh        # target/release/Codedeck.app, with the mascot app icon
+./packaging/bundle.sh        # target/release/Repobox.app, with the mascot app icon
 ```
 
 - `crates/codedeck`: the app (window, menus, actions, screens)

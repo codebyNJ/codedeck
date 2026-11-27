@@ -98,7 +98,14 @@ impl Settings {
 }
 
 pub fn support_dir() -> PathBuf {
-    dirs::data_dir().unwrap_or_default().join("Codedeck")
+    let data = dirs::data_dir().unwrap_or_default();
+    let dir = data.join("Repobox");
+    // ponytail: one-time move from the old name; drop once no Codedeck installs remain.
+    let old = data.join("Codedeck");
+    if !dir.exists() && old.exists() {
+        let _ = std::fs::rename(&old, &dir);
+    }
+    dir
 }
 
 fn path() -> PathBuf {

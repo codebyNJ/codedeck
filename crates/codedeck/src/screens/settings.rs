@@ -127,7 +127,7 @@ impl Shell {
             )
             .when_some(latest, |g, session| {
                 g.child(
-                    row("Resume command".into(), Some(format!("What Codedeck runs for your latest {} session.", session.agent.label()))).child(
+                    row("Resume command".into(), Some(format!("What Repobox runs for your latest {} session.", session.agent.label()))).child(
                         div()
                             .max_w(px(300.))
                             .truncate()
@@ -189,9 +189,9 @@ impl Shell {
         }));
 
         let scanned = if snapshot.scanned_ms > 0 { match ago(snapshot.scanned_ms).as_str() {
-            "now" => "Last scanned just now. Codedeck also rescans when files change.".to_string(),
-            age => format!("Last scanned {age} ago. Codedeck also rescans when files change."),
-        } } else { "Codedeck also rescans when files change.".into() };
+            "now" => "Last scanned just now. Repobox also rescans when files change.".to_string(),
+            age => format!("Last scanned {age} ago. Repobox also rescans when files change."),
+        } } else { "Repobox also rescans when files change.".into() };
         let folders = group("Folders")
             .children(settings.roots.iter().enumerate().map(|(index, root)| {
                 let remove = root.clone();
@@ -205,7 +205,7 @@ impl Shell {
                     )))
             }))
             .child(
-                row("Add a folder".into(), Some("Codedeck finds every project inside it.".into())).child(
+                row("Add a folder".into(), Some("Repobox finds every project inside it.".into())).child(
                     GelButton::new("add-root", "Choose…").small().icon("icons/ui/folder.svg").on_click(cx.listener(|this, _, _, cx| {
                         this.add_folders(cx);
                     })),
@@ -233,7 +233,7 @@ impl Shell {
                     .flex_1()
                     .min_w_0()
                     .gap(px(3.))
-                    .child(div().text_size(px(14.)).font_weight(FontWeight::MEDIUM).child("Codedeck only reads."))
+                    .child(div().text_size(px(14.)).font_weight(FontWeight::MEDIUM).child("Repobox only reads."))
                     .child(div().w_full().whitespace_normal().text_size(px(12.5)).text_color(theme.ink_3).child(
                         "It never moves, edits or uploads your code or your conversations. There is no account and no analytics. Only project names leave this Mac, as avatar seeds for DiceBear.",
                     )),

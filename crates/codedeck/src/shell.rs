@@ -250,7 +250,7 @@ impl Shell {
                     .pb(px(16.))
                     .gap(px(9.))
                     .child(Avatar::mascot().size(24.))
-                    .child(div().text_size(px(15.)).font_weight(FontWeight::SEMIBOLD).child("Codedeck")),
+                    .child(div().font_family(SERIF).italic().text_size(px(21.)).child("repobox")),
             )
             .child(find)
             .child(div().id("side-scroll").flex_1().min_h_0().overflow_y_scroll().child(self.nav_list("side", top, cx)))

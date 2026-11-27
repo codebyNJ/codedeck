@@ -42,7 +42,7 @@ pub fn resume_command(session: &crate::Session) -> String {
 pub fn resume(terminal: &str, session: &crate::Session) -> anyhow::Result<()> {
     let command = resume_command(session);
     let name: String = session.id.chars().filter(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_').collect();
-    let script = std::env::temp_dir().join(format!("codedeck-resume-{name}.command"));
+    let script = std::env::temp_dir().join(format!("repobox-resume-{name}.command"));
     std::fs::write(&script, format!("#!/bin/zsh -l\ncd {} && exec {command}\n", quote(&session.cwd.to_string_lossy())))?;
     use std::os::unix::fs::PermissionsExt;
     std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755))?;

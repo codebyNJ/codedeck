@@ -1,10 +1,10 @@
 #!/bin/zsh
-# Builds target/release/Codedeck.app (release binary, Info.plist, mascot icon).
+# Builds target/release/Repobox.app (release binary, Info.plist, mascot icon).
 # ponytail: ad-hoc signed only; Developer ID signing + notarizing + .dmg come with distribution.
 set -euo pipefail
 cd "${0:A:h}/.."
 cargo build --release
-app=target/release/Codedeck.app
+app=target/release/Repobox.app
 version=$(sed -n 's/^version = "\(.*\)"/\1/p' crates/codedeck/Cargo.toml | head -1)
 
 # Icon: regenerate the .icns only when the mascot or the generator changed.
@@ -23,7 +23,7 @@ fi
 
 rm -rf $app
 mkdir -p $app/Contents/MacOS $app/Contents/Resources
-cp target/release/Codedeck $app/Contents/MacOS/
+cp target/release/Repobox $app/Contents/MacOS/
 cp $icns $app/Contents/Resources/
 sed "s/VERSION/$version/g" packaging/Info.plist > $app/Contents/Info.plist
 codesign --force --sign - $app

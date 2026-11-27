@@ -229,7 +229,7 @@ impl Shell {
                 .child(div().text_size(px(13.)).text_color(theme.ink_3).child(if has_query {
                     "Search looks at project names, paths and branches. Esc clears it."
                 } else {
-                    "Add a folder in Settings and Codedeck will find the repos inside."
+                    "Add a folder in Settings and Repobox will find the repos inside."
                 }))
                 .into_any_element()
         } else {

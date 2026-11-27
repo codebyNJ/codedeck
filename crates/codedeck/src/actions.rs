@@ -18,10 +18,10 @@ pub fn install(cx: &mut App) {
         KeyBinding::new("cmd-shift-l", ToggleTheme, None),
     ]);
     cx.set_menus([
-        Menu::new("Codedeck").items([
+        Menu::new("Repobox").items([
             MenuItem::action("Settings…", OpenSettings),
             MenuItem::separator(),
-            MenuItem::action("Quit Codedeck", Quit),
+            MenuItem::action("Quit Repobox", Quit),
         ]),
         Menu::new("View").items([
             MenuItem::action("Home", GoHome),
