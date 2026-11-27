@@ -3,7 +3,7 @@ use gpui_kit::App;
 
 pub const SANS: &str = "Instrument Sans";
 /// Accent words only, always italic.
-pub const SERIF: &str = "Fraunces";
+pub const SERIF: &str = "Boska";
 pub const MONO: &str = "Geist Mono";
 
 pub(crate) fn load_fonts(cx: &mut App) {
