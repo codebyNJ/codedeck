@@ -1,7 +1,7 @@
 use super::{ago, tilde};
 use crate::shell::{Screen, Shell};
-use codedeck_core::{Session, avatar};
-use codedeck_ui::prelude::*;
+use repobox_core::{Session, avatar};
+use repobox_ui::prelude::*;
 use std::path::PathBuf;
 
 actions!(palette, [Close, Up, Down, Confirm]);

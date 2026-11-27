@@ -1,7 +1,7 @@
 use super::{AGENTS, by_day, group_label, tilde};
 use crate::shell::{Scope, Shell};
-use codedeck_core::{Session, now_ms};
-use codedeck_ui::prelude::*;
+use repobox_core::{Session, now_ms};
+use repobox_ui::prelude::*;
 use std::path::PathBuf;
 
 impl Shell {

@@ -1,11 +1,11 @@
 [package]
-name = "codedeck_core"
+name = "repobox_core"
 version = "0.1.0"
 edition.workspace = true
 publish.workspace = true
 
 [lib]
-path = "src/codedeck_core.rs"
+path = "src/repobox_core.rs"
 
 [dependencies]
 anyhow.workspace = true

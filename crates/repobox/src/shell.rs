@@ -1,7 +1,7 @@
 use crate::app_state::AppState;
 use crate::screens::{AGENTS, agent_icon, tilde};
-use codedeck_core::{Agent, now_ms};
-use codedeck_ui::{motion, prelude::*};
+use repobox_core::{Agent, now_ms};
+use repobox_ui::{motion, prelude::*};
 use std::path::PathBuf;
 
 #[derive(Clone, PartialEq)]
@@ -47,7 +47,7 @@ pub struct Shell {
     /// Agent filter on the project and Sessions screens; 0 is All.
     pub agent_filter: usize,
     /// Git history for the open project page, read when the page opens.
-    pub history: Option<(PathBuf, Option<codedeck_core::git::History>)>,
+    pub history: Option<(PathBuf, Option<repobox_core::git::History>)>,
     _subscriptions: Vec<Subscription>,
 }
 
@@ -88,7 +88,7 @@ impl Shell {
         if let Screen::Project(root) = &screen
             && self.history.as_ref().is_none_or(|(r, _)| r != root)
         {
-            self.history = Some((root.clone(), codedeck_core::git::history(root)));
+            self.history = Some((root.clone(), repobox_core::git::history(root)));
         }
         self.screen = screen;
         cx.notify();

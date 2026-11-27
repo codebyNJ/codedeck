@@ -973,7 +973,7 @@ function runScan() {
 
 /* ============================================================
    The Codedeck bot, rebuilt as live SVG from its DiceBear source (bottts-neutral,
-   seed "codedeck-mascot"): the red light sweeps the visor, the grill talks, the body squashes.
+   seed "repobox-mascot"): the red light sweeps the visor, the grill talks, the body squashes.
    ============================================================ */
 const VISOR = "M96 2H8c-4.5 0-8 3.5-8 8.03V28c0 4.5 3.5 8 8 8h13c8 0 11 8 18 8h27c7 0 9-8 17-8h13c4.5 0 8-3.5 8-8V10c0-4.5-3.5-8-8-8";
 const SLIT = "M87 14H17c-3.5 0-5 3-5 5v2c0 2 1.5 5 5 5h12c6 0 11.62 8 17 8h14c5.38 0 9-8 15-8h12c3.5 0 5-3 5-5v-2c0-2-1.5-5-5-5";
@@ -1689,12 +1689,12 @@ function loose() {
   return app("loose", `<div class="bar"><div class="crumb"><b>Loose sessions</b></div></div>
   <div class="scroll"><div class="h" data-in>Sessions <span class="it">without a home.</span></div><p class="hsub" data-in style="--i:1">These ran somewhere Codedeck doesn't watch. Give them a home, or hide them.</p>
   <div class="rows" data-in style="--i:2">${L.map(([a, t, path, why, add]) => `<div class="r" style="height:54px"><span class="gl ag ${a}"><i>${AG[a][0]}</i></span><div class="ttl"><b>${t}</b><small class="miss">${path} · ${why}</small></div>${add ? gel(I.plus + " Watch folder", "sm paper") : ""}${gel("Resume", "sm", 'data-go="resume"')}<button class="gel sm paper">Hide</button></div>`).join("")}</div>
-  <div class="empty" data-in style="--i:3">${bot("codedeck-mascot", 64, "bob")}<p style="color:var(--ink-3);margin:14px 0 0;font-size:12.5px">When everything has a home, this list disappears.</p></div></div>`);
+  <div class="empty" data-in style="--i:3">${bot("repobox-mascot", 64, "bob")}<p style="color:var(--ink-3);margin:14px 0 0;font-size:12.5px">When everything has a home, this list disappears.</p></div></div>`);
 }
 
 function settings(tab) {
   const agRow = (a, n, path, on, sub) => `<div class="srow"><span class="gl ag ${a}" style="width:28px;height:28px;border-radius:8px;background:var(--shell);display:grid;place-items:center"><i>${AG[a][0]}</i></span><div class="k"><b>${n}</b><span class="mono">${sub || path}</span></div>${tog(on)}</div>`;
-  const body = tab === "License" ? `<div class="lic" data-in style="--i:1">${bot("codedeck-mascot", 88, "bob")}<div style="flex:1">
+  const body = tab === "License" ? `<div class="lic" data-in style="--i:1">${bot("repobox-mascot", 88, "bob")}<div style="flex:1">
       <span class="lbl">Trial · 11 of 14 days left</span><div class="meter"><i></i></div>
       <div style="display:flex;align-items:baseline;gap:12px;margin-top:16px"><span class="price">$15</span><span class="it" style="font-size:20px">once, yours forever.</span></div>
       <p style="color:var(--ink-3);margin:6px 0 0">One Mac license. Free updates for this major version. No account, no subscription.</p>
@@ -1714,7 +1714,7 @@ function settings(tab) {
 }
 
 const menubar = () => `<div class="desk bgp"></div><div class="mbar"><span>Finder</span><span style="font-weight:400">File</span><span style="font-weight:400">Edit</span><span style="font-weight:400">View</span>
-  <div class="rs"><span class="me">${bot("codedeck-mascot", 15)}</span><span>Mon 16 Nov 9:41</span></div></div>
+  <div class="rs"><span class="me">${bot("repobox-mascot", 15)}</span><span>Mon 16 Nov 9:41</span></div></div>
   <div class="pop"><button class="find" data-go="palette">${I.search}Search projects & sessions<kbd>⌘⇧K</kbd></button>
     <span class="lbl" style="display:block;margin:8px 8px 4px">Recent</span>
     ${ALL.filter(x => x.d <= 1).slice(0, 4).map(x => `<div class="r">${bot(x.p.id, 26)}<div class="ttl"><b>${x.t}</b><small>${x.p.id} · ${AG[x.a][1]} · ${x.ago}</small></div>${gel("Resume", "sm", 'data-go="resume"')}</div>`).join("")}

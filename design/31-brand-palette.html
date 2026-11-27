@@ -58,7 +58,7 @@ body { margin: 0; background: var(--ground); color: var(--fig); font: 14px/1.4 "
 </head>
 <body>
 <div class="bar">
-  <span class="nm"><img src="assets/mascot/codedeck-mascot.svg" width="22" height="22" alt="" style="display:block">Codedeck <span class="lab" style="margin-left:6px">Palette board · 002</span></span>
+  <span class="nm"><img src="assets/mascot/repobox-mascot.svg" width="22" height="22" alt="" style="display:block">Codedeck <span class="lab" style="margin-left:6px">Palette board · 002</span></span>
   <span class="sp"></span>
   <span class="lab">Ground</span><div class="sw2" id="ground"><button class="on" data-v="white">White</button><button data-v="black">Black</button></div>
   <span class="lab">Direction</span><div class="sw2" id="dir"><button class="on" data-v="mono">Mono</button><button data-v="stamp">Stamp</button><button data-v="meadow">Meadow</button><button data-v="painting">Painting</button></div>
@@ -100,7 +100,7 @@ const PAINT = ["assets/art/wheat-day.jpg", "assets/art/jatte.jpg", "assets/art/w
 
 /* ---- robot ---- */
 // ring: a flat 3px outline so the red mascot still reads on a red ground
-const bot = (size, ring = "") => `<img src="assets/mascot/codedeck-mascot.svg" width="${size}" height="${size}" alt="" style="display:block;flex:none;border-radius:${size * .225}px;${ring ? `box-shadow:0 0 0 ${Math.max(2, size / 40)}px ${ring}` : ""}">`;
+const bot = (size, ring = "") => `<img src="assets/mascot/repobox-mascot.svg" width="${size}" height="${size}" alt="" style="display:block;flex:none;border-radius:${size * .225}px;${ring ? `box-shadow:0 0 0 ${Math.max(2, size / 40)}px ${ring}` : ""}">`;
 const av = (name, size) => `<img src="assets/avatars/${name}.svg" width="${size}" height="${size}" alt="" style="display:block;flex:none;border-radius:${size * .22}px">`;
 
 /* ---- a direction decides what a "field" is: flat colour, art, and its text colours ---- */

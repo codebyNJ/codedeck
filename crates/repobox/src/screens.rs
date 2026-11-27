@@ -5,8 +5,8 @@ mod sessions;
 mod settings;
 
 use crate::shell::{Screen, Shell};
-use codedeck_core::{Agent, Session, avatar, launch};
-use codedeck_ui::prelude::*;
+use repobox_core::{Agent, Session, avatar, launch};
+use repobox_ui::prelude::*;
 use std::path::Path;
 
 pub const AGENTS: [Agent; 3] = [Agent::Claude, Agent::OpenCode, Agent::Codex];
@@ -75,7 +75,7 @@ pub fn prompts(n: u32) -> String {
 
 /// "now", "4m", "2h", "3d", "5w" — the prototype's short ages.
 pub fn ago(ms: i64) -> String {
-    let minutes = (codedeck_core::now_ms() - ms).max(0) / 60_000;
+    let minutes = (repobox_core::now_ms() - ms).max(0) / 60_000;
     match minutes {
         0 => "now".into(),
         1..=59 => format!("{minutes}m"),
@@ -262,7 +262,7 @@ impl Shell {
         let dark = cx.theme().dark;
         self.state.update(cx, |state, cx| {
             state.update_settings(cx, |s| {
-                s.theme = if dark { codedeck_core::settings::Theme::Dark } else { codedeck_core::settings::Theme::Light }
+                s.theme = if dark { repobox_core::settings::Theme::Dark } else { repobox_core::settings::Theme::Light }
             })
         });
     }

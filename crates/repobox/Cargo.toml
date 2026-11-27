@@ -1,5 +1,5 @@
 [package]
-name = "codedeck"
+name = "repobox"
 version = "0.1.0"
 edition.workspace = true
 publish.workspace = true
@@ -9,8 +9,8 @@ name = "Repobox"
 path = "src/main.rs"
 
 [dependencies]
-codedeck_core.workspace = true
-codedeck_ui.workspace = true
+repobox_core.workspace = true
+repobox_ui.workspace = true
 gpui-kit.workspace = true
 anyhow.workspace = true
 log.workspace = true

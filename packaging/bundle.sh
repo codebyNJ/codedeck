@@ -5,13 +5,13 @@ set -euo pipefail
 cd "${0:A:h}/.."
 cargo build --release
 app=target/release/Repobox.app
-version=$(sed -n 's/^version = "\(.*\)"/\1/p' crates/codedeck/Cargo.toml | head -1)
+version=$(sed -n 's/^version = "\(.*\)"/\1/p' crates/repobox/Cargo.toml | head -1)
 
 # Icon: regenerate the .icns only when the mascot or the generator changed.
 icns=packaging/AppIcon.icns
-if [[ ! -f $icns || design/assets/mascot/codedeck-mascot.svg -nt $icns || packaging/icon.swift -nt $icns ]]; then
+if [[ ! -f $icns || design/assets/mascot/repobox-mascot.svg -nt $icns || packaging/icon.swift -nt $icns ]]; then
   tmp=$(mktemp -d)
-  swift packaging/icon.swift design/assets/mascot/codedeck-mascot.svg $tmp/1024.png
+  swift packaging/icon.swift design/assets/mascot/repobox-mascot.svg $tmp/1024.png
   mkdir $tmp/AppIcon.iconset
   for s in 16 32 128 256 512; do
     sips -z $s $s $tmp/1024.png --out $tmp/AppIcon.iconset/icon_${s}x${s}.png >/dev/null

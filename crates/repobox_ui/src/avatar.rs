@@ -42,7 +42,7 @@ impl RenderOnce for Avatar {
             return img(path).size(px(s)).flex_shrink_0().rounded(px(s * 0.29)).into_any_element();
         }
         if self.name.is_none() {
-            return img("art/codedeck-mascot.svg").size(px(s)).flex_shrink_0().rounded(px(s * 0.225)).into_any_element();
+            return img("art/repobox-mascot.svg").size(px(s)).flex_shrink_0().rounded(px(s * 0.225)).into_any_element();
         }
         let body: Hsla = rgb(match &self.name {
             Some(name) => BODIES[hash(name) % BODIES.len()],

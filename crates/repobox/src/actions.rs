@@ -1,12 +1,12 @@
 use crate::shell::{Screen, Shell};
-use codedeck_ui::prelude::*;
+use repobox_ui::prelude::*;
 
-actions!(codedeck, [Quit, Rescan, GoHome, OpenSettings, ToggleTheme, FocusSearch, OpenPalette]);
+actions!(repobox, [Quit, Rescan, GoHome, OpenSettings, ToggleTheme, FocusSearch, OpenPalette]);
 
 /// Keybindings and the native menu bar. Shell handles the view actions.
 pub fn install(cx: &mut App) {
     cx.on_action(|_: &Quit, cx| cx.quit());
-    codedeck_ui::text_input::bind_keys(cx);
+    repobox_ui::text_input::bind_keys(cx);
     crate::screens::palette::bind_keys(cx);
     cx.bind_keys([
         KeyBinding::new("cmd-f", FocusSearch, None),

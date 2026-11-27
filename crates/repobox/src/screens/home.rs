@@ -1,7 +1,7 @@
 use super::{ago, stack_label, tilde};
 use crate::shell::{Screen, Shell};
-use codedeck_core::{Project, avatar, now_ms, settings::{Layout, Painting}};
-use codedeck_ui::prelude::*;
+use repobox_core::{Project, avatar, now_ms, settings::{Layout, Painting}};
+use repobox_ui::prelude::*;
 
 /// Painting by time of day: (asset, credit).
 const MONET: (&str, &str) = ("art/wheat-summer.jpg", "Claude Monet, Stacks of Wheat (End of Summer), 1890–91");
@@ -385,7 +385,7 @@ impl Shell {
     /// The three most recent sessions, one per project.
     fn render_continue(&self, projects: &[Project], cx: &mut Context<Self>) -> AnyElement {
         let theme = cx.theme().clone();
-        let mut recent: Vec<(&Project, &codedeck_core::Session)> =
+        let mut recent: Vec<(&Project, &repobox_core::Session)> =
             projects.iter().filter_map(|p| p.sessions.first().map(|s| (p, s))).collect();
         recent.sort_by_key(|(_, s)| std::cmp::Reverse(s.updated_ms));
         recent.truncate(3);

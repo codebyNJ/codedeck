@@ -1,5 +1,5 @@
-use codedeck_core::{Settings, Snapshot, index, watch};
-use codedeck_ui::prelude::*;
+use repobox_core::{Settings, Snapshot, index, watch};
+use repobox_ui::prelude::*;
 use std::{
     sync::{
         Arc,
@@ -12,7 +12,7 @@ use std::{
 /// so a rescan mostly costs a walk, a stat per file and one `git status` per project.
 const MIN_RESCAN_GAP: Duration = Duration::from_secs(10);
 
-/// Everything the screens show, and the only bridge to codedeck_core.
+/// Everything the screens show, and the only bridge to repobox_core.
 pub struct AppState {
     pub settings: Settings,
     pub snapshot: Snapshot,
@@ -70,7 +70,7 @@ impl AppState {
         self.scan_task = Some(cx.spawn(async move |this, cx| {
             let snapshot = cx
                 .background_spawn(async move {
-                    let snapshot = codedeck_core::scan_all(&settings);
+                    let snapshot = repobox_core::scan_all(&settings);
                     if let Err(error) = index::save(&snapshot) {
                         log::warn!("cache: {error:#}");
                     }
@@ -84,7 +84,7 @@ impl AppState {
                 cx.notify();
             })?;
             // Avatars after the cards are up; cards draw a bot until each one lands.
-            cx.background_spawn(async move { codedeck_core::avatar::fetch_missing(names.iter().map(String::as_str)) }).await;
+            cx.background_spawn(async move { repobox_core::avatar::fetch_missing(names.iter().map(String::as_str)) }).await;
             this.update(cx, |_, cx| cx.notify())
         }));
     }

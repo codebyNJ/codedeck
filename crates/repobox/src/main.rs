@@ -4,15 +4,15 @@ mod screens;
 mod shell;
 
 use app_state::AppState;
-use codedeck_ui::prelude::*;
+use repobox_ui::prelude::*;
 use shell::Shell;
 
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn")).init();
-    gpui_kit::application().with_assets(codedeck_ui::Assets).run(|cx| {
+    gpui_kit::application().with_assets(repobox_ui::Assets).run(|cx| {
         gpui_kit::init(cx);
-        let settings = codedeck_core::Settings::load();
-        codedeck_ui::init(settings.theme == codedeck_core::settings::Theme::Dark, cx);
+        let settings = repobox_core::Settings::load();
+        repobox_ui::init(settings.theme == repobox_core::settings::Theme::Dark, cx);
         actions::install(cx);
 
         let state = cx.new(|cx| AppState::new(settings, cx));

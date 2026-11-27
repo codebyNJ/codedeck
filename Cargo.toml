@@ -7,8 +7,8 @@ edition = "2024"
 publish = false
 
 [workspace.dependencies]
-codedeck_core = { path = "crates/codedeck_core" }
-codedeck_ui = { path = "crates/codedeck_ui" }
+repobox_core = { path = "crates/repobox_core" }
+repobox_ui = { path = "crates/repobox_ui" }
 gpui-kit = { version = "=0.10.0", default-features = false }
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }

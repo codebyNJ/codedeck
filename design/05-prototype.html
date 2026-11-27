@@ -406,7 +406,7 @@ function sidebar(active) {
       <div class="lbl">Agents</div>
       ${Object.keys(AG).map(a => nav("ag-" + a, `<span class="ag ${a}"><i>${AG[a][0]}</i></span>`, AG[a][1], `<span class="c">${count(a)}</span>`, "sessions")).join("")}
     </div>
-    <div class="side-foot">${bot("codedeck-mascot", 26)}<div class="t"><b>Watching 2 folders</b><span class="spin">●</span> synced just now</div><button data-go="settings" title="Settings">${I.gear}</button></div>
+    <div class="side-foot">${bot("repobox-mascot", 26)}<div class="t"><b>Watching 2 folders</b><span class="spin">●</span> synced just now</div><button data-go="settings" title="Settings">${I.gear}</button></div>
   </aside>`;
 }
 const app = (active, body, extra = "") => `<div class="app">${sidebar(active)}<section class="main">${body}</section></div>${extra}`;
@@ -484,12 +484,12 @@ function loose() {
   return app("loose", `<div class="bar"><div class="crumb"><b>Loose sessions</b></div></div>
   <div class="scroll"><div class="h" data-in>Sessions <span class="it">without a home.</span></div><p class="hsub" data-in style="--i:1">These ran somewhere Codedeck doesn't watch. Add the folder, or hide them.</p>
   <div class="rows" data-in style="--i:2">${L.map(([a, t, path, why, add]) => `<div class="r" style="height:54px"><span class="gl ag ${a}"><i>${AG[a][0]}</i></span><div class="ttl">${t}<div class="miss">${path} · ${why}</div></div>${add ? gel(I.plus + " Watch folder", "sm paper") : ""}${gel("Resume", "sm", 'data-go="resume"')}<button class="gel sm paper">Hide</button></div>`).join("")}</div>
-  <div class="empty" data-in style="--i:3">${bot("codedeck-mascot", 64)}<p style="color:var(--ink-3);margin:14px 0 0;font-size:12.5px">When everything has a home, this list disappears.</p></div>
+  <div class="empty" data-in style="--i:3">${bot("repobox-mascot", 64)}<p style="color:var(--ink-3);margin:14px 0 0;font-size:12.5px">When everything has a home, this list disappears.</p></div>
   </div>`);
 }
 
 function settings(tab = "General") {
-  const body = tab === "License" ? `<div class="lic" data-in style="--i:1">${bot("codedeck-mascot", 88)}<div style="flex:1">
+  const body = tab === "License" ? `<div class="lic" data-in style="--i:1">${bot("repobox-mascot", 88)}<div style="flex:1">
       <div class="lbl">Trial · 11 of 14 days left</div><div class="meter"><i></i></div>
       <div style="display:flex;align-items:baseline;gap:12px;margin-top:16px"><span class="price">$15</span><span class="it" style="font-size:20px">once, yours forever.</span></div>
       <p style="color:var(--ink-3);margin:6px 0 0">One Mac license. Free updates for this major version. No account, no subscription.</p>
@@ -521,7 +521,7 @@ function settings(tab = "General") {
 const obFoot = (step, next, label = "Continue") => `<div class="ob-foot" data-in style="--i:6"><div class="dots">${[0, 1, 2, 3, 4].map(i => `<i class="${i === step ? "on" : ""}"></i>`).join("")}</div><div>${step > 0 && step < 4 ? `<button class="skip" data-go="${next}">Skip</button>` : ""}${gel(label, "lg", `data-go="${next}"`)}</div></div>`;
 const ob = (inner, foot) => `<div class="ob-wrap"><div class="ob">${inner}</div>${foot}</div>`;
 
-const welcome = () => ob(`<div class="mascot" data-in>${bot("codedeck-mascot", 76)}</div>
+const welcome = () => ob(`<div class="mascot" data-in>${bot("repobox-mascot", 76)}</div>
   <h2 data-in style="--i:1">Every project,<br><span class="it">quietly remembered.</span></h2>
   <p class="lead" data-in style="--i:2">Codedeck finds the code on your Mac and every conversation you've had with Claude, Codex or OpenCode about it, then keeps them one click away.</p>
   <div class="privacy" data-in style="--i:3">${I.lock}Everything stays on this Mac. No account, no cloud, no AI.</div>`, obFoot(0, "folders", "Get started"));
@@ -562,7 +562,7 @@ const ready = () => ob(`<div class="fan" data-in>${P.slice(0, 8).map((p, i) => `
 
 function menubar() {
   return `<div class="desk"></div><div class="mbar"><b></b><span>Finder</span><span style="font-weight:400">File</span><span style="font-weight:400">Edit</span><span style="font-weight:400">View</span>
-    <div class="r-side"><span class="me">${bot("codedeck-mascot", 15)}</span><span style="font-weight:400">Mon 16 Nov  9:41</span></div></div>
+    <div class="r-side"><span class="me">${bot("repobox-mascot", 15)}</span><span style="font-weight:400">Mon 16 Nov  9:41</span></div></div>
     <div class="pop"><button class="find" data-go="palette">${I.search}Search projects & sessions<kbd>⌘⇧K</kbd></button>
       <div class="lbl" style="margin:8px 8px 4px">Recent</div>
       ${ALL.filter(x => x.d <= 1).slice(0, 4).map(x => `<div class="r">${bot(x.p.id, 26)}<div class="ttl">${x.t}<small>${x.p.id} · ${AG[x.a][1]} · ${x.ago}</small></div>${gel("Resume", "sm", 'data-go="resume"')}</div>`).join("")}

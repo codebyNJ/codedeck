@@ -1,7 +1,7 @@
 use super::{AGENTS, ago, agent_icon, by_day, group_label, stack_label, tilde};
 use crate::shell::{Screen, Shell};
-use codedeck_core::{avatar, git, launch, now_ms};
-use codedeck_ui::prelude::*;
+use repobox_core::{avatar, git, launch, now_ms};
+use repobox_ui::prelude::*;
 use std::path::Path;
 
 impl Shell {

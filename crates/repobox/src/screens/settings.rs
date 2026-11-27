@@ -1,7 +1,7 @@
 use super::{AGENTS, ago, agent_icon, installed_editors, tilde};
 use crate::shell::Shell;
-use codedeck_core::{Agent, index, launch, scan, settings::{Painting, support_dir}};
-use codedeck_ui::prelude::*;
+use repobox_core::{Agent, index, launch, scan, settings::{Painting, support_dir}};
+use repobox_ui::prelude::*;
 
 const PAINTINGS: [(Painting, &str, &str); 4] = [
     (Painting::Auto, "Auto", ""),

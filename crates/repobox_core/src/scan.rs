@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn stops_at_first_project() -> anyhow::Result<()> {
-        let tmp = std::env::temp_dir().join(format!("codedeck-scan-{}", std::process::id()));
+        let tmp = std::env::temp_dir().join(format!("repobox-scan-{}", std::process::id()));
         std::fs::create_dir_all(tmp.join("a/packages/inner"))?;
         std::fs::write(tmp.join("a/Cargo.toml"), "")?;
         std::fs::write(tmp.join("a/packages/inner/package.json"), "{}")?;
