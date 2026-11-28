@@ -135,7 +135,13 @@ h1 em{display:block;font-size:1.08em;letter-spacing:-.02em;margin-top:.04em}
 .sheet .p{color:#8a8a90}.sheet .g{color:#7fd18f}.sheet .c{color:#f0a08f}
 .sheet .you{margin-top:12px;color:#fff}
 .sheet .ai{color:#c9c9ce;white-space:normal}
-.sheet .ai b{color:var(--claude);font-weight:400}
+.sheet .ai b,.sheet .ed b{color:var(--claude);font-weight:400}
+.sheet .ed{margin-top:10px;color:#e8e8ea}.sheet .ed .w{color:#fff}
+.sheet .df{margin:4px 0 0 18px;font-size:12.5px;line-height:1.7;border-left:1px solid #3a3a3e;padding-left:12px}
+.sheet .df span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet .df .m{color:#f0a08f}.sheet .df .pl{color:#7fd18f}
+.sheet .cin{position:absolute;left:20px;right:20px;bottom:16px;border:1px solid #3a3a3e;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:10px;color:#8a8a90}
+.sheet .cin em{font:inherit;font-style:normal;margin-left:auto;font-size:11.5px}
 .caret{display:inline-block;width:8px;height:15px;background:#e8e8ea;vertical-align:-2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .cursor{position:absolute;left:0;top:0;width:22px;z-index:6;opacity:0;pointer-events:none}
@@ -204,7 +210,8 @@ details p{color:var(--ink2);margin-top:10px;font-size:15.5px}
 code{font-family:"Geist Mono",monospace;font-size:.88em;background:var(--soft);padding:1px 6px;border-radius:5px}
 footer{position:relative;overflow:hidden;padding-top:60px}
 .mark{font-family:Boska,serif;font-style:italic;font-weight:500;font-size:27vw;line-height:.76;letter-spacing:-.03em;text-align:center;margin-bottom:-4.2vw;white-space:nowrap;user-select:none}
-.footbot{position:absolute;width:8vw;max-width:110px;right:12vw;top:calc(60px - 4.6vw);transform-origin:50% 100%;cursor:pointer}
+.mw{position:relative}
+.footbot{position:absolute;width:8vw;max-width:110px;right:12vw;top:calc(6.6vw - min(8vw,110px));transform-origin:50% 100%;cursor:pointer}
 .fl{display:flex;gap:22px;flex-wrap:wrap;align-items:center;padding:22px 28px 26px;font-size:13px;color:var(--ink3);border-top:1px solid var(--line);position:relative;background:#fff}
 .fl>:last-child{margin-left:auto}
 .fl a:hover{color:var(--ink)}
@@ -237,6 +244,99 @@ dialog[open] .pal,dialog[open] .fbox{animation:pop .5s var(--spring)}
 .fbox video{width:100%;display:block;border-radius:16px;background:#000}
 .fx{position:fixed;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:#fff;font-size:22px;line-height:1}
 
+
+/* ======== detailing ======== */
+nav .prog{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line)}
+nav .prog i{position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:0 50%}
+nav .links a{display:flex;gap:6px;align-items:baseline}
+nav .links a small{font-family:"Geist Mono",monospace;font-size:10.5px;color:var(--ink3)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 14px 0 5px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);font-size:14px;color:var(--ink2);margin-bottom:28px;background:#fff;transition:transform .35s var(--spring)}
+.eyebrow:hover{transform:scale(1.03)}
+.eyebrow .tg{font-family:"Geist Mono",monospace;font-size:10.5px;letter-spacing:.06em;background:var(--ink);color:#fff;border-radius:999px;padding:5px 9px}
+.eyebrow .ey{color:var(--ink3)}
+/* the stage is drawn like a spec sheet */
+.frame{position:absolute;inset:76px 16px 16px;border:1px solid var(--line);pointer-events:none;z-index:1}
+.frame::before{content:"";position:absolute;inset:0;background:radial-gradient(#dcdcdf 1px,transparent 1.3px) 0 0/24px 24px;-webkit-mask:radial-gradient(ellipse at 50% 45%,transparent 32%,#000 78%);mask:radial-gradient(ellipse at 50% 45%,transparent 32%,#000 78%);opacity:.8}
+.frame .x{position:absolute;width:13px;height:13px}
+.frame .x::before,.frame .x::after{content:"";position:absolute;background:var(--ink)}
+.frame .x::before{left:6px;top:0;width:1px;height:13px}.frame .x::after{top:6px;left:0;height:1px;width:13px}
+.x.a{left:-7px;top:-7px}.x.b{right:-7px;top:-7px}.x.c{left:-7px;bottom:-7px}.x.d{right:-7px;bottom:-7px}
+.ruler{position:absolute;left:0;right:0;top:0;height:9px;background:repeating-linear-gradient(90deg,#d4d4d8 0 1px,transparent 1px 10px) 0 0/100% 4px no-repeat,repeating-linear-gradient(90deg,#9a9aa0 0 1px,transparent 1px 100px) 0 0/100% 9px no-repeat}
+.ruler.v{right:auto;bottom:0;width:9px;height:auto;background:repeating-linear-gradient(180deg,#d4d4d8 0 1px,transparent 1px 10px) 0 0/4px 100% no-repeat,repeating-linear-gradient(180deg,#9a9aa0 0 1px,transparent 1px 100px) 0 0/9px 100% no-repeat}
+.rnum{position:absolute;top:12px;font:9.5px/1 "Geist Mono",monospace;color:var(--ink3);transform:translateX(3px)}
+.readout{position:absolute;left:18px;bottom:12px;font:10.5px/1 "Geist Mono",monospace;color:var(--ink3);letter-spacing:.06em;display:flex;gap:16px}
+.readout b{font-weight:400;color:var(--ink)}
+.tblock{position:absolute;right:0;bottom:0;display:grid;grid-template-columns:auto auto;border-left:1px solid var(--line);border-top:1px solid var(--line);background:#fff;font:10.5px/1 "Geist Mono",monospace;letter-spacing:.06em;color:var(--ink3)}
+.tblock span{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tblock span:nth-child(2n){border-right:0}.tblock span:nth-last-child(-n+2){border-bottom:0}
+.tblock b{font-weight:400;color:var(--ink)}
+.tblock .fig{color:var(--red)}
+/* spec callouts that point at the product */
+.ann{position:absolute;left:0;top:0;z-index:6;pointer-events:none;opacity:0}
+.ann .pt{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.ann .ln{position:absolute;left:0;width:1px;background:var(--ink);transform-origin:50% 0}
+.ann .lb{position:absolute;left:-1px;white-space:nowrap;font:10.5px/1 "Geist Mono",monospace;letter-spacing:.06em;background:var(--ink);color:#fff;padding:7px 9px;border-radius:5px}
+.ann .lb s{text-decoration:none;color:#f0a08f;margin-right:7px}
+.ann.up .ln{bottom:0;height:var(--h);transform-origin:50% 100%}.ann.up .lb{bottom:var(--h)}
+.ann.dn .ln{top:0;height:var(--h)}.ann.dn .lb{top:var(--h)}
+.ann.l .lb{left:auto;right:-1px}
+/* denser app window */
+.side{position:relative}
+.nv .fd{width:13px;height:10px;background:#dfe7f6;border-radius:2px}
+.sfoot{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--ink3);border-top:1px solid var(--line);padding:10px 9px 0}
+.sfoot .dot{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.wbar{position:absolute;left:0;right:0;bottom:0;height:28px;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 16px;font:10.5px/1 "Geist Mono",monospace;color:var(--ink3);background:#fff;z-index:1}
+.wbar span{display:flex;align-items:center;gap:6px}.wbar .r{margin-left:auto}
+.cmeta{grid-column:2/4;display:flex;align-items:flex-end;gap:8px;margin-top:6px;font-size:10.5px;color:var(--ink3)}
+.spark{display:flex;align-items:flex-end;gap:2px;height:14px}
+.spark i{width:3px;background:#dcdcdf;border-radius:1px}
+.spark i:nth-last-child(-n+3){background:var(--ink)}
+.cmeta .lgs{margin-left:auto;display:flex;gap:4px;align-items:center}
+.cmeta .lg{width:11px;height:11px}
+.srow .r .mc{font-family:"Geist Mono",monospace;font-size:10.5px}
+.frag .f-bub b span{color:var(--ink3);opacity:.8}
+.step .spec{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.step .spec span{font:10.5px/1 "Geist Mono",monospace;padding:5px 8px;border-radius:5px;background:var(--soft);color:var(--ink2)}
+/* marquee band */
+.band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:2.2vw 0;white-space:nowrap;background:#fff}
+.band .tr{display:inline-flex;align-items:center;gap:3vw;will-change:transform}
+.band .it{font-family:Boska,serif;font-style:italic;font-weight:500;font-size:clamp(56px,8.5vw,140px);line-height:1;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:3vw}
+.band .it img{height:.62em}
+.band .it .c{font-family:"Geist Mono",monospace;font-style:normal;font-size:.16em;letter-spacing:.06em;color:var(--ink3);border:1px solid var(--line);border-radius:999px;padding:.5em .9em;align-self:center}
+/* section bars */
+.secbar{display:flex;align-items:center;gap:16px;font:11px/1 "Geist Mono",monospace;letter-spacing:.08em;color:var(--ink3);margin-bottom:64px}
+.secbar i{flex:1;height:1px;background:var(--line)}
+.secbar b{font-weight:400;color:var(--red)}
+.dark .secbar{color:#8a8a90}.dark .secbar i{background:#2b2b30}
+/* access table */
+.access{margin-top:88px;border-top:1px solid #2b2b30}
+.ar{display:grid;grid-template-columns:1.25fr 1fr 110px;gap:24px;padding:16px 4px;border-bottom:1px solid #2b2b30;font-size:15px;color:#d6d6da;align-items:center}
+.ar>:first-child{font-family:"Geist Mono",monospace;font-size:13px;color:#fff}
+.ar.ah{font:10.5px/1 "Geist Mono",monospace;letter-spacing:.08em;color:#8a8a90;padding:14px 4px}
+.ar .rd,.ar .no{font:11px/1 "Geist Mono",monospace;letter-spacing:.06em;justify-self:start;padding:6px 10px;border-radius:999px}
+.ar .rd{color:#7fd18f;box-shadow:inset 0 0 0 1px #2c4a33}
+.ar .no{color:#f0a08f;box-shadow:inset 0 0 0 1px #4a2f2b}
+/* close details */
+.specs{display:grid;grid-template-columns:repeat(4,1fr);max-width:1080px;margin:56px auto 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left}
+.specs div{padding:18px 20px}.specs div+div{border-left:1px solid var(--line)}
+.specs small{display:block;font:10.5px/1 "Geist Mono",monospace;letter-spacing:.08em;color:var(--ink3);margin-bottom:9px}
+.specs p{font-size:15px;font-weight:500}
+.filmcard .fc{position:absolute;inset:16px;pointer-events:none}
+.filmcard .fc i{position:absolute;width:18px;height:18px;border:0 solid #fff}
+.filmcard .fc i:nth-child(1){left:0;top:0;border-width:2px 0 0 2px}.filmcard .fc i:nth-child(2){right:0;top:0;border-width:2px 2px 0 0}
+.filmcard .fc i:nth-child(3){left:0;bottom:0;border-width:0 0 2px 2px}.filmcard .fc i:nth-child(4){right:0;bottom:0;border-width:0 2px 2px 0}
+.filmcard .tc{position:absolute;top:26px;left:30px;font:11px/1 "Geist Mono",monospace;letter-spacing:.08em;background:var(--ink);color:#fff;padding:7px 10px;border-radius:5px}
+.filmcard .tc b{color:var(--red);font-weight:400}
+.filmcard .tr{position:absolute;top:26px;right:30px;font:11px/1 "Geist Mono",monospace;letter-spacing:.08em;background:#fff;color:var(--ink);padding:7px 10px;border-radius:5px}
+.fcols{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px;max-width:1180px;margin:0 auto;padding:0 28px 72px;text-align:left;font-size:14.5px}
+.fcols h5{font:10.5px/1 "Geist Mono",monospace;letter-spacing:.08em;color:var(--ink3);font-weight:400;margin-bottom:16px}
+.fcols a,.fcols span{display:block;color:var(--ink2);margin-bottom:8px}.fcols a:hover,.fcols button:hover{color:var(--ink)}
+.fcols button{display:block;color:var(--ink2);margin-bottom:8px;text-align:left}
+.fcols .lead{font-size:20px;line-height:1.3;color:var(--ink);letter-spacing:-.01em;max-width:300px}
+.fcols .lead em{font-size:1.1em}
+html:not(.motion) .frame,html:not(.motion) .ann{display:none}
+
 /* ======== static layout (phones, short screens, reduced motion, no JS) ======== */
 html:not(.motion) .pin{height:auto;overflow:visible;padding:120px 0 40px}
 html:not(.motion) .hA{position:relative;left:auto;top:auto;transform:none;margin:0 auto}
@@ -255,6 +355,9 @@ html:not(.motion) .try{display:none}
   .robot{right:24px}
   html:not(.motion) .steps{grid-template-columns:1fr}
   .pv,.faq{grid-template-columns:1fr;gap:48px}
+  .specs,.fcols{grid-template-columns:1fr 1fr}.specs div:nth-child(3){border-left:0}.specs div:nth-child(n+3){border-top:1px solid var(--line)}
+  .ar{grid-template-columns:1fr auto;gap:6px 16px}.ar>:nth-child(2){grid-row:2;color:#8a8a90;font-size:13px}.ar>:nth-child(3){grid-row:span 2}.ar.ah>:nth-child(2){display:none}
+  .secbar{margin-bottom:40px}.access{margin-top:56px}
   .faq{gap:0}
   .dark{padding:96px 0}.close{padding:110px 0 60px}
   .wrap{padding:0 20px}
@@ -267,18 +370,24 @@ html:not(.motion) .try{display:none}
 
 <nav>
   <a class="brand" href="#top"><img src="assets/img/repobox-mascot.svg" alt=""><span>repobox</span></a>
-  <div class="links"><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#film" data-film>Film</a><a href="https://github.com/codebyNJ/repobox">GitHub</a></div>
+  <div class="links"><a href="#how"><small>01</small>How it works</a><a href="#privacy"><small>02</small>Privacy</a><a href="#film" data-film><small>03</small>Film</a><a href="https://github.com/codebyNJ/repobox"><small>04</small>GitHub</a></div>
   <div class="r">
     <button class="kbtn" data-pal>Search the demo <kbd>⌘K</kbd></button>
     <a class="btn sm" href="https://github.com/codebyNJ/repobox/releases">Download</a>
   </div>
+  <span class="prog"><i></i></span>
 </nav>
 
 <main id="top">
 <section class="stage" id="how" aria-label="How Repobox works">
 <div class="pin">
+  <div class="frame" aria-hidden="true"><i class="ruler"></i><i class="ruler v"></i><i class="x a"></i><i class="x b"></i><i class="x c"></i><i class="x d"></i>
+    <div class="readout"><span>X <b id="rx">0000</b></span><span>Y <b id="ry">0000</b></span><span>SCROLL <b id="rs">000</b>%</span></div>
+    <div class="tblock"><span>PROJECT</span><span><b>REPOBOX</b></span><span>FIG.</span><span class="fig" id="fig">01 · THE MESS</span><span>SHEET</span><span><b id="sheetn">1</b> OF 5</span></div>
+  </div>
 
   <div class="hA">
+    <a class="eyebrow" href="#how"><span class="tg">MAC APP</span>Every repo and every agent chat, filed <span class="ey">→</span></a>
     <h1>Your agents wrote the code. <em>Now where is it?</em></h1>
     <p class="lede">Repobox finds every repo on your Mac, files each Claude Code, Codex and OpenCode chat under the repo it belongs to, and reopens any of them in one click.</p>
     <div class="ctas">
@@ -291,9 +400,9 @@ html:not(.motion) .try{display:none}
   <div class="hB"><h2>Repobox puts all of it <em>in one box.</em></h2></div>
 
   <div class="steps">
-    <div class="step"><div class="n mono">01 <span class="bar"><i></i></span></div><h3>It finds every repo.</h3><p>Point it at a folder. It lists each project with its stack, its branch and what's waiting to be committed.</p></div>
-    <div class="step"><div class="n mono">02 <span class="bar"><i></i></span></div><h3>It files every chat.</h3><p>Claude Code, Codex and OpenCode history, sorted under the repo it belongs to. A green dot means it's running now.</p></div>
-    <div class="step"><div class="n mono">03 <span class="bar"><i></i></span></div><h3>One click back in.</h3><p>Resume opens Terminal in the right folder and runs the agent's own resume command. The whole conversation is back.</p></div>
+    <div class="step"><div class="n mono">01 <span class="bar"><i></i></span></div><h3>It finds every repo.</h3><p>Point it at a folder. It lists each project with its stack, its branch and what's waiting to be committed.</p><div class="spec"><span>.git/HEAD</span><span>package.json</span><span>Cargo.toml</span><span>go.mod</span></div></div>
+    <div class="step"><div class="n mono">02 <span class="bar"><i></i></span></div><h3>It files every chat.</h3><p>Claude Code, Codex and OpenCode history, sorted under the repo it belongs to. A green dot means it's running now.</p><div class="spec"><span>~/.claude/projects</span><span>~/.codex/sessions</span><span>opencode</span></div></div>
+    <div class="step"><div class="n mono">03 <span class="bar"><i></i></span></div><h3>One click back in.</h3><p>Resume opens Terminal in the right folder and runs the agent's own resume command. The whole conversation is back.</p><div class="spec"><span>claude --resume</span><span>codex resume</span><span>opencode --session</span></div></div>
     <p class="try">Try it here: press <kbd>⌘K</kbd> or <button data-pal>search the demo sessions</button>.</p>
   </div>
 
@@ -311,6 +420,10 @@ html:not(.motion) .try{display:none}
       <div class="nv" data-slot="a-claude"><i class="lg claude"></i>Claude Code<b data-n="21">21</b></div>
       <div class="nv" data-slot="a-codex"><i class="lg codex"></i>Codex<b data-n="9">9</b></div>
       <div class="nv" data-slot="a-opencode"><i class="lg opencode"></i>OpenCode<b data-n="8">8</b></div>
+      <div class="hd">FOLDERS</div>
+      <div class="nv"><i class="fd"></i>~/codes<b data-n="5">5</b></div>
+      <div class="nv"><i class="fd"></i>~/work<b data-n="1">1</b></div>
+      <div class="sfoot mono"><i class="dot"></i>Watching 2 folders</div>
     </aside>
     <div class="main">
       <div class="view home">
@@ -323,26 +436,26 @@ html:not(.motion) .try{display:none}
         </div>
         <div class="vh"><h4>Projects</h4><div class="chips"><span class="on">All</span><span>TypeScript</span><span>Rust</span><span>Go</span></div></div>
         <div class="grid">
-          <div class="card" data-slot="c1"><img src="assets/av/tidepool.svg" alt=""><p>tidepool</p><span class="ago">now</span><span class="path mono">~/codes/tidepool</span><div class="tags"><span class="tag">⎇ main</span><span class="tag warn">4 uncommitted</span></div></div>
-          <div class="card" data-slot="c2"><img src="assets/av/lumen-api.svg" alt=""><p>lumen-api</p><span class="ago">1h</span><span class="path mono">~/codes/lumen-api</span><div class="tags"><span class="tag">⎇ rate-limit</span><span class="tag warn">3 uncommitted</span></div></div>
-          <div class="card" data-slot="c3"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">1d</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
-          <div class="card" data-slot="c4"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d</span><span class="path mono">~/work/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Vite</span></div></div>
-          <div class="card" data-slot="c5"><img src="assets/av/sparrow-mail.svg" alt=""><p>sparrow-mail</p><span class="ago">1d</span><span class="path mono">~/codes/sparrow-mail</span><div class="tags"><span class="tag">⎇ inbox-v2</span></div></div>
-          <div class="card" data-slot="c6"><img src="assets/av/quill-cli.svg" alt=""><p>quill-cli</p><span class="ago">5d</span><span class="path mono">~/codes/quill-cli</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
+          <div class="card" data-slot="c1"><img src="assets/av/tidepool.svg" alt=""><p>tidepool</p><span class="ago">now</span><span class="path mono">~/codes/tidepool</span><div class="tags"><span class="tag">⎇ main</span><span class="tag warn">4 uncommitted</span></div><div class="cmeta"><span class="spark"></span><span>11 chats</span><span class="lgs"><i class="lg claude"></i><i class="lg codex"></i></span></div></div>
+          <div class="card" data-slot="c2"><img src="assets/av/lumen-api.svg" alt=""><p>lumen-api</p><span class="ago">1h</span><span class="path mono">~/codes/lumen-api</span><div class="tags"><span class="tag">⎇ rate-limit</span><span class="tag warn">3 uncommitted</span></div><div class="cmeta"><span class="spark"></span><span>7 chats</span><span class="lgs"><i class="lg codex"></i><i class="lg claude"></i></span></div></div>
+          <div class="card" data-slot="c3"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">1d</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div><div class="cmeta"><span class="spark"></span><span>6 chats</span><span class="lgs"><i class="lg opencode"></i><i class="lg claude"></i></span></div></div>
+          <div class="card" data-slot="c4"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d</span><span class="path mono">~/work/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Vite</span></div><div class="cmeta"><span class="spark"></span><span>4 chats</span><span class="lgs"><i class="lg codex"></i><i class="lg opencode"></i></span></div></div>
+          <div class="card" data-slot="c5"><img src="assets/av/sparrow-mail.svg" alt=""><p>sparrow-mail</p><span class="ago">1d</span><span class="path mono">~/codes/sparrow-mail</span><div class="tags"><span class="tag">⎇ inbox-v2</span></div><div class="cmeta"><span class="spark"></span><span>4 chats</span><span class="lgs"><i class="lg claude"></i></span></div></div>
+          <div class="card" data-slot="c6"><img src="assets/av/quill-cli.svg" alt=""><p>quill-cli</p><span class="ago">5d</span><span class="path mono">~/codes/quill-cli</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div><div class="cmeta"><span class="spark"></span><span>2 chats</span><span class="lgs"><i class="lg claude"></i></span></div></div>
         </div>
       </div>
       <div class="view sess">
         <div class="vh" style="margin-top:2px"><h4>Sessions</h4><div class="chips"><span class="on">All</span><span>Claude Code</span><span>Codex</span><span>OpenCode</span></div></div>
         <div class="slist">
           <div class="glab">RUNNING NOW</div>
-          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i><i class="dot"></i></div><div><p>Fix login redirect loop</p><small>› the cookie is set but /dashboard still bounces back</small></div><div class="r"><span class="pill">tidepool</span><span class="resume" id="resume">Resume</span></div></div>
+          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i><i class="dot"></i></div><div><p>Fix login redirect loop</p><small>› the cookie is set but /dashboard still bounces back</small></div><div class="r"><span class="mc">14 msgs</span><span class="pill">tidepool</span><span class="resume" id="resume">Resume</span></div></div>
           <div class="glab">TODAY</div>
-          <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>› use a token bucket per API key, not per IP</small></div><div class="r"><span class="pill">lumen-api</span>1h</div></div>
-          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Release notes for 0.4</p><small>› group the changelog by breaking changes vs fixes</small></div><div class="r"><span class="pill">quill-cli</span>4h</div></div>
+          <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>› use a token bucket per API key, not per IP</small></div><div class="r"><span class="mc">22 msgs</span><span class="pill">lumen-api</span>1h</div></div>
+          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Release notes for 0.4</p><small>› group the changelog by breaking changes vs fixes</small></div><div class="r"><span class="mc">9 msgs</span><span class="pill">quill-cli</span>4h</div></div>
           <div class="glab">YESTERDAY</div>
-          <div class="srow"><div class="m"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>› write the sync queue to IndexedDB first</small></div><div class="r"><span class="pill">harbor-sync</span>1d</div></div>
-          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Inbox keyboard shortcuts</p><small>› j and k should move between threads</small></div><div class="r"><span class="pill">sparrow-mail</span>1d</div></div>
-          <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Redirect old /blog URLs</p><small>› 301 every /blog/:slug to /notes/:slug</small></div><div class="r"><span class="pill">moss-ui</span>1d</div></div>
+          <div class="srow"><div class="m"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>› write the sync queue to IndexedDB first</small></div><div class="r"><span class="mc">31 msgs</span><span class="pill">harbor-sync</span>1d</div></div>
+          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Inbox keyboard shortcuts</p><small>› j and k should move between threads</small></div><div class="r"><span class="mc">12 msgs</span><span class="pill">sparrow-mail</span>1d</div></div>
+          <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Redirect old /blog URLs</p><small>› 301 every /blog/:slug to /notes/:slug</small></div><div class="r"><span class="mc">6 msgs</span><span class="pill">moss-ui</span>1d</div></div>
         </div>
       </div>
       <div class="sheet">
@@ -351,7 +464,11 @@ html:not(.motion) .try{display:none}
         <div class="tline p">Resuming “Fix login redirect loop” · 14 messages</div>
         <div class="tline you">› the cookie is set but /dashboard still bounces back</div>
         <div class="tline ai"><b>⏺</b> Found it. The middleware reads the session before the cookie is written, so the first request after login looks logged out. I'll move the check after <span class="c">setSession()</span>.</div>
+        <div class="tline ed"><b>⏺</b> Update(<span class="w">src/middleware.ts</span>)</div>
+        <div class="tline df"><span class="m">- if (!getSession(req)) return redirect("/login")</span><span class="pl">+ await setSession(res); if (!getSession(req)) return redirect("/login")</span></div>
+        <div class="tline cin"><span>›</span><i class="caret"></i><em>? for shortcuts</em></div>
       </div>
+      <div class="wbar"><span><i class="dot"></i>read-only</span><span>6 repos</span><span>38 chats</span><span class="r">scanned 2s ago</span></div>
       <svg class="cursor" viewBox="0 0 24 24"><path d="M5 3l14 8-6.5 1.6L10 19z" fill="#111112" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
       <div class="crop"><i></i><i></i><i></i><i></i></div>
     </div>
@@ -361,11 +478,13 @@ html:not(.motion) .try{display:none}
 </div>
 </section>
 
+<div class="band" aria-hidden="true"><div class="tr"><span class="it">every repo <img src="assets/img/repobox-mascot.svg" alt=""> every chat <span class="c">claude --resume 8f3c2e1a</span> one click back in <img src="assets/img/repobox-mascot.svg" alt=""></span><span class="it">every repo <img src="assets/img/repobox-mascot.svg" alt=""> every chat <span class="c">claude --resume 8f3c2e1a</span> one click back in <img src="assets/img/repobox-mascot.svg" alt=""></span><span class="it">every repo <img src="assets/img/repobox-mascot.svg" alt=""> every chat <span class="c">claude --resume 8f3c2e1a</span> one click back in <img src="assets/img/repobox-mascot.svg" alt=""></span><span class="it">every repo <img src="assets/img/repobox-mascot.svg" alt=""> every chat <span class="c">claude --resume 8f3c2e1a</span> one click back in <img src="assets/img/repobox-mascot.svg" alt=""></span></div></div>
+
 <section class="dark" id="privacy">
+  <div class="wrap"><div class="secbar"><b>02</b><span>PRIVACY</span><i></i><span>READ-ONLY BY DESIGN</span></div></div>
   <div class="wrap pv">
     <div>
-      <div class="kicker">Privacy</div>
-      <h2 class="big">Repobox <em>only reads.</em></h2>
+            <h2 class="big">Repobox <em>only reads.</em></h2>
       <p class="sub">It's a window onto files already on your Mac. It doesn't run your agents, doesn't call an AI, and never edits your history. Your code and your conversations stay where they are.</p>
       <div class="facts"><span>No account</span><span>No AI inside</span><span>Never edits history</span><span>Works offline</span></div>
     </div>
@@ -383,17 +502,33 @@ html:not(.motion) .try{display:none}
       </div>
     </div>
   </div>
+  <div class="wrap">
+    <div class="access" aria-label="Everything Repobox reads">
+      <div class="ar ah"><span>WHERE IT LOOKS</span><span>WHAT'S THERE</span><span>ACCESS</span></div>
+      <div class="ar"><span>~/.claude/projects/</span><span>Claude Code chats</span><span class="rd">READ</span></div>
+      <div class="ar"><span>~/.codex/sessions/</span><span>Codex chats</span><span class="rd">READ</span></div>
+      <div class="ar"><span>~/.local/share/opencode/</span><span>OpenCode sessions</span><span class="rd">READ</span></div>
+      <div class="ar"><span>your folders / **/.git</span><span>Branch and uncommitted changes</span><span class="rd">READ</span></div>
+      <div class="ar"><span>the internet</span><span>Nothing, ever</span><span class="no">NONE</span></div>
+    </div>
+  </div>
 </section>
 
 <section class="close" id="film">
   <div class="wrap">
-    <div class="kicker" style="justify-content:center">For everyone who codes with agents</div>
+    <div class="secbar"><b>03</b><span>GET IT</span><i></i><span>FOR EVERYONE WHO CODES WITH AGENTS</span></div>
     <h2>Stop hunting for <em>that one chat.</em></h2>
     <div class="ctas">
       <a class="btn" href="https://github.com/codebyNJ/repobox/releases">Download for macOS</a>
       <a class="btn ghost" href="https://github.com/codebyNJ/repobox">View on GitHub</a>
     </div>
-    <a class="filmcard" href="#film" data-film aria-label="Play the 42-second Repobox film"><span class="play"></span><span class="lab">Repobox in 42 seconds</span></a>
+    <div class="specs">
+      <div><small>SYSTEM</small><p>macOS 13 or later</p></div>
+      <div><small>AGENTS</small><p>Claude Code · Codex · OpenCode</p></div>
+      <div><small>TERMINALS</small><p>Terminal · iTerm</p></div>
+      <div><small>ACCOUNT</small><p>None. It's yours.</p></div>
+    </div>
+    <a class="filmcard" href="#film" data-film aria-label="Play the 42-second Repobox film"><span class="fc"><i></i><i></i><i></i><i></i></span><span class="tc"><b>●</b> FILM · 00:42</span><span class="tr">SOUND ON</span><span class="play"></span><span class="lab">Repobox in 42 seconds</span></a>
 
     <div class="faq">
       <div>
@@ -410,8 +545,14 @@ html:not(.motion) .try{display:none}
 </main>
 
 <footer>
-  <img class="footbot" src="assets/img/repobox-mascot.svg" alt="">
-  <div class="mark" aria-hidden="true">repobox</div>
+  <div class="fcols">
+    <div><p class="lead">Every repo and every agent chat on your Mac, <em>in one box.</em></p></div>
+    <div><h5>PRODUCT</h5><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#film" data-film>Film</a><button data-pal>Search the demo</button></div>
+    <div><h5>GET IT</h5><a href="https://github.com/codebyNJ/repobox/releases">Download</a><a href="https://github.com/codebyNJ/repobox">GitHub</a><a href="https://github.com/codebyNJ/repobox/releases">Releases</a></div>
+    <div><h5>FACTS</h5><span>macOS 13+</span><span>Read-only</span><span>No account</span></div>
+  </div>
+  <div class="mw"><img class="footbot" src="assets/img/repobox-mascot.svg" alt="">
+  <div class="mark" aria-hidden="true">repobox</div></div>
   <div class="fl">
     <span>© 2026 Repobox</span>
     <a href="https://github.com/codebyNJ/repobox">GitHub</a>
@@ -495,6 +636,20 @@ let reads=0,secs=0,pvOn=false;
 new IntersectionObserver(([e])=>pvOn=e.isIntersecting).observe($("#privacy"));
 setInterval(()=>{if(!pvOn)return;secs++;reads+=3+(secs%4);$("#readn").textContent=reads.toLocaleString()+" files";$("#since").textContent=secs<60?secs+"s":Math.floor(secs/60)+"m "+secs%60+"s"},1000);
 
+
+/* ---------- small live details ---------- */
+$$(".spark").forEach((sp,k)=>{sp.innerHTML=Array.from({length:14},(_,i)=>`<i style="height:${3+((i*7+k*5)%11)}px"></i>`).join("")});
+const prog=$("nav .prog i"),rx=$("#rx"),ry=$("#ry"),rs=$("#rs"),pad=n=>String(Math.round(n)).padStart(4,"0");
+const onScroll=()=>{const m=document.documentElement.scrollHeight-innerHeight;prog.style.transform=`scaleX(${m>0?scrollY/m:0})`};
+addEventListener("scroll",onScroll,{passive:true});onScroll();
+addEventListener("mousemove",e=>{rx.textContent=pad(e.clientX);ry.textContent=pad(e.clientY)},{passive:true});
+const rulerNums=()=>{const f=$(".frame");$$(".rnum",f).forEach(n=>n.parentNode.removeChild(n));for(let x=100;x<f.clientWidth-60;x+=100){const n=document.createElement("span");n.className="rnum";n.style.left=x+"px";n.textContent=x;f.appendChild(n)}};
+rulerNums();addEventListener("resize",rulerNums);
+/* marquee: drifts on its own, speeds up with your scroll */
+const band=$(".band .tr");let bx=0,lastY=scrollY,vel=0;
+const tick=()=>{const dy=scrollY-lastY;lastY=scrollY;vel+=(Math.abs(dy)*.6-vel)*.1;bx-=.6+vel;const half=band.scrollWidth/2;if(-bx>half)bx+=half;band.style.transform=`translateX(${bx}px)`;requestAnimationFrame(tick)};
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(tick);
+
 /* ---------- footer robot: jelly on tap ---------- */
 const fb=$(".footbot");
 fb.addEventListener("click",()=>window.gsap&&gsap.timeline().to(fb,{scaleX:1.3,scaleY:.68,duration:.12}).to(fb,{scaleX:1,scaleY:1,duration:1.1,ease:"elastic.out(1.1,.3)"}));
@@ -527,14 +682,14 @@ mm.add("(min-width: 901px) and (min-height: 620px) and (prefers-reduced-motion: 
   // the mess: fragments from hidden folders, terminals and half-remembered chats
   const F=[
    ["folder","~/codes/tidepool",9,22,-6,"c1"],
-   ["bub","the cookie is set but /dashboard still bounces back",87,19,4,"t1","claude"],
+   ["bub","the cookie is set but /dashboard still bounces back",87,19,4,"t1","claude","3d ago"],
    ["term","claude --resume 8f3c…a21",13,47,3,"running"],
    ["tag","⎇ rate-limit",84,42,-8,"c2"],
    ["path","~/.codex/sessions/2026/11/27/…jsonl",28,13,2,"a-codex"],
-   ["bub","token bucket per API key, not per IP",70,11,-3,"t2","codex"],
+   ["bub","token bucket per API key, not per IP",70,11,-3,"t2","codex","last week"],
    ["folder","~/Desktop/old/harbor-sync",91,63,5,"c3"],
    ["tag","4 uncommitted",19,69,-4,"c1","warn"],
-   ["bub","write the sync queue to IndexedDB first",9,79,6,"t3","opencode"],
+   ["bub","write the sync queue to IndexedDB first",9,79,6,"t3","opencode","which repo?"],
    ["path","~/.claude/projects/-Users-you-codes…",80,80,-2,"a-claude"],
    ["term","opencode --session ses_9k2…",93,31,-5,"a-opencode"],
    ["folder","~/work/moss-ui",5,35,8,"c4"],
@@ -542,10 +697,10 @@ mm.add("(min-width: 901px) and (min-height: 620px) and (prefers-reduced-motion: 
    ["path","opencode.db",3,58,-3,"loose"],
    ["term","codex resume 019a…",22,89,4,"sessions"],
    ["folder","~/codes/quill-cli",90,90,-4,"c6"]];
-  const frags=F.map(([k,txt,cx,cy,rot,slot,x],i)=>{
+  const frags=F.map(([k,txt,cx,cy,rot,slot,x,ago],i)=>{
     const el=document.createElement("div");el.className="frag";
     el.innerHTML=k=="folder"?`<div class="f-folder"><i></i>${txt}</div>`:
-      k=="bub"?`<div class="f-bub"><b><i class="lg ${x}"></i>${NAME[x]}</b>› ${txt}</div>`:
+      k=="bub"?`<div class="f-bub"><b><i class="lg ${x}"></i>${NAME[x]} <span>· ${ago}</span></b>› ${txt}</div>`:
       k=="term"?`<div class="f-term"><span>❯</span> ${txt}</div>`:
       k=="tag"?`<div class="f-tag ${x||""}">${txt}</div>`:`<div class="f-path">${txt}</div>`;
     const d=el.firstChild;d.style.setProperty("--d",(5+i%5*.9)+"s");d.style.setProperty("--dl",(-i*.7)+"s");
@@ -565,6 +720,31 @@ mm.add("(min-width: 901px) and (min-height: 620px) and (prefers-reduced-motion: 
   const counters=$$("[data-n]",win).map(b=>({b,v:+b.dataset.n,o:{n:0}}));
   const stepEls=$$(".step",steps),bars=$$(".step .bar i",steps);
 
+
+  // spec callouts: [step, anchor, side, label, fx, fy, extra offset, label to the left]
+  const AN=[
+   [0,'[data-nv="home"] b','up','<s>6</s>REPOS FOUND',.5,.5,0],
+   [0,'[data-slot="c4"] .path','dn','FOUND IN ANY FOLDER',.3,.5,0],
+   [0,'[data-slot="c5"] .tag','dn','LIVE GIT BRANCH',.5,.5,26],
+   [0,'[data-slot="c6"] .spark','dn','RECENT ACTIVITY',.5,.5,0,1],
+   [1,'.sess .chips','up','FILTER BY AGENT',.5,.5,34,1],
+   [1,'.sess .srow .dot','up','<s>●</s>RUNNING NOW',.5,.5,26],
+   [1,'.sess .srow:last-child .pill','dn','FILED UNDER ITS REPO',.5,.5,0,1],
+   [1,'[data-slot="loose"]','dn','CHATS WITH NO REPO',.3,.5,0],
+   [2,'#resume','up','ONE CLICK',.5,.5,34,1],
+   [2,'.sheet .p','dn','OPENS IN THE RIGHT FOLDER',.4,.5,0,1],
+   [2,'#typed','dn','THE AGENT\'S OWN RESUME',.25,.5,26],
+   [2,'.sheet .tline.ai','dn','WHOLE CONVERSATION BACK',.8,.5,0,1]];
+  const anns=AN.map(([st,sel,side,txt,fx,fy,ex,l])=>{const el=document.createElement("div");el.className=`ann ${side}${l?" l":""}`;el.innerHTML=`<i class="ln"></i><span class="lb">${txt}</span><i class="pt"></i>`;pin.appendChild(el);return{st,a:$(sel,win),side,fx,fy,ex,el}});
+  const placeAnns=()=>{const c=C(),s=c.scale,top=vh()/2+c.y-H*s/2,bot=vh()/2+c.y+H*s/2;
+    anns.forEach(n=>{const o=off(n.a,win),x=vw()/2+c.x+(o.x+n.a.offsetWidth*n.fx-W/2)*s,y=vh()/2+c.y+(o.y+n.a.offsetHeight*(n.side=="up"?0:1)-H/2)*s;
+      const h=n.side=="up"?y-(top-38-n.ex):(bot+38+n.ex)-y;n.el.style.left=x+"px";n.el.style.top=y+"px";n.el.style.setProperty("--h",Math.max(20,h)+"px")})};
+  placeAnns();ScrollTrigger.addEventListener("refreshInit",placeAnns);addEventListener("resize",placeAnns);
+  const showAnns=(st,at,out)=>anns.filter(n=>n.st==st).forEach((n,i)=>{
+    tl.fromTo(n.el,{opacity:0},{opacity:1,duration:.2},at+i*.12);
+    tl.fromTo($(".ln",n.el),{scaleY:0},{scaleY:1,duration:.3,ease:"power2.out"},at+i*.12);
+    tl.fromTo($(".lb",n.el),{y:n.side=="up"?8:-8},{y:0,duration:.3,ease:"back.out(2)"},at+i*.12+.15);
+    tl.to(n.el,{opacity:0,duration:.2},out)});
   const tl=gsap.timeline({defaults:{ease:"none"},scrollTrigger:{trigger:pin,start:"top top",end:"+=560%",pin:true,scrub:1,invalidateOnRefresh:true}});
   // 0–1 hold on the mess · 1–3.2 everything packs into the box
   tl.to(hA,{y:-170,opacity:0,duration:.9,ease:"power1.in"},1);
@@ -610,17 +790,22 @@ mm.add("(min-width: 901px) and (min-height: 620px) and (prefers-reduced-motion: 
   tl.fromTo(ty,{n:0},{n:line.length,duration:.7,onUpdate:()=>typed.textContent=line.slice(0,Math.round(ty.n))},9.05);
   tl.fromTo($$(".tline",sheet),{opacity:0,y:8},{opacity:1,y:0,duration:.3,stagger:.22},9.8);
   tl.fromTo(bars[2],{scaleX:0},{scaleX:1,duration:1.2},8.5);
-  tl.to({},{duration:.8},10.6);
+  showAnns(0,4.75,5.85);showAnns(1,6.5,7.7);showAnns(2,9.6,10.9);
+  tl.to({},{duration:.8},10.9);
+  // title block follows the story
+  const FIG=[[0,"01 · THE MESS"],[2.6,"02 · ONE BOX"],[4.4,"03 · REPOS"],[5.95,"04 · CHATS"],[7.75,"05 · RESUME"]],figEl=$("#fig"),shEl=$("#sheetn");let lastF=-1;
+  tl.eventCallback("onUpdate",()=>{const t=tl.time();let k=0;FIG.forEach(([a],i)=>{if(t>=a)k=i});if(k!=lastF){lastF=k;figEl.textContent=FIG[k][1];shEl.textContent=k+1}rs.textContent=String(Math.round(tl.progress()*100)).padStart(3,"0")});
 
   // gentle parallax on the mess while it's still a mess
   const st=tl.scrollTrigger,qx=gsap.quickTo(field,"x",{duration:.9,ease:"power3"}),qy=gsap.quickTo(field,"y",{duration:.9,ease:"power3"});
   const mv=e=>{const k=st.progress<.08?1:0;qx((e.clientX/innerWidth-.5)*-26*k);qy((e.clientY/innerHeight-.5)*-18*k)};
   addEventListener("mousemove",mv);
-  return()=>{document.documentElement.classList.remove("motion");frags.forEach(f=>f.el.remove());removeEventListener("mousemove",mv)};
+  return()=>{document.documentElement.classList.remove("motion");frags.forEach(f=>f.el.remove());anns.forEach(n=>n.el.remove());removeEventListener("resize",placeAnns);removeEventListener("mousemove",mv)};
 });
 // simple entrances everywhere else
 mm.add("(prefers-reduced-motion: no-preference)",()=>{
-  $$(".pv>*,.close h2,.close .ctas,.filmcard,.faq details").forEach(el=>gsap.from(el,{y:40,opacity:0,duration:1,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 88%"}}));
+  $$(".pv>*,.close h2,.close .ctas,.specs,.filmcard,.faq details,.secbar,.fcols>div").forEach(el=>gsap.from(el,{y:40,opacity:0,duration:1,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 88%"}}));
+  gsap.from(".ar",{x:-30,opacity:0,duration:.7,stagger:.08,ease:"power3.out",scrollTrigger:{trigger:".access",start:"top 85%"}});
   gsap.from(".footbot",{y:80,scaleY:.6,duration:1.2,ease:"elastic.out(1,.4)",scrollTrigger:{trigger:"footer",start:"top 80%"}});
 });
 }
