@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repobox: find and resume your Claude Code, Codex and OpenCode sessions on Mac</title>
+<meta name="description" content="Repobox is a Mac app that finds every code repo on your computer, files each Claude Code, Codex and OpenCode chat under the repo it belongs to, and reopens any session in one click. It only reads, and nothing leaves your Mac.">
+<link rel="canonical" href="https://repobox.co.in/">
+<meta property="og:title" content="Repobox: every repo and every AI coding chat on your Mac, in one box">
+<meta property="og:description" content="Find any Claude Code, Codex or OpenCode session and pick up where you left off, in one click.">
+<meta property="og:image" content="assets/img/film-poster.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/repobox-mascot.svg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Repobox","operatingSystem":"macOS 13 or later","applicationCategory":"DeveloperApplication","description":"A Mac app that finds every code repo on your computer, files each Claude Code, Codex and OpenCode session under its repo, and resumes any session in one click.","url":"https://repobox.co.in/","downloadUrl":"https://github.com/codebyNJ/repobox/releases"}
+</script>
+<style>
+@font-face{font-family:Boska;src:url(assets/fonts/boska-500-italic.ttf);font-style:italic;font-weight:500;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-400-normal.ttf);font-weight:400;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-500-normal.ttf);font-weight:500;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-600-normal.ttf);font-weight:600;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url(assets/fonts/geist-mono-400-normal.ttf);font-display:swap}
+:root{--bg:#fff;--ink:#111112;--ink2:#4f4f55;--ink3:#8a8a90;--line:#ececee;--soft:#f6f6f7;--red:#e45e4d;--green:#2fa84f;--claude:#d97757}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+em,.serif{font-family:Boska,Georgia,serif;font-style:italic;font-weight:500}
+.mono{font-family:"Geist Mono",ui-monospace,monospace}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+/* nav */
+nav{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid transparent}
+nav .wrap{display:flex;align-items:center;height:64px;gap:28px}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.brand img{width:26px;height:26px;border-radius:6px}
+.brand span{font-family:Boska,serif;font-style:italic;font-weight:500;font-size:25px;line-height:1}
+nav .links{margin-left:auto;display:flex;gap:26px;font-size:15px;color:var(--ink2)}
+nav .links a{text-decoration:none}
+nav .links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:9px;height:48px;padding:0 22px;border-radius:999px;background:var(--ink);color:#fff;font-weight:500;font-size:16px;text-decoration:none;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.btn:hover{transform:scale(1.04)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.sm{height:38px;padding:0 16px;font-size:14px}
+.btn svg{width:17px;height:17px}
+/* hero */
+.hero{padding:88px 0 40px;text-align:center}
+.bot{width:84px;height:84px;margin:0 auto 26px;display:block;border-radius:18px;transform-origin:50% 100%;animation:jelly 3.2s ease-in-out infinite}
+@keyframes jelly{0%,78%,100%{transform:scale(1,1)}84%{transform:scale(1.14,.86)}90%{transform:scale(.94,1.06)}95%{transform:scale(1.02,.98)}}
+h1{font-size:clamp(40px,6.2vw,76px);line-height:1.02;letter-spacing:-.035em;font-weight:600;max-width:920px;margin:0 auto}
+h1 em{letter-spacing:-.01em;font-size:1.06em}
+.lede{font-size:clamp(17px,2vw,20px);color:var(--ink2);max-width:640px;margin:24px auto 34px}
+.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.fine{margin-top:16px;font-size:14px;color:var(--ink3)}
+.agents{display:flex;gap:22px;justify-content:center;margin-top:30px;font-size:14px;color:var(--ink2);flex-wrap:wrap}
+.agents span{display:flex;align-items:center;gap:7px}
+.lg{display:inline-block;width:16px;height:16px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;flex-shrink:0}
+.lg.claude{--m:url(assets/img/claude.svg);color:var(--claude)}
+.lg.codex{--m:url(assets/img/codex.svg)}
+.lg.opencode{--m:url(assets/img/opencode.svg)}
+/* app window mock */
+.stage{padding:30px 0 80px}
+.win{border:1px solid var(--line);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:220px 1fr;background:#fff;max-width:1060px;margin:0 auto;text-align:left;font-size:13px}
+.side{border-right:1px solid var(--line);padding:16px 12px;background:#fbfbfb}
+.tl{display:flex;gap:7px;margin-bottom:18px}.tl i{width:11px;height:11px;border-radius:50%;background:#ec6a5e}.tl i:nth-child(2){background:#f4bf4f}.tl i:nth-child(3){background:#61c554}
+.side .brand span{font-size:19px}.side .brand img{width:20px;height:20px;border-radius:5px}
+.search{margin:14px 0 12px;border:1px solid var(--line);border-radius:8px;padding:6px 9px;color:var(--ink3);display:flex;justify-content:space-between;background:#fff}
+.nv{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:7px;color:var(--ink2)}
+.nv b{margin-left:auto;font-weight:400;color:var(--ink3);font-size:12px}
+.nv.on{background:#efeff1;color:var(--ink);font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.hd{font-size:10.5px;letter-spacing:.08em;color:var(--ink3);margin:14px 9px 6px}
+.main{padding:18px;min-width:0}
+.paint{height:170px;border-radius:12px;background:url(assets/img/wheat-summer.jpg) center 60%/cover;position:relative;padding:22px 24px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end}
+.paint::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.45))}
+.paint>*{position:relative}
+.paint .serif{font-size:36px;line-height:1.1}
+.paint small{font-size:13px;opacity:.92;margin-top:4px}
+.paint cite{position:absolute;right:16px;bottom:12px;font-size:10px;font-style:normal;opacity:.8}
+.cont{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 18px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;min-width:0}
+.tile .m{width:28px;height:28px;border-radius:8px;background:#fbeee8;display:grid;place-items:center;flex-shrink:0}
+.tile div{min-width:0}.tile p{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tile small{color:var(--ink3);font-size:11.5px}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ph h4{font-size:16px;font-weight:600}
+.chips{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:2px;font-size:11.5px;color:var(--ink2)}.chips span{padding:3px 9px;border-radius:6px}.chips .on{background:#fff;color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid var(--line);border-radius:12px;padding:13px;display:grid;grid-template-columns:38px 1fr auto;gap:4px 11px}
+.card img{width:38px;height:38px;border-radius:9px;grid-row:span 3}
+.card p{font-weight:500;font-size:14px}.card .ago{color:var(--ink3);font-size:11.5px}
+.card .path{font-size:11px;color:var(--ink3);grid-column:2/4}
+.tags{grid-column:2/4;display:flex;gap:6px;margin-top:4px}
+.tag{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--soft);color:var(--ink2)}.tag.warn{background:#fdf0dc;color:#9a5b0b}
+/* sections */
+section{padding:96px 0;border-top:1px solid var(--line)}
+.kicker{font-size:14px;color:var(--red);font-weight:500;margin-bottom:14px}
+h2{font-size:clamp(32px,4.4vw,52px);line-height:1.05;letter-spacing:-.03em;font-weight:600;max-width:760px}
+h2 em{letter-spacing:0}
+.sub{font-size:18px;color:var(--ink2);max-width:600px;margin-top:18px}
+.split{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:center}
+.split.rev{grid-template-columns:1.15fr 1fr}
+.split>*,.srow>div,.faq>*{min-width:0}.split.rev .copy{order:2}
+ul.ticks{list-style:none;padding:0;margin-top:26px;display:grid;gap:12px}
+ul.ticks li{display:flex;gap:12px;color:var(--ink2)}
+ul.ticks li::before{content:"";width:18px;height:18px;margin-top:3px;border-radius:50%;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;flex-shrink:0}
+.panel{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;font-size:13px}
+/* problem */
+.problem{text-align:center}
+.problem .big{font-family:Boska,serif;font-style:italic;font-size:clamp(64px,11vw,140px);line-height:1;letter-spacing:-.02em}
+.problem p{max-width:640px;margin:26px auto 0;font-size:19px;color:var(--ink2)}
+.folders{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.folders span{font-size:13px;padding:7px 12px;border-radius:8px;background:var(--soft);color:var(--ink2)}
+/* sessions */
+.srow{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:11px 10px;border-radius:10px}
+.srow+.srow{border-top:1px solid var(--line)}
+.srow .m{width:34px;height:34px;border-radius:9px;background:var(--soft);display:grid;place-items:center;position:relative}
+.srow .m .dot{position:absolute;right:-2px;bottom:-2px;border:2px solid #fff;width:11px;height:11px}
+.srow p{font-weight:500;font-size:14px}.srow small{color:var(--ink3);font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow .r{display:flex;gap:8px;align-items:center;color:var(--ink3);font-size:12px}
+.pill{font-size:11.5px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink2)}
+.glab{font-size:11px;letter-spacing:.08em;color:var(--ink3);padding:6px 10px}
+.resume{height:28px;padding:0 11px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;display:flex;align-items:center}
+/* terminal */
+.term{border-radius:14px;background:#111112;color:#e8e8ea;padding:16px 18px 22px;font-size:13.5px;line-height:1.75}
+.term .tl{margin-bottom:14px}.term .tl i{background:#3a3a3e!important}
+.term .p{color:#8a8a90}.term .g{color:#7fd18f}.term .c{color:#f0a08f}
+.kbar{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.kbar .in{padding:13px 16px;border-bottom:1px solid var(--line);font-size:15px;display:flex;gap:10px;align-items:center}
+.kbar .in .caret{width:1.5px;height:18px;background:var(--ink);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.kbar .h{display:flex;gap:10px;align-items:center;padding:9px 16px;font-size:13.5px}.kbar .h.on{background:var(--soft)}
+.kbar .h small{margin-left:auto;color:var(--ink3)}
+kbd{font-family:"Geist Mono",monospace;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--ink2)}
+/* privacy */
+.privacy{background:var(--ink);color:#fff;border-top:0}
+.privacy .kicker{color:#f0a08f}
+.privacy .sub,.privacy ul.ticks li{color:#b9b9be}
+.privacy ul.ticks li::before{background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.promise{border:1px solid #2b2b2f;border-radius:18px;padding:34px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px}
+.promise img{width:96px;height:96px;border-radius:22px}
+.promise .serif{font-size:44px;line-height:1.05}
+.promise small{color:#8a8a90;font-size:14px;max-width:320px}
+/* film */
+.film video{width:100%;border-radius:16px;border:1px solid var(--line);display:block;margin-top:40px;background:#fff}
+/* faq */
+.faq{display:grid;grid-template-columns:1fr 1.6fr;gap:56px}
+details{border-bottom:1px solid var(--line);padding:20px 0}
+details:first-child{border-top:1px solid var(--line)}
+summary{cursor:pointer;font-weight:500;font-size:18px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::after{content:"+";color:var(--ink3);font-size:22px;line-height:1;transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--ink2);margin-top:12px;max-width:620px}
+code{font-family:"Geist Mono",monospace;font-size:.88em;background:var(--soft);padding:1px 6px;border-radius:5px}
+/* end */
+.end{text-align:center;padding:120px 0}
+.end h2{margin:0 auto}
+.end .ctas{margin-top:34px}
+footer{border-top:1px solid var(--line);padding:30px 0 40px;font-size:13.5px;color:var(--ink3)}
+footer .wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+footer .wrap>:last-child{margin-left:auto}
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.9,.3,1.2)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.bot{animation:none}}
+@media (max-width:860px){
+  nav .links{display:none}
+  nav .btn.sm{margin-left:auto}
+  .win{grid-template-columns:1fr}.side{display:none}
+  .cont{grid-template-columns:1fr}.cont .tile:nth-child(n+2){display:none}
+  .grid{grid-template-columns:1fr}
+  .split,.split.rev,.faq{grid-template-columns:1fr;gap:36px}.split.rev .copy{order:0}
+  section{padding:72px 0}
+  .srow .r .pill{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#"><img src="assets/img/repobox-mascot.svg" alt=""><span>repobox</span></a>
+  <div class="links"><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#film">Film</a><a href="#faq">FAQ</a><a href="https://github.com/codebyNJ/repobox">GitHub</a></div>
+  <a class="btn sm" href="https://github.com/codebyNJ/repobox/releases">Download</a>
+</div></nav>
+
+<header class="hero wrap">
+  <img class="bot" src="assets/img/repobox-mascot.svg" alt="The Repobox robot">
+  <h1>Every repo and every AI coding chat on your Mac, <em>in one box.</em></h1>
+  <p class="lede">Repobox finds your projects, files each Claude Code, Codex and OpenCode session under the repo it belongs to, and reopens any of them in one click.</p>
+  <div class="ctas">
+    <a class="btn" href="https://github.com/codebyNJ/repobox/releases"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.1.1 2.3-.6 3.1-1.5z"/></svg>Download for macOS</a>
+    <a class="btn ghost" href="#film">Watch the 42-second film</a>
+  </div>
+  <p class="fine">macOS 13 or later · no account · your code never leaves your Mac</p>
+  <div class="agents"><span><i class="lg claude"></i>Claude Code</span><span><i class="lg codex"></i>Codex</span><span><i class="lg opencode"></i>OpenCode</span></div>
+</header>
+
+<div class="stage wrap rv">
+  <div class="win" role="img" aria-label="The Repobox home screen: a sidebar, a greeting over a Monet painting, sessions to continue, and a grid of projects">
+    <aside class="side">
+      <div class="tl"><i></i><i></i><i></i></div>
+      <div class="brand"><img src="assets/img/repobox-mascot.svg" alt=""><span>repobox</span></div>
+      <div class="search"><span>Search</span><kbd>⌘K</kbd></div>
+      <div class="nv on">Home<b>6</b></div>
+      <div class="nv">Sessions<b>38</b></div>
+      <div class="nv"><i class="dot"></i>Running now<b>1</b></div>
+      <div class="nv">Loose sessions<b>4</b></div>
+      <div class="hd">AGENTS</div>
+      <div class="nv"><i class="lg claude"></i>Claude Code<b>21</b></div>
+      <div class="nv"><i class="lg codex"></i>Codex<b>9</b></div>
+      <div class="nv"><i class="lg opencode"></i>OpenCode<b>8</b></div>
+    </aside>
+    <div class="main">
+      <div class="paint"><div class="serif">Good evening.</div><small>One agent is running right now. 7 files are waiting to be committed.</small><cite>Claude Monet, Stacks of Wheat (End of Summer), 1890–91</cite></div>
+      <div class="cont">
+        <div class="tile"><div class="m"><i class="lg claude"></i></div><div><p>Fix login redirect loop</p><small>tidepool · now</small></div></div>
+        <div class="tile"><div class="m" style="background:var(--soft)"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>lumen-api · 1h</small></div></div>
+        <div class="tile"><div class="m" style="background:var(--soft)"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>harbor-sync · 2h</small></div></div>
+      </div>
+      <div class="ph"><h4>Projects</h4><div class="chips"><span class="on">All</span><span>TypeScript</span><span>Rust</span><span>Go</span></div></div>
+      <div class="grid">
+        <div class="card"><img src="assets/av/tidepool.svg" alt=""><p>tidepool</p><span class="ago">now</span><span class="path mono">~/codes/tidepool</span><div class="tags"><span class="tag">⎇ main</span><span class="tag warn">4 uncommitted</span><span class="tag">Next.js</span></div></div>
+        <div class="card"><img src="assets/av/lumen-api.svg" alt=""><p>lumen-api</p><span class="ago">1h ago</span><span class="path mono">~/codes/lumen-api</span><div class="tags"><span class="tag">⎇ rate-limit</span><span class="tag warn">3 uncommitted</span><span class="tag">Go</span></div></div>
+        <div class="card"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">2h ago</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
+        <div class="card"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d ago</span><span class="path mono">~/codes/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">TypeScript</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="problem">
+  <div class="wrap rv">
+    <div class="big">Where was I?</div>
+    <p>Agents write the code now. But their conversations pile up in hidden folders, and none of them tell you which repo they belonged to or how to get back in.</p>
+    <div class="folders mono"><span>~/.claude/projects</span><span>~/.codex/sessions</span><span>OpenCode's database</span><span>~/codes/…</span></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap split rv">
+    <div class="copy">
+      <div class="kicker">1 · Finds every repo</div>
+      <h2>Point it at a folder. <em>It finds the rest.</em></h2>
+      <p class="sub">Repobox looks through the folders you choose and lists every project inside, with what it's built with and where git stands.</p>
+      <ul class="ticks">
+        <li>Detects the stack: TypeScript, Rust, Go, Next.js, Flutter and more</li>
+        <li>Shows the branch and how many files are waiting to be committed</li>
+        <li>Opens any project in your editor, Terminal or Finder</li>
+        <li>Notices new files and rescans by itself</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="grid">
+        <div class="card"><img src="assets/av/sparrow-mail.svg" alt=""><p>sparrow-mail</p><span class="ago">5h ago</span><span class="path mono">~/codes/sparrow-mail</span><div class="tags"><span class="tag">⎇ inbox-v2</span><span class="tag warn">12 uncommitted</span></div></div>
+        <div class="card"><img src="assets/av/quill-cli.svg" alt=""><p>quill-cli</p><span class="ago">1d ago</span><span class="path mono">~/codes/quill-cli</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
+        <div class="card"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">2h ago</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
+        <div class="card"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d ago</span><span class="path mono">~/codes/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Vite</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split rev rv">
+    <div class="copy">
+      <div class="kicker">2 · Files every chat</div>
+      <h2>Every conversation, <em>under the repo it belongs to.</em></h2>
+      <p class="sub">Claude Code, Codex and OpenCode each keep their history in a different place. Repobox reads all three and sorts them by project and by day.</p>
+      <ul class="ticks">
+        <li>See the last thing you asked, not a random ID</li>
+        <li>A green dot shows which agents are running right now</li>
+        <li>Chats started outside any repo are kept as loose sessions</li>
+        <li>Filter by agent with one click</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="glab">RUNNING NOW · TODAY</div>
+      <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i><i class="dot"></i></div><div><p>Fix login redirect loop</p><small>› the cookie is set but /dashboard still bounces back</small></div><div class="r"><span class="pill">tidepool</span><span class="resume">Resume</span></div></div>
+      <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>› use a token bucket per API key, not per IP</small></div><div class="r"><span class="pill">lumen-api</span>1h</div></div>
+      <div class="glab" style="margin-top:8px">YESTERDAY</div>
+      <div class="srow"><div class="m"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>› write the sync queue to IndexedDB first</small></div><div class="r"><span class="pill">harbor-sync</span>1d</div></div>
+      <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Inbox keyboard shortcuts</p><small>› j and k should move between threads</small></div><div class="r"><span class="pill">sparrow-mail</span>1d</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split rv">
+    <div class="copy">
+      <div class="kicker">3 · One click back in</div>
+      <h2>Pick up exactly <em>where you left off.</em></h2>
+      <p class="sub">Press Resume and Repobox opens Terminal in the right folder and runs the agent's own resume command. The agent has the whole conversation again.</p>
+      <ul class="ticks">
+        <li><span>Press <kbd>⌘K</kbd> and type a few letters of any project or chat</span></li>
+        <li>Works with Terminal and iTerm</li>
+        <li>Uses each agent's own command, so nothing is rewritten</li>
+      </ul>
+    </div>
+    <div>
+      <div class="term mono"><div class="tl"><i></i><i></i><i></i></div>
+        <div><span class="p">~/codes/tidepool</span> <span class="g">❯</span> claude --resume <span class="c">8f3c…a21</span></div>
+        <div class="p">Resuming “Fix login redirect loop”…</div>
+      </div>
+      <div class="kbar"><div class="in"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a8a90" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>redir<i class="caret"></i></div>
+        <div class="h on"><i class="lg claude"></i>Fix login redirect loop<small>tidepool · now</small></div>
+        <div class="h"><i class="lg codex"></i>Redirect old /blog URLs<small>moss-ui · 3d</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="privacy" class="privacy">
+  <div class="wrap split rv">
+    <div class="copy">
+      <div class="kicker">Privacy</div>
+      <h2>Your code stays <em>on your Mac.</em></h2>
+      <p class="sub">Repobox is a window onto files you already have. It doesn't run agents, call an AI, or send anything anywhere.</p>
+      <ul class="ticks">
+        <li>Reads agent history files; never edits or deletes them</li>
+        <li>No account and no sign-in</li>
+        <li>Your code and conversations never leave your computer</li>
+        <li>No AI inside: what you see is what's on disk</li>
+      </ul>
+    </div>
+    <div class="promise"><img src="assets/img/repobox-mascot.svg" alt=""><div class="serif">Repobox only reads.</div><small>The same promise you'll find in the app's Settings.</small></div>
+  </div>
+</section>
+
+<section id="film" class="film">
+  <div class="wrap rv">
+    <div class="kicker">The film</div>
+    <h2>Repobox <em>in 42 seconds.</em></h2>
+    <video src="assets/repobox-film.mp4" poster="assets/img/film-poster.jpg" controls playsinline preload="metadata"></video>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap faq rv">
+    <div><div class="kicker">Questions</div><h2>Good to <em>know.</em></h2></div>
+    <div>
+      <details open><summary>What is Repobox?</summary><p>Repobox is a Mac app that finds every code repo on your computer and lists the Claude Code, Codex and OpenCode conversations that belong to each one. From there you can open the project in your editor or resume any session in one click.</p></details>
+      <details><summary>How do I resume an old Claude Code session?</summary><p>Find the session in Repobox (or press <kbd>⌘K</kbd> and type part of its name) and press Resume. Repobox opens Terminal in that project's folder and runs <code>claude --resume</code> with the session's ID, so the full conversation comes back.</p></details>
+      <details><summary>Which coding agents does it support?</summary><p>Claude Code, OpenAI Codex CLI and OpenCode. Each one can be turned off in Settings.</p></details>
+      <details><summary>Does Repobox upload my code or chats?</summary><p>No. It only reads files that are already on your Mac and never sends your code or conversations anywhere. There's no account and no AI inside.</p></details>
+      <details><summary>Will it change my agent history?</summary><p>No. Repobox only reads the history folders. Resuming uses each agent's own command, so the agent itself does the work.</p></details>
+      <details><summary>Does it work on Windows or Linux?</summary><p>Not yet. Repobox is a native Mac app for macOS 13 or later.</p></details>
+      <details><summary>How do I say it?</summary><p>Like it's spelled: “repo box”. A box for your repos.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="end">
+  <div class="wrap rv">
+    <img class="bot" src="assets/img/repobox-mascot.svg" alt="">
+    <h2>Stop hunting for <em>that one chat.</em></h2>
+    <div class="ctas"><a class="btn" href="https://github.com/codebyNJ/repobox/releases">Download for macOS</a><a class="btn ghost" href="https://github.com/codebyNJ/repobox">View on GitHub</a></div>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <a class="brand" href="#"><img src="assets/img/repobox-mascot.svg" alt=""><span style="font-size:20px">repobox</span></a>
+  <span>Painting: Claude Monet, Stacks of Wheat (End of Summer), Art Institute of Chicago, public domain.</span>
+  <a href="https://github.com/codebyNJ/repobox">GitHub</a>
+</div></footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
