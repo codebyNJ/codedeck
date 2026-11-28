@@ -13,7 +13,12 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/img/repobox-mascot.svg">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Repobox","operatingSystem":"macOS 13 or later","applicationCategory":"DeveloperApplication","description":"A Mac app that finds every code repo on your computer, files each Claude Code, Codex and OpenCode session under its repo, and resumes any session in one click.","url":"https://repobox.co.in/","downloadUrl":"https://github.com/codebyNJ/repobox/releases"}
+[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Repobox","operatingSystem":"macOS 13 or later","applicationCategory":"DeveloperApplication","description":"A Mac app that finds every code repo on your computer, files each Claude Code, Codex and OpenCode session under its repo, and resumes any session in one click.","url":"https://repobox.co.in/","downloadUrl":"https://github.com/codebyNJ/repobox/releases"},
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is Repobox?","acceptedAnswer":{"@type":"Answer","text":"Repobox is a Mac app that finds every code repo on your computer and lists the Claude Code, Codex and OpenCode conversations that belong to each one, so you can resume any session in one click."}},
+{"@type":"Question","name":"How do I resume an old Claude Code session?","acceptedAnswer":{"@type":"Answer","text":"Find the session in Repobox, or press Command-K and type part of its name, then press Resume. Repobox opens Terminal in that project's folder and runs claude --resume with the session's ID."}},
+{"@type":"Question","name":"Does Repobox upload my code or chats?","acceptedAnswer":{"@type":"Answer","text":"No. It only reads files already on your Mac. There is no account, no AI inside, and nothing is sent anywhere."}},
+{"@type":"Question","name":"What do I need to run Repobox?","acceptedAnswer":{"@type":"Answer","text":"macOS 13 or later and at least one of Claude Code, OpenAI Codex CLI or OpenCode. It works with Terminal and iTerm."}}]}]
 </script>
 <style>
 @font-face{font-family:Boska;src:url(assets/fonts/boska-500-italic.ttf);font-style:italic;font-weight:500;font-display:swap}
@@ -21,350 +26,604 @@
 @font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-500-normal.ttf);font-weight:500;font-display:swap}
 @font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-600-normal.ttf);font-weight:600;font-display:swap}
 @font-face{font-family:"Geist Mono";src:url(assets/fonts/geist-mono-400-normal.ttf);font-display:swap}
-:root{--bg:#fff;--ink:#111112;--ink2:#4f4f55;--ink3:#8a8a90;--line:#ececee;--soft:#f6f6f7;--red:#e45e4d;--green:#2fa84f;--claude:#d97757}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font:400 17px/1.55 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit}
-em,.serif{font-family:Boska,Georgia,serif;font-style:italic;font-weight:500}
+:root{--bg:#fff;--ink:#111112;--ink2:#4f4f55;--ink3:#8a8a90;--line:#ececee;--soft:#f5f5f6;--red:#e45e4d;--green:#2fa84f;--claude:#d97757;--spring:cubic-bezier(.3,1.6,.5,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+em,.serif{font-family:Boska,Georgia,serif;font-style:italic;font-weight:500;letter-spacing:-.005em}
 .mono{font-family:"Geist Mono",ui-monospace,monospace}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
-/* nav */
-nav{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid transparent}
-nav .wrap{display:flex;align-items:center;height:64px;gap:28px}
-.brand{display:flex;align-items:center;gap:9px;text-decoration:none}
-.brand img{width:26px;height:26px;border-radius:6px}
-.brand span{font-family:Boska,serif;font-style:italic;font-weight:500;font-size:25px;line-height:1}
-nav .links{margin-left:auto;display:flex;gap:26px;font-size:15px;color:var(--ink2)}
-nav .links a{text-decoration:none}
-nav .links a:hover{color:var(--ink)}
-.btn{display:inline-flex;align-items:center;gap:9px;height:48px;padding:0 22px;border-radius:999px;background:var(--ink);color:#fff;font-weight:500;font-size:16px;text-decoration:none;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
-.btn:hover{transform:scale(1.04)}
-.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
-.btn.sm{height:38px;padding:0 16px;font-size:14px}
-.btn svg{width:17px;height:17px}
-/* hero */
-.hero{padding:88px 0 40px;text-align:center}
-.bot{width:84px;height:84px;margin:0 auto 26px;display:block;border-radius:18px;transform-origin:50% 100%;animation:jelly 3.2s ease-in-out infinite}
-@keyframes jelly{0%,78%,100%{transform:scale(1,1)}84%{transform:scale(1.14,.86)}90%{transform:scale(.94,1.06)}95%{transform:scale(1.02,.98)}}
-h1{font-size:clamp(40px,6.2vw,76px);line-height:1.02;letter-spacing:-.035em;font-weight:600;max-width:920px;margin:0 auto}
-h1 em{letter-spacing:-.01em;font-size:1.06em}
-.lede{font-size:clamp(17px,2vw,20px);color:var(--ink2);max-width:640px;margin:24px auto 34px}
-.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.fine{margin-top:16px;font-size:14px;color:var(--ink3)}
-.agents{display:flex;gap:22px;justify-content:center;margin-top:30px;font-size:14px;color:var(--ink2);flex-wrap:wrap}
-.agents span{display:flex;align-items:center;gap:7px}
-.lg{display:inline-block;width:16px;height:16px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;flex-shrink:0}
+kbd{font-family:"Geist Mono",monospace;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--ink2);background:#fff}
+.lg{display:inline-block;width:15px;height:15px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;flex-shrink:0}
 .lg.claude{--m:url(assets/img/claude.svg);color:var(--claude)}
 .lg.codex{--m:url(assets/img/codex.svg)}
 .lg.opencode{--m:url(assets/img/opencode.svg)}
-/* app window mock */
-.stage{padding:30px 0 80px}
-.win{border:1px solid var(--line);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:220px 1fr;background:#fff;max-width:1060px;margin:0 auto;text-align:left;font-size:13px}
-.side{border-right:1px solid var(--line);padding:16px 12px;background:#fbfbfb}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;display:inline-block}
+.btn{display:inline-flex;align-items:center;gap:9px;height:50px;padding:0 24px;border-radius:999px;background:var(--ink);color:#fff;font-weight:500;font-size:16px;transition:transform .35s var(--spring)}
+.btn:hover{transform:scale(1.05)}.btn:active{transform:scale(.96)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px #dcdcdf}
+.btn.sm{height:38px;padding:0 16px;font-size:14px}
+.btn svg{width:17px;height:17px}
+
+/* nav */
+nav{position:fixed;inset:0 0 auto;z-index:50;height:64px;display:flex;align-items:center;gap:26px;padding:0 28px;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:9px}
+.brand img{width:26px;height:26px}
+.brand span{font-family:Boska,serif;font-style:italic;font-weight:500;font-size:25px;line-height:1}
+nav .links{display:flex;gap:24px;font-size:15px;color:var(--ink2);margin-left:18px}
+nav .links a:hover{color:var(--ink)}
+nav .r{margin-left:auto;display:flex;gap:12px;align-items:center}
+.kbtn{display:flex;align-items:center;gap:8px;height:38px;padding:0 8px 0 14px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);font-size:14px;color:var(--ink2);transition:transform .35s var(--spring)}
+.kbtn:hover{transform:scale(1.04);color:var(--ink)}
+
+/* ======== stage: the one-take scroll story ======== */
+.pin{position:relative;height:100vh;overflow:hidden}
+.hA{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:min(1100px,calc(100% - 48px));text-align:center;z-index:3}
+h1{font-size:clamp(42px,5.5vw,80px);line-height:.98;letter-spacing:-.045em;font-weight:600}
+h1 em{display:block;font-size:1.08em;letter-spacing:-.02em;margin-top:.04em}
+.lede{font-size:clamp(17px,1.6vw,20px);color:var(--ink2);max-width:560px;margin:22px auto 30px}
+.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.fine{margin-top:16px;font-size:13.5px;color:var(--ink3);display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.fine span{display:flex;align-items:center;gap:6px}
+.hB{position:absolute;left:0;right:0;top:86px;text-align:center;z-index:3;opacity:0;padding:0 24px}
+.hB h2{font-size:clamp(28px,3.2vw,44px);line-height:1.05;letter-spacing:-.035em;font-weight:600}
+.field{position:absolute;inset:0;z-index:4;pointer-events:none}
+.frag{position:absolute;left:0;top:0;white-space:nowrap;font-size:13px}
+.frag>div{animation:bob var(--d,6s) ease-in-out infinite alternate;animation-delay:var(--dl,0s)}
+@keyframes bob{to{transform:translate(var(--bx,6px),var(--by,-10px)) rotate(var(--br,1.5deg))}}
+.f-folder{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink2)}
+.f-folder i{width:16px;height:13px;background:#dfe7f6;border-radius:2px 3px 3px 3px;position:relative}
+.f-folder i::before{content:"";position:absolute;left:0;top:-3px;width:7px;height:4px;background:#dfe7f6;border-radius:2px 2px 0 0}
+.f-bub{background:var(--soft);border-radius:14px 14px 14px 4px;padding:9px 13px;max-width:270px;white-space:normal;line-height:1.35}
+.f-bub b{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3);font-weight:500;margin-bottom:3px}
+.f-term{background:var(--ink);color:#e8e8ea;border-radius:9px;padding:8px 12px;font-family:"Geist Mono",monospace;font-size:12px}
+.f-term span{color:#7fd18f}
+.f-tag{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink2);font-size:12.5px}
+.f-tag.warn{background:#fdf0dc;border-color:#f6e2bf;color:#9a5b0b}
+.f-path{font-family:"Geist Mono",monospace;font-size:11.5px;color:var(--ink3);background:#fff;border:1px dashed #d9d9dd;border-radius:8px;padding:6px 10px}
+
+/* the app window (the box) */
+.win{position:absolute;left:50%;top:50%;width:1080px;height:620px;margin:-310px 0 0 -540px;border:1px solid #e3e3e6;border-radius:16px;background:#fff;display:grid;grid-template-columns:212px 1fr;font-size:13px;z-index:2;transform-origin:50% 50%}
+.robot{position:absolute;right:110px;top:-61px;width:62px;height:62px;transform-origin:50% 100%;z-index:3}
+.side{border-right:1px solid var(--line);padding:16px 12px;background:#fbfbfb;border-radius:16px 0 0 16px}
 .tl{display:flex;gap:7px;margin-bottom:18px}.tl i{width:11px;height:11px;border-radius:50%;background:#ec6a5e}.tl i:nth-child(2){background:#f4bf4f}.tl i:nth-child(3){background:#61c554}
-.side .brand span{font-size:19px}.side .brand img{width:20px;height:20px;border-radius:5px}
-.search{margin:14px 0 12px;border:1px solid var(--line);border-radius:8px;padding:6px 9px;color:var(--ink3);display:flex;justify-content:space-between;background:#fff}
+.side .brand span{font-size:19px}.side .brand img{width:20px;height:20px}
+.search{margin:14px 0 12px;border:1px solid var(--line);border-radius:8px;padding:6px 9px;color:var(--ink3);display:flex;justify-content:space-between;align-items:center;background:#fff}
+.search kbd{font-size:10.5px}
 .nv{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:7px;color:var(--ink2)}
-.nv b{margin-left:auto;font-weight:400;color:var(--ink3);font-size:12px}
+.nv b{margin-left:auto;font-weight:400;color:var(--ink3);font-size:12px;font-variant-numeric:tabular-nums}
 .nv.on{background:#efeff1;color:var(--ink);font-weight:500}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
 .hd{font-size:10.5px;letter-spacing:.08em;color:var(--ink3);margin:14px 9px 6px}
-.main{padding:18px;min-width:0}
-.paint{height:170px;border-radius:12px;background:url(assets/img/wheat-summer.jpg) center 60%/cover;position:relative;padding:22px 24px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end}
-.paint::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.45))}
+.main{position:relative;overflow:hidden;border-radius:0 16px 16px 0}
+.view{position:absolute;inset:0;padding:18px}
+.paint{height:150px;border-radius:12px;background:url(assets/img/wheat-summer.jpg) center 60%/cover;position:relative;padding:20px 22px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.paint::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.45))}
 .paint>*{position:relative}
-.paint .serif{font-size:36px;line-height:1.1}
-.paint small{font-size:13px;opacity:.92;margin-top:4px}
-.paint cite{position:absolute;right:16px;bottom:12px;font-size:10px;font-style:normal;opacity:.8}
-.cont{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 18px}
-.tile{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;min-width:0}
-.tile .m{width:28px;height:28px;border-radius:8px;background:#fbeee8;display:grid;place-items:center;flex-shrink:0}
-.tile div{min-width:0}.tile p{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tile small{color:var(--ink3);font-size:11.5px}
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.ph h4{font-size:16px;font-weight:600}
+.paint .serif{font-size:34px;line-height:1.1}
+.paint small{font-size:12.5px;opacity:.92;margin-top:2px}
+.paint cite{position:absolute;right:14px;bottom:10px;font-size:9.5px;font-style:normal;opacity:.75}
+.vh{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px}
+.vh h4{font-size:15px;font-weight:600}
 .chips{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:2px;font-size:11.5px;color:var(--ink2)}.chips span{padding:3px 9px;border-radius:6px}.chips .on{background:#fff;color:var(--ink);box-shadow:0 0 0 1px var(--line)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{border:1px solid var(--line);border-radius:12px;padding:13px;display:grid;grid-template-columns:38px 1fr auto;gap:4px 11px}
-.card img{width:38px;height:38px;border-radius:9px;grid-row:span 3}
-.card p{font-weight:500;font-size:14px}.card .ago{color:var(--ink3);font-size:11.5px}
-.card .path{font-size:11px;color:var(--ink3);grid-column:2/4}
-.tags{grid-column:2/4;display:flex;gap:6px;margin-top:4px}
-.tag{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--soft);color:var(--ink2)}.tag.warn{background:#fdf0dc;color:#9a5b0b}
-/* sections */
-section{padding:96px 0;border-top:1px solid var(--line)}
-.kicker{font-size:14px;color:var(--red);font-weight:500;margin-bottom:14px}
-h2{font-size:clamp(32px,4.4vw,52px);line-height:1.05;letter-spacing:-.03em;font-weight:600;max-width:760px}
-h2 em{letter-spacing:0}
-.sub{font-size:18px;color:var(--ink2);max-width:600px;margin-top:18px}
-.split{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:center}
-.split.rev{grid-template-columns:1.15fr 1fr}
-.split>*,.srow>div,.faq>*{min-width:0}.split.rev .copy{order:2}
-ul.ticks{list-style:none;padding:0;margin-top:26px;display:grid;gap:12px}
-ul.ticks li{display:flex;gap:12px;color:var(--ink2)}
-ul.ticks li::before{content:"";width:18px;height:18px;margin-top:3px;border-radius:50%;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;flex-shrink:0}
-.panel{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;font-size:13px}
-/* problem */
-.problem{text-align:center}
-.problem .big{font-family:Boska,serif;font-style:italic;font-size:clamp(64px,11vw,140px);line-height:1;letter-spacing:-.02em}
-.problem p{max-width:640px;margin:26px auto 0;font-size:19px;color:var(--ink2)}
-.folders{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:30px}
-.folders span{font-size:13px;padding:7px 12px;border-radius:8px;background:var(--soft);color:var(--ink2)}
-/* sessions */
-.srow{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:11px 10px;border-radius:10px}
+.cont{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;min-width:0;background:#fff}
+.tile .m{width:28px;height:28px;border-radius:8px;background:var(--soft);display:grid;place-items:center;flex-shrink:0}
+.tile div{min-width:0}.tile p{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tile small{color:var(--ink3);font-size:11.5px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:34px 1fr auto;gap:3px 10px;background:#fff;min-width:0}
+.card img{width:34px;height:34px;border-radius:9px;grid-row:span 3}
+.card p{font-weight:500;font-size:13.5px}.card .ago{color:var(--ink3);font-size:11px}
+.card .path{font-size:10.5px;color:var(--ink3);grid-column:2/4}
+.tags{grid-column:2/4;display:flex;gap:5px;margin-top:3px;flex-wrap:wrap}
+.tag{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--soft);color:var(--ink2)}.tag.warn{background:#fdf0dc;color:#9a5b0b}
+/* sessions view */
+.glab{font-size:10.5px;letter-spacing:.08em;color:var(--ink3);padding:10px 10px 4px}
+.srow{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:9px 10px;border-radius:10px}
 .srow+.srow{border-top:1px solid var(--line)}
-.srow .m{width:34px;height:34px;border-radius:9px;background:var(--soft);display:grid;place-items:center;position:relative}
+.srow .m{width:32px;height:32px;border-radius:9px;background:var(--soft);display:grid;place-items:center;position:relative}
 .srow .m .dot{position:absolute;right:-2px;bottom:-2px;border:2px solid #fff;width:11px;height:11px}
-.srow p{font-weight:500;font-size:14px}.srow small{color:var(--ink3);font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow p{font-weight:500;font-size:13.5px}.srow small{color:var(--ink3);font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow>div{min-width:0}
 .srow .r{display:flex;gap:8px;align-items:center;color:var(--ink3);font-size:12px}
-.pill{font-size:11.5px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink2)}
-.glab{font-size:11px;letter-spacing:.08em;color:var(--ink3);padding:6px 10px}
-.resume{height:28px;padding:0 11px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;display:flex;align-items:center}
-/* terminal */
-.term{border-radius:14px;background:#111112;color:#e8e8ea;padding:16px 18px 22px;font-size:13.5px;line-height:1.75}
-.term .tl{margin-bottom:14px}.term .tl i{background:#3a3a3e!important}
-.term .p{color:#8a8a90}.term .g{color:#7fd18f}.term .c{color:#f0a08f}
-.kbar{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.kbar .in{padding:13px 16px;border-bottom:1px solid var(--line);font-size:15px;display:flex;gap:10px;align-items:center}
-.kbar .in .caret{width:1.5px;height:18px;background:var(--ink);animation:blink 1s steps(1) infinite}
+.pill{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink2)}
+.resume{height:28px;padding:0 12px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;display:flex;align-items:center;gap:6px}
+/* terminal sheet */
+.sheet{position:absolute;left:14px;right:14px;bottom:0;height:62%;background:#111112;color:#e8e8ea;border-radius:14px 14px 0 0;padding:16px 20px;font-family:"Geist Mono",monospace;font-size:14px;line-height:1.75}
+.sheet .tl i{background:#3a3a3e}
+.sheet .p{color:#8a8a90}.sheet .g{color:#7fd18f}.sheet .c{color:#f0a08f}
+.sheet .you{margin-top:12px;color:#fff}
+.sheet .ai{color:#c9c9ce;white-space:normal}
+.sheet .ai b{color:var(--claude);font-weight:400}
+.caret{display:inline-block;width:8px;height:15px;background:#e8e8ea;vertical-align:-2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-.kbar .h{display:flex;gap:10px;align-items:center;padding:9px 16px;font-size:13.5px}.kbar .h.on{background:var(--soft)}
-.kbar .h small{margin-left:auto;color:var(--ink3)}
-kbd{font-family:"Geist Mono",monospace;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--ink2)}
-/* privacy */
-.privacy{background:var(--ink);color:#fff;border-top:0}
-.privacy .kicker{color:#f0a08f}
-.privacy .sub,.privacy ul.ticks li{color:#b9b9be}
-.privacy ul.ticks li::before{background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
-.promise{border:1px solid #2b2b2f;border-radius:18px;padding:34px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px}
-.promise img{width:96px;height:96px;border-radius:22px}
-.promise .serif{font-size:44px;line-height:1.05}
-.promise small{color:#8a8a90;font-size:14px;max-width:320px}
-/* film */
-.film video{width:100%;border-radius:16px;border:1px solid var(--line);display:block;margin-top:40px;background:#fff}
-/* faq */
-.faq{display:grid;grid-template-columns:1fr 1.6fr;gap:56px}
-details{border-bottom:1px solid var(--line);padding:20px 0}
-details:first-child{border-top:1px solid var(--line)}
-summary{cursor:pointer;font-weight:500;font-size:18px;list-style:none;display:flex;justify-content:space-between;gap:16px}
-summary::after{content:"+";color:var(--ink3);font-size:22px;line-height:1;transition:transform .3s}
+.cursor{position:absolute;left:0;top:0;width:22px;z-index:6;opacity:0;pointer-events:none}
+/* crop marks: the brand's one ornament */
+.crop{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:5;opacity:0}
+.crop i{position:absolute;width:14px;height:14px;border:0 solid var(--red)}
+.crop i:nth-child(1){left:0;top:0;border-width:2px 0 0 2px}.crop i:nth-child(2){right:0;top:0;border-width:2px 2px 0 0}
+.crop i:nth-child(3){left:0;bottom:0;border-width:0 0 2px 2px}.crop i:nth-child(4){right:0;bottom:0;border-width:0 2px 2px 0}
+html.motion .hA,html.motion .steps{transform:none}
+/* step copy */
+.steps{position:absolute;left:clamp(24px,4vw,64px);top:50%;transform:translateY(-50%);width:min(30vw,400px);z-index:3;opacity:0}
+.step{padding:22px 0;border-top:1px solid var(--line);opacity:.3}
+.step:last-of-type{border-bottom:1px solid var(--line)}
+.step .n{font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:10px}
+.step .bar{flex:1;height:2px;background:var(--line);position:relative;overflow:hidden}
+.step .bar i{position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:0 50%}
+.step h3{font-size:clamp(22px,2.1vw,30px);line-height:1.1;letter-spacing:-.03em;font-weight:600;margin-top:10px}
+.step p{color:var(--ink2);font-size:15.5px;margin-top:8px}
+.try{margin-top:22px;font-size:14px;color:var(--ink3)}
+.try button{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
+/* ======== privacy ======== */
+.dark{background:var(--ink);color:#fff;padding:140px 0;position:relative}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.pv{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.kicker{font-size:14px;color:var(--red);font-weight:500;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.dark .kicker{color:#f0a08f}
+.big{font-size:clamp(52px,7vw,104px);line-height:.95;letter-spacing:-.045em;font-weight:600}
+.big em{display:block;letter-spacing:-.02em}
+.pv .sub{color:#a9a9ae;font-size:18px;max-width:470px;margin-top:26px}
+.facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+.facts span{font-size:13.5px;padding:7px 13px;border-radius:999px;box-shadow:inset 0 0 0 1px #2e2e33;color:#d6d6da}
+.ledger{border:1px solid #2b2b30;border-radius:18px;overflow:hidden}
+.lrow{padding:20px 22px;border-bottom:1px solid #2b2b30}
+.lrow:last-child{border:0}
+.lhead{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;letter-spacing:.08em;color:#8a8a90}
+.lnum{font-size:44px;letter-spacing:-.03em;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:6px}
+.lnum.zero{color:#7fd18f}
+.feed{height:132px;overflow:hidden;margin-top:12px;mask:linear-gradient(transparent,#000 25%,#000 75%,transparent);-webkit-mask:linear-gradient(transparent,#000 25%,#000 75%,transparent)}
+.feed ul{list-style:none;animation:feed 18s linear infinite}
+.feed li{font-family:"Geist Mono",monospace;font-size:12px;color:#b9b9be;padding:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed li b{color:#7fd18f;font-weight:400}
+@keyframes feed{to{transform:translateY(-50%)}}
+.flat{height:46px;margin-top:10px;position:relative;border-bottom:1px dashed #3a3a40}
+.flat::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#7fd18f;transform-origin:0 50%;animation:draw 2.4s ease-out both}
+@keyframes draw{from{transform:scaleX(0)}}
+.lnote{font-size:12.5px;color:#8a8a90;margin-top:8px}
+
+/* ======== closing ======== */
+.close{padding:150px 0 80px;text-align:center}
+.close h2{font-size:clamp(44px,6vw,86px);line-height:.98;letter-spacing:-.045em;font-weight:600}
+.close h2 em{display:block;letter-spacing:-.02em}
+.close .ctas{margin-top:36px}
+.filmcard{display:block;position:relative;max-width:980px;margin:80px auto 0;border-radius:20px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;background:#111 url(assets/img/film-card.jpg) center/cover}
+.filmcard .play{position:absolute;left:24px;bottom:24px;width:64px;height:64px;border-radius:50%;background:var(--red);display:grid;place-items:center;transition:transform .45s var(--spring)}
+.filmcard:hover .play{transform:scale(1.12)}
+.filmcard .play::after{content:"";border-left:18px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:6px}
+.filmcard .lab{position:absolute;left:100px;bottom:37px;background:var(--ink);color:#fff;border-radius:999px;padding:8px 16px;font-size:15px;font-weight:500}
+.faq{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px;max-width:1080px;margin:110px auto 0;text-align:left}
+details{border-top:1px solid var(--line);padding:20px 0}
+summary{cursor:pointer;font-weight:500;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--ink3);font-size:22px;line-height:1;transition:transform .35s var(--spring)}
 details[open] summary::after{transform:rotate(45deg)}
-details p{color:var(--ink2);margin-top:12px;max-width:620px}
+details p{color:var(--ink2);margin-top:10px;font-size:15.5px}
 code{font-family:"Geist Mono",monospace;font-size:.88em;background:var(--soft);padding:1px 6px;border-radius:5px}
-/* end */
-.end{text-align:center;padding:120px 0}
-.end h2{margin:0 auto}
-.end .ctas{margin-top:34px}
-footer{border-top:1px solid var(--line);padding:30px 0 40px;font-size:13.5px;color:var(--ink3)}
-footer .wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
-footer .wrap>:last-child{margin-left:auto}
-/* reveal */
-.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.9,.3,1.2)}
-.rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.bot{animation:none}}
-@media (max-width:860px){
-  nav .links{display:none}
-  nav .btn.sm{margin-left:auto}
+footer{position:relative;overflow:hidden;padding-top:60px}
+.mark{font-family:Boska,serif;font-style:italic;font-weight:500;font-size:27vw;line-height:.76;letter-spacing:-.03em;text-align:center;margin-bottom:-4.2vw;white-space:nowrap;user-select:none}
+.footbot{position:absolute;width:8vw;max-width:110px;right:12vw;top:calc(60px - 4.6vw);transform-origin:50% 100%;cursor:pointer}
+.fl{display:flex;gap:22px;flex-wrap:wrap;align-items:center;padding:22px 28px 26px;font-size:13px;color:var(--ink3);border-top:1px solid var(--line);position:relative;background:#fff}
+.fl>:last-child{margin-left:auto}
+.fl a:hover{color:var(--ink)}
+
+/* ======== palette + film dialogs ======== */
+dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;margin:auto;color:var(--ink)}
+dialog::backdrop{background:rgba(17,17,18,.42)}
+.pal{width:min(640px,calc(100vw - 32px));background:#fff;border-radius:16px;overflow:hidden}
+#pal{margin-top:14vh}
+dialog[open] .pal,dialog[open] .fbox{animation:pop .5s var(--spring)}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+.pin-in{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.pin-in input{flex:1;border:0;outline:0;font:inherit;font-size:17px;background:transparent;min-width:0}
+.plist{max-height:min(380px,50vh);overflow:auto;padding:6px}
+.pi{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;padding:9px 12px;border-radius:10px;cursor:pointer}
+.pi.on{background:var(--soft)}
+.pi .m{width:30px;height:30px;border-radius:8px;background:var(--soft);display:grid;place-items:center}
+.pi.on .m{background:#fff}
+.pi p{font-weight:500;font-size:14.5px}.pi small{color:var(--ink3);font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi>div{min-width:0}
+.pi .ago{font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:6px}
+.pfoot{display:flex;gap:16px;padding:10px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3)}
+.pempty{padding:30px;text-align:center;color:var(--ink3);font-size:14px}
+.pres{padding:18px}
+.pres .term{background:var(--ink);color:#e8e8ea;border-radius:12px;padding:16px 18px;font-family:"Geist Mono",monospace;font-size:13px;line-height:1.8;overflow-x:auto}
+.pres .term .p{color:#8a8a90}.pres .term .g{color:#7fd18f}
+.pres p{font-size:14.5px;color:var(--ink2);margin:14px 2px 16px}
+.pres .row{display:flex;gap:10px;flex-wrap:wrap}
+.fbox{width:min(1100px,calc(100vw - 32px))}
+.fbox video{width:100%;display:block;border-radius:16px;background:#000}
+.fx{position:fixed;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:#fff;font-size:22px;line-height:1}
+
+/* ======== static layout (phones, short screens, reduced motion, no JS) ======== */
+html:not(.motion) .pin{height:auto;overflow:visible;padding:120px 0 40px}
+html:not(.motion) .hA{position:relative;left:auto;top:auto;transform:none;margin:0 auto}
+html:not(.motion) .field,html:not(.motion) .hB,html:not(.motion) .sheet,html:not(.motion) .crop,html:not(.motion) .cursor,html:not(.motion) .view.sess{display:none}
+html:not(.motion) .win{position:relative;left:auto;top:auto;margin:110px auto 0;width:min(1080px,calc(100% - 32px));height:auto}
+html:not(.motion) .view{position:relative}
+html:not(.motion) .steps{position:relative;left:auto;top:auto;transform:none;width:min(1080px,calc(100% - 32px));margin:48px auto 0;opacity:1;display:grid;grid-template-columns:repeat(3,1fr);gap:0 32px}
+html:not(.motion) .step{opacity:1}
+html:not(.motion) .step:last-of-type{border-bottom:0}
+html:not(.motion) .step .bar i{transform:none}
+html:not(.motion) .try{display:none}
+@media (max-width:900px){
+  nav{padding:0 16px;gap:12px}nav .links,.kbtn{display:none}
   .win{grid-template-columns:1fr}.side{display:none}
-  .cont{grid-template-columns:1fr}.cont .tile:nth-child(n+2){display:none}
-  .grid{grid-template-columns:1fr}
-  .split,.split.rev,.faq{grid-template-columns:1fr;gap:36px}.split.rev .copy{order:0}
-  section{padding:72px 0}
-  .srow .r .pill{display:none}
+  .cont,.grid{grid-template-columns:1fr}.cont .tile:nth-child(n+2),.grid .card:nth-child(n+4){display:none}
+  .robot{right:24px}
+  html:not(.motion) .steps{grid-template-columns:1fr}
+  .pv,.faq{grid-template-columns:1fr;gap:48px}
+  .faq{gap:0}
+  .dark{padding:96px 0}.close{padding:110px 0 60px}
+  .wrap{padding:0 20px}
+  .fl>:last-child{margin-left:0}
 }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<nav><div class="wrap">
-  <a class="brand" href="#"><img src="assets/img/repobox-mascot.svg" alt=""><span>repobox</span></a>
-  <div class="links"><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#film">Film</a><a href="#faq">FAQ</a><a href="https://github.com/codebyNJ/repobox">GitHub</a></div>
-  <a class="btn sm" href="https://github.com/codebyNJ/repobox/releases">Download</a>
-</div></nav>
-
-<header class="hero wrap">
-  <img class="bot" src="assets/img/repobox-mascot.svg" alt="The Repobox robot">
-  <h1>Every repo and every AI coding chat on your Mac, <em>in one box.</em></h1>
-  <p class="lede">Repobox finds your projects, files each Claude Code, Codex and OpenCode session under the repo it belongs to, and reopens any of them in one click.</p>
-  <div class="ctas">
-    <a class="btn" href="https://github.com/codebyNJ/repobox/releases"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.1.1 2.3-.6 3.1-1.5z"/></svg>Download for macOS</a>
-    <a class="btn ghost" href="#film">Watch the 42-second film</a>
+<nav>
+  <a class="brand" href="#top"><img src="assets/img/repobox-mascot.svg" alt=""><span>repobox</span></a>
+  <div class="links"><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#film" data-film>Film</a><a href="https://github.com/codebyNJ/repobox">GitHub</a></div>
+  <div class="r">
+    <button class="kbtn" data-pal>Search the demo <kbd>⌘K</kbd></button>
+    <a class="btn sm" href="https://github.com/codebyNJ/repobox/releases">Download</a>
   </div>
-  <p class="fine">macOS 13 or later · no account · your code never leaves your Mac</p>
-  <div class="agents"><span><i class="lg claude"></i>Claude Code</span><span><i class="lg codex"></i>Codex</span><span><i class="lg opencode"></i>OpenCode</span></div>
-</header>
+</nav>
 
-<div class="stage wrap rv">
-  <div class="win" role="img" aria-label="The Repobox home screen: a sidebar, a greeting over a Monet painting, sessions to continue, and a grid of projects">
+<main id="top">
+<section class="stage" id="how" aria-label="How Repobox works">
+<div class="pin">
+
+  <div class="hA">
+    <h1>Your agents wrote the code. <em>Now where is it?</em></h1>
+    <p class="lede">Repobox finds every repo on your Mac, files each Claude Code, Codex and OpenCode chat under the repo it belongs to, and reopens any of them in one click.</p>
+    <div class="ctas">
+      <a class="btn" href="https://github.com/codebyNJ/repobox/releases"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.1.1 2.3-.6 3.1-1.5z"/></svg>Download for macOS</a>
+      <button class="btn ghost" data-pal>Try the search <kbd style="margin-left:2px">⌘K</kbd></button>
+    </div>
+    <div class="fine"><span><i class="lg claude"></i>Claude Code</span><span><i class="lg codex"></i>Codex</span><span><i class="lg opencode"></i>OpenCode</span><span>macOS 13+ · no account</span></div>
+  </div>
+
+  <div class="hB"><h2>Repobox puts all of it <em>in one box.</em></h2></div>
+
+  <div class="steps">
+    <div class="step"><div class="n mono">01 <span class="bar"><i></i></span></div><h3>It finds every repo.</h3><p>Point it at a folder. It lists each project with its stack, its branch and what's waiting to be committed.</p></div>
+    <div class="step"><div class="n mono">02 <span class="bar"><i></i></span></div><h3>It files every chat.</h3><p>Claude Code, Codex and OpenCode history, sorted under the repo it belongs to. A green dot means it's running now.</p></div>
+    <div class="step"><div class="n mono">03 <span class="bar"><i></i></span></div><h3>One click back in.</h3><p>Resume opens Terminal in the right folder and runs the agent's own resume command. The whole conversation is back.</p></div>
+    <p class="try">Try it here: press <kbd>⌘K</kbd> or <button data-pal>search the demo sessions</button>.</p>
+  </div>
+
+  <div class="win" aria-label="The Repobox app window">
+    <img class="robot" src="assets/img/repobox-mascot.svg" alt="The Repobox robot">
     <aside class="side">
       <div class="tl"><i></i><i></i><i></i></div>
       <div class="brand"><img src="assets/img/repobox-mascot.svg" alt=""><span>repobox</span></div>
-      <div class="search"><span>Search</span><kbd>⌘K</kbd></div>
-      <div class="nv on">Home<b>6</b></div>
-      <div class="nv">Sessions<b>38</b></div>
-      <div class="nv"><i class="dot"></i>Running now<b>1</b></div>
-      <div class="nv">Loose sessions<b>4</b></div>
+      <div class="search" data-slot="search"><span>Search</span><kbd>⌘K</kbd></div>
+      <div class="nv on" data-nv="home">Home<b data-n="6">6</b></div>
+      <div class="nv" data-nv="sess" data-slot="sessions">Sessions<b data-n="38">38</b></div>
+      <div class="nv" data-slot="running"><i class="dot"></i>Running now<b data-n="1">1</b></div>
+      <div class="nv" data-slot="loose">Loose sessions<b data-n="4">4</b></div>
       <div class="hd">AGENTS</div>
-      <div class="nv"><i class="lg claude"></i>Claude Code<b>21</b></div>
-      <div class="nv"><i class="lg codex"></i>Codex<b>9</b></div>
-      <div class="nv"><i class="lg opencode"></i>OpenCode<b>8</b></div>
+      <div class="nv" data-slot="a-claude"><i class="lg claude"></i>Claude Code<b data-n="21">21</b></div>
+      <div class="nv" data-slot="a-codex"><i class="lg codex"></i>Codex<b data-n="9">9</b></div>
+      <div class="nv" data-slot="a-opencode"><i class="lg opencode"></i>OpenCode<b data-n="8">8</b></div>
     </aside>
     <div class="main">
-      <div class="paint"><div class="serif">Good evening.</div><small>One agent is running right now. 7 files are waiting to be committed.</small><cite>Claude Monet, Stacks of Wheat (End of Summer), 1890–91</cite></div>
-      <div class="cont">
-        <div class="tile"><div class="m"><i class="lg claude"></i></div><div><p>Fix login redirect loop</p><small>tidepool · now</small></div></div>
-        <div class="tile"><div class="m" style="background:var(--soft)"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>lumen-api · 1h</small></div></div>
-        <div class="tile"><div class="m" style="background:var(--soft)"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>harbor-sync · 2h</small></div></div>
+      <div class="view home">
+        <div class="paint"><div class="serif">Good evening.</div><small>One agent is running right now. 7 files are waiting to be committed.</small><cite>Claude Monet, Stacks of Wheat (End of Summer), 1890–91</cite></div>
+        <div class="vh"><h4>Continue</h4></div>
+        <div class="cont">
+          <div class="tile" data-slot="t1"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Fix login redirect loop</p><small>tidepool · now</small></div></div>
+          <div class="tile" data-slot="t2"><div class="m"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>lumen-api · 1h</small></div></div>
+          <div class="tile" data-slot="t3"><div class="m"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>harbor-sync · 1d</small></div></div>
+        </div>
+        <div class="vh"><h4>Projects</h4><div class="chips"><span class="on">All</span><span>TypeScript</span><span>Rust</span><span>Go</span></div></div>
+        <div class="grid">
+          <div class="card" data-slot="c1"><img src="assets/av/tidepool.svg" alt=""><p>tidepool</p><span class="ago">now</span><span class="path mono">~/codes/tidepool</span><div class="tags"><span class="tag">⎇ main</span><span class="tag warn">4 uncommitted</span></div></div>
+          <div class="card" data-slot="c2"><img src="assets/av/lumen-api.svg" alt=""><p>lumen-api</p><span class="ago">1h</span><span class="path mono">~/codes/lumen-api</span><div class="tags"><span class="tag">⎇ rate-limit</span><span class="tag warn">3 uncommitted</span></div></div>
+          <div class="card" data-slot="c3"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">1d</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
+          <div class="card" data-slot="c4"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d</span><span class="path mono">~/work/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Vite</span></div></div>
+          <div class="card" data-slot="c5"><img src="assets/av/sparrow-mail.svg" alt=""><p>sparrow-mail</p><span class="ago">1d</span><span class="path mono">~/codes/sparrow-mail</span><div class="tags"><span class="tag">⎇ inbox-v2</span></div></div>
+          <div class="card" data-slot="c6"><img src="assets/av/quill-cli.svg" alt=""><p>quill-cli</p><span class="ago">5d</span><span class="path mono">~/codes/quill-cli</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
+        </div>
       </div>
-      <div class="ph"><h4>Projects</h4><div class="chips"><span class="on">All</span><span>TypeScript</span><span>Rust</span><span>Go</span></div></div>
-      <div class="grid">
-        <div class="card"><img src="assets/av/tidepool.svg" alt=""><p>tidepool</p><span class="ago">now</span><span class="path mono">~/codes/tidepool</span><div class="tags"><span class="tag">⎇ main</span><span class="tag warn">4 uncommitted</span><span class="tag">Next.js</span></div></div>
-        <div class="card"><img src="assets/av/lumen-api.svg" alt=""><p>lumen-api</p><span class="ago">1h ago</span><span class="path mono">~/codes/lumen-api</span><div class="tags"><span class="tag">⎇ rate-limit</span><span class="tag warn">3 uncommitted</span><span class="tag">Go</span></div></div>
-        <div class="card"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">2h ago</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
-        <div class="card"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d ago</span><span class="path mono">~/codes/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">TypeScript</span></div></div>
+      <div class="view sess">
+        <div class="vh" style="margin-top:2px"><h4>Sessions</h4><div class="chips"><span class="on">All</span><span>Claude Code</span><span>Codex</span><span>OpenCode</span></div></div>
+        <div class="slist">
+          <div class="glab">RUNNING NOW</div>
+          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i><i class="dot"></i></div><div><p>Fix login redirect loop</p><small>› the cookie is set but /dashboard still bounces back</small></div><div class="r"><span class="pill">tidepool</span><span class="resume" id="resume">Resume</span></div></div>
+          <div class="glab">TODAY</div>
+          <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>› use a token bucket per API key, not per IP</small></div><div class="r"><span class="pill">lumen-api</span>1h</div></div>
+          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Release notes for 0.4</p><small>› group the changelog by breaking changes vs fixes</small></div><div class="r"><span class="pill">quill-cli</span>4h</div></div>
+          <div class="glab">YESTERDAY</div>
+          <div class="srow"><div class="m"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>› write the sync queue to IndexedDB first</small></div><div class="r"><span class="pill">harbor-sync</span>1d</div></div>
+          <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Inbox keyboard shortcuts</p><small>› j and k should move between threads</small></div><div class="r"><span class="pill">sparrow-mail</span>1d</div></div>
+          <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Redirect old /blog URLs</p><small>› 301 every /blog/:slug to /notes/:slug</small></div><div class="r"><span class="pill">moss-ui</span>1d</div></div>
+        </div>
       </div>
+      <div class="sheet">
+        <div class="tl"><i></i><i></i><i></i></div>
+        <div><span class="p">~/codes/tidepool</span> <span class="g">❯</span> <span id="typed"></span><i class="caret"></i></div>
+        <div class="tline p">Resuming “Fix login redirect loop” · 14 messages</div>
+        <div class="tline you">› the cookie is set but /dashboard still bounces back</div>
+        <div class="tline ai"><b>⏺</b> Found it. The middleware reads the session before the cookie is written, so the first request after login looks logged out. I'll move the check after <span class="c">setSession()</span>.</div>
+      </div>
+      <svg class="cursor" viewBox="0 0 24 24"><path d="M5 3l14 8-6.5 1.6L10 19z" fill="#111112" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      <div class="crop"><i></i><i></i><i></i><i></i></div>
     </div>
   </div>
+
+  <div class="field" aria-hidden="true"></div>
 </div>
-
-<section class="problem">
-  <div class="wrap rv">
-    <div class="big">Where was I?</div>
-    <p>Agents write the code now. But their conversations pile up in hidden folders, and none of them tell you which repo they belonged to or how to get back in.</p>
-    <div class="folders mono"><span>~/.claude/projects</span><span>~/.codex/sessions</span><span>OpenCode's database</span><span>~/codes/…</span></div>
-  </div>
 </section>
 
-<section id="how">
-  <div class="wrap split rv">
-    <div class="copy">
-      <div class="kicker">1 · Finds every repo</div>
-      <h2>Point it at a folder. <em>It finds the rest.</em></h2>
-      <p class="sub">Repobox looks through the folders you choose and lists every project inside, with what it's built with and where git stands.</p>
-      <ul class="ticks">
-        <li>Detects the stack: TypeScript, Rust, Go, Next.js, Flutter and more</li>
-        <li>Shows the branch and how many files are waiting to be committed</li>
-        <li>Opens any project in your editor, Terminal or Finder</li>
-        <li>Notices new files and rescans by itself</li>
-      </ul>
-    </div>
-    <div class="panel">
-      <div class="grid">
-        <div class="card"><img src="assets/av/sparrow-mail.svg" alt=""><p>sparrow-mail</p><span class="ago">5h ago</span><span class="path mono">~/codes/sparrow-mail</span><div class="tags"><span class="tag">⎇ inbox-v2</span><span class="tag warn">12 uncommitted</span></div></div>
-        <div class="card"><img src="assets/av/quill-cli.svg" alt=""><p>quill-cli</p><span class="ago">1d ago</span><span class="path mono">~/codes/quill-cli</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
-        <div class="card"><img src="assets/av/harbor-sync.svg" alt=""><p>harbor-sync</p><span class="ago">2h ago</span><span class="path mono">~/codes/harbor-sync</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Rust</span></div></div>
-        <div class="card"><img src="assets/av/moss-ui.svg" alt=""><p>moss-ui</p><span class="ago">3d ago</span><span class="path mono">~/codes/moss-ui</span><div class="tags"><span class="tag">⎇ main</span><span class="tag">Vite</span></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap split rev rv">
-    <div class="copy">
-      <div class="kicker">2 · Files every chat</div>
-      <h2>Every conversation, <em>under the repo it belongs to.</em></h2>
-      <p class="sub">Claude Code, Codex and OpenCode each keep their history in a different place. Repobox reads all three and sorts them by project and by day.</p>
-      <ul class="ticks">
-        <li>See the last thing you asked, not a random ID</li>
-        <li>A green dot shows which agents are running right now</li>
-        <li>Chats started outside any repo are kept as loose sessions</li>
-        <li>Filter by agent with one click</li>
-      </ul>
-    </div>
-    <div class="panel">
-      <div class="glab">RUNNING NOW · TODAY</div>
-      <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i><i class="dot"></i></div><div><p>Fix login redirect loop</p><small>› the cookie is set but /dashboard still bounces back</small></div><div class="r"><span class="pill">tidepool</span><span class="resume">Resume</span></div></div>
-      <div class="srow"><div class="m"><i class="lg codex"></i></div><div><p>Plan the rate limiter</p><small>› use a token bucket per API key, not per IP</small></div><div class="r"><span class="pill">lumen-api</span>1h</div></div>
-      <div class="glab" style="margin-top:8px">YESTERDAY</div>
-      <div class="srow"><div class="m"><i class="lg opencode"></i></div><div><p>offline-cache-v1</p><small>› write the sync queue to IndexedDB first</small></div><div class="r"><span class="pill">harbor-sync</span>1d</div></div>
-      <div class="srow"><div class="m" style="background:#fbeee8"><i class="lg claude"></i></div><div><p>Inbox keyboard shortcuts</p><small>› j and k should move between threads</small></div><div class="r"><span class="pill">sparrow-mail</span>1d</div></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap split rv">
-    <div class="copy">
-      <div class="kicker">3 · One click back in</div>
-      <h2>Pick up exactly <em>where you left off.</em></h2>
-      <p class="sub">Press Resume and Repobox opens Terminal in the right folder and runs the agent's own resume command. The agent has the whole conversation again.</p>
-      <ul class="ticks">
-        <li><span>Press <kbd>⌘K</kbd> and type a few letters of any project or chat</span></li>
-        <li>Works with Terminal and iTerm</li>
-        <li>Uses each agent's own command, so nothing is rewritten</li>
-      </ul>
-    </div>
+<section class="dark" id="privacy">
+  <div class="wrap pv">
     <div>
-      <div class="term mono"><div class="tl"><i></i><i></i><i></i></div>
-        <div><span class="p">~/codes/tidepool</span> <span class="g">❯</span> claude --resume <span class="c">8f3c…a21</span></div>
-        <div class="p">Resuming “Fix login redirect loop”…</div>
-      </div>
-      <div class="kbar"><div class="in"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a8a90" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>redir<i class="caret"></i></div>
-        <div class="h on"><i class="lg claude"></i>Fix login redirect loop<small>tidepool · now</small></div>
-        <div class="h"><i class="lg codex"></i>Redirect old /blog URLs<small>moss-ui · 3d</small></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="privacy" class="privacy">
-  <div class="wrap split rv">
-    <div class="copy">
       <div class="kicker">Privacy</div>
-      <h2>Your code stays <em>on your Mac.</em></h2>
-      <p class="sub">Repobox is a window onto files you already have. It doesn't run agents, call an AI, or send anything anywhere.</p>
-      <ul class="ticks">
-        <li>Reads agent history files; never edits or deletes them</li>
-        <li>No account and no sign-in</li>
-        <li>Your code and conversations never leave your computer</li>
-        <li>No AI inside: what you see is what's on disk</li>
-      </ul>
+      <h2 class="big">Repobox <em>only reads.</em></h2>
+      <p class="sub">It's a window onto files already on your Mac. It doesn't run your agents, doesn't call an AI, and never edits your history. Your code and your conversations stay where they are.</p>
+      <div class="facts"><span>No account</span><span>No AI inside</span><span>Never edits history</span><span>Works offline</span></div>
     </div>
-    <div class="promise"><img src="assets/img/repobox-mascot.svg" alt=""><div class="serif">Repobox only reads.</div><small>The same promise you'll find in the app's Settings.</small></div>
-  </div>
-</section>
-
-<section id="film" class="film">
-  <div class="wrap rv">
-    <div class="kicker">The film</div>
-    <h2>Repobox <em>in 42 seconds.</em></h2>
-    <video src="assets/repobox-film.mp4" poster="assets/img/film-poster.jpg" controls playsinline preload="metadata"></video>
-  </div>
-</section>
-
-<section id="faq">
-  <div class="wrap faq rv">
-    <div><div class="kicker">Questions</div><h2>Good to <em>know.</em></h2></div>
-    <div>
-      <details open><summary>What is Repobox?</summary><p>Repobox is a Mac app that finds every code repo on your computer and lists the Claude Code, Codex and OpenCode conversations that belong to each one. From there you can open the project in your editor or resume any session in one click.</p></details>
-      <details><summary>How do I resume an old Claude Code session?</summary><p>Find the session in Repobox (or press <kbd>⌘K</kbd> and type part of its name) and press Resume. Repobox opens Terminal in that project's folder and runs <code>claude --resume</code> with the session's ID, so the full conversation comes back.</p></details>
-      <details><summary>Which coding agents does it support?</summary><p>Claude Code, OpenAI Codex CLI and OpenCode. Each one can be turned off in Settings.</p></details>
-      <details><summary>Does Repobox upload my code or chats?</summary><p>No. It only reads files that are already on your Mac and never sends your code or conversations anywhere. There's no account and no AI inside.</p></details>
-      <details><summary>Will it change my agent history?</summary><p>No. Repobox only reads the history folders. Resuming uses each agent's own command, so the agent itself does the work.</p></details>
-      <details><summary>Does it work on Windows or Linux?</summary><p>Not yet. Repobox is a native Mac app for macOS 13 or later.</p></details>
-      <details><summary>How do I say it?</summary><p>Like it's spelled: “repo box”. A box for your repos.</p></details>
+    <div class="ledger" aria-label="What Repobox reads and sends">
+      <div class="lrow">
+        <div class="lhead"><span>READ FROM YOUR MAC</span><span>while you've been here</span></div>
+        <div class="lnum" id="readn">0 files</div>
+        <div class="feed"><ul id="feed"></ul></div>
+      </div>
+      <div class="lrow">
+        <div class="lhead"><span>SENT TO THE INTERNET</span><span id="since">0s</span></div>
+        <div class="lnum zero">0 bytes</div>
+        <div class="flat"></div>
+        <div class="lnote">Repobox has no servers to send anything to.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="end">
-  <div class="wrap rv">
-    <img class="bot" src="assets/img/repobox-mascot.svg" alt="">
+<section class="close" id="film">
+  <div class="wrap">
+    <div class="kicker" style="justify-content:center">For everyone who codes with agents</div>
     <h2>Stop hunting for <em>that one chat.</em></h2>
-    <div class="ctas"><a class="btn" href="https://github.com/codebyNJ/repobox/releases">Download for macOS</a><a class="btn ghost" href="https://github.com/codebyNJ/repobox">View on GitHub</a></div>
+    <div class="ctas">
+      <a class="btn" href="https://github.com/codebyNJ/repobox/releases">Download for macOS</a>
+      <a class="btn ghost" href="https://github.com/codebyNJ/repobox">View on GitHub</a>
+    </div>
+    <a class="filmcard" href="#film" data-film aria-label="Play the 42-second Repobox film"><span class="play"></span><span class="lab">Repobox in 42 seconds</span></a>
+
+    <div class="faq">
+      <div>
+        <details open><summary>What is Repobox?</summary><p>A Mac app that finds every code repo on your computer and lists the Claude Code, Codex and OpenCode conversations that belong to each one. Open the project in your editor, or resume any session in one click.</p></details>
+        <details><summary>How do I resume an old Claude Code session?</summary><p>Find it in Repobox, or press <kbd>⌘K</kbd> and type part of its name, then press Resume. Repobox opens Terminal in that project's folder and runs <code>claude --resume</code> with the session's ID.</p></details>
+      </div>
+      <div>
+        <details><summary>Does it upload my code or chats?</summary><p>No. It only reads files that are already on your Mac. There's no account, no AI inside, and nothing is sent anywhere.</p></details>
+        <details><summary>What do I need?</summary><p>macOS 13 or later and at least one of Claude Code, OpenAI Codex CLI or OpenCode. Works with Terminal and iTerm.</p></details>
+      </div>
+    </div>
   </div>
 </section>
+</main>
 
-<footer><div class="wrap">
-  <a class="brand" href="#"><img src="assets/img/repobox-mascot.svg" alt=""><span style="font-size:20px">repobox</span></a>
-  <span>Painting: Claude Monet, Stacks of Wheat (End of Summer), Art Institute of Chicago, public domain.</span>
-  <a href="https://github.com/codebyNJ/repobox">GitHub</a>
-</div></footer>
+<footer>
+  <img class="footbot" src="assets/img/repobox-mascot.svg" alt="">
+  <div class="mark" aria-hidden="true">repobox</div>
+  <div class="fl">
+    <span>© 2026 Repobox</span>
+    <a href="https://github.com/codebyNJ/repobox">GitHub</a>
+    <a href="https://github.com/codebyNJ/repobox/releases">Releases</a>
+    <span>Painting: Claude Monet, Stacks of Wheat (End of Summer), Art Institute of Chicago, public domain.</span>
+    <span>Say it “repo box”.</span>
+  </div>
+</footer>
 
+<dialog id="pal" aria-label="Search the demo sessions">
+  <div class="pal">
+    <div class="pin-in"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8a8a90" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pq" placeholder="Search projects and chats… try “redirect”" autocomplete="off" spellcheck="false"><kbd>esc</kbd></div>
+    <div class="plist" id="plist"></div>
+    <div class="pres" id="pres" hidden></div>
+    <div class="pfoot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>↵</kbd> resume</span><span style="margin-left:auto">Demo data · the app searches your real sessions</span></div>
+  </div>
+</dialog>
+
+<dialog id="filmd" aria-label="The Repobox film">
+  <button class="fx" aria-label="Close">×</button>
+  <div class="fbox"><video src="assets/repobox-film.mp4" poster="assets/img/film-poster.jpg" controls playsinline preload="none"></video></div>
+</dialog>
+
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/ScrollTrigger.min.js"></script>
+<script src="assets/js/lenis.min.js"></script>
 <script>
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
-document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+/* ---------- demo sessions (fictional, shared by the palette) ---------- */
+const S=[
+ {t:"Fix login redirect loop",r:"tidepool",a:"claude",ago:"now",id:"8f3c2e1a",p:"the cookie is set but /dashboard still bounces back",run:1},
+ {t:"Plan the rate limiter",r:"lumen-api",a:"codex",ago:"1h",id:"019a6c4e",p:"use a token bucket per API key, not per IP"},
+ {t:"Release notes for 0.4",r:"quill-cli",a:"claude",ago:"4h",id:"c2e4a771",p:"group the changelog by breaking changes vs fixes"},
+ {t:"offline-cache-v1",r:"harbor-sync",a:"opencode",ago:"1d",id:"ses_9k2xq",p:"write the sync queue to IndexedDB first"},
+ {t:"Inbox keyboard shortcuts",r:"sparrow-mail",a:"claude",ago:"1d",id:"b71d09fe",p:"j and k should move between threads"},
+ {t:"Redirect old /blog URLs",r:"moss-ui",a:"codex",ago:"1d",id:"019a41b2",p:"301 every /blog/:slug to /notes/:slug"},
+ {t:"Dark mode tokens",r:"moss-ui",a:"opencode",ago:"1w",id:"ses_3mf8p",p:"map every gray to a semantic token"},
+ {t:"Flaky upload test",r:"harbor-sync",a:"claude",ago:"2w",id:"5a90de13",p:"it only fails when two chunks finish together"},
+ {t:"Retry webhooks with backoff",r:"lumen-api",a:"claude",ago:"3w",id:"e6b1f204",p:"cap it at five tries, then park it in a dead-letter table"}];
+const NAME={claude:"Claude Code",codex:"Codex",opencode:"OpenCode"};
+const cmd=s=>s.a=="claude"?`claude --resume ${s.id}`:s.a=="codex"?`codex resume ${s.id}`:`opencode --session ${s.id}`;
+const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- ⌘K palette ---------- */
+const pal=$("#pal"),pq=$("#pq"),plist=$("#plist"),pres=$("#pres");let hits=[],sel=0;
+function render(){
+  const q=pq.value.trim().toLowerCase();
+  hits=S.filter(s=>!q||(s.t+" "+s.r+" "+s.p+" "+NAME[s.a]).toLowerCase().includes(q));
+  sel=Math.min(sel,Math.max(0,hits.length-1));
+  plist.innerHTML=hits.length?hits.map((s,i)=>`<div class="pi${i==sel?" on":""}" data-i="${i}"><div class="m"><i class="lg ${s.a}"></i></div><div><p>${esc(s.t)}</p><small>${s.r} · › ${esc(s.p)}</small></div><span class="ago">${s.run?'<i class="dot"></i>':''}${s.ago}</span></div>`).join(""):`<div class="pempty">Nothing matches “${esc(pq.value)}”. In the app, this searches every chat on your Mac.</div>`;
+}
+function resume(s){
+  plist.hidden=true;pres.hidden=false;
+  pres.innerHTML=`<div class="term"><div><span class="p">~/codes/${s.r}</span> <span class="g">❯</span> ${cmd(s)}</div><div class="p">Resuming “${esc(s.t)}”…</div><div style="color:#fff">› ${esc(s.p)}</div></div><p>On your Mac, Repobox opens Terminal in <b>${s.r}</b> and runs this for you. ${NAME[s.a]} picks up the whole conversation.</p><div class="row"><a class="btn sm" href="https://github.com/codebyNJ/repobox/releases">Download for macOS</a><button class="btn sm ghost" id="pback">Back to search</button></div>`;
+  $("#pback").onclick=()=>{pres.hidden=true;plist.hidden=false;pq.focus()};
+}
+function openPal(){pres.hidden=true;plist.hidden=false;pq.value="";sel=0;render();pal.showModal();setTimeout(()=>pq.focus(),30)}
+pq.addEventListener("input",()=>{sel=0;render()});
+pq.addEventListener("keydown",e=>{
+  if((e.key=="ArrowDown"||e.key=="ArrowUp")&&hits.length){e.preventDefault();sel=(sel+(e.key=="ArrowDown"?1:-1)+hits.length)%hits.length;render();$(".pi.on")?.scrollIntoView({block:"nearest"})}
+  else if(e.key=="Enter"&&hits[sel]){e.preventDefault();resume(hits[sel])}
+});
+plist.addEventListener("click",e=>{const it=e.target.closest(".pi");if(it)resume(hits[+it.dataset.i])});
+plist.addEventListener("mousemove",e=>{const it=e.target.closest(".pi");if(it&&+it.dataset.i!=sel){sel=+it.dataset.i;$$(".pi",plist).forEach((p,i)=>p.classList.toggle("on",i==sel))}});
+pal.addEventListener("click",e=>{if(e.target==pal)pal.close()});
+$$("[data-pal]").forEach(b=>b.addEventListener("click",openPal));
+addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()=="k"){e.preventDefault();pal.open?pal.close():openPal()}});
+
+/* ---------- film ---------- */
+const fd=$("#filmd"),fv=$("video",fd);
+$$("[data-film]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();fd.showModal();fv.play().catch(()=>{})}));
+$(".fx").onclick=()=>fd.close();
+fd.addEventListener("click",e=>{if(e.target==fd)fd.close()});
+fd.addEventListener("close",()=>fv.pause());
+
+/* ---------- privacy ledger: reads tick, sends stay at zero ---------- */
+const files=["~/.claude/projects/-Users-you-codes-tidepool/8f3c2e1a.jsonl","~/.codex/sessions/2026/11/28/rollout-019a6c4e.jsonl","~/.local/share/opencode/opencode.db","~/codes/lumen-api/.git/HEAD","~/.claude/projects/-Users-you-codes-quill-cli/c2e4a771.jsonl","~/codes/harbor-sync/Cargo.toml","~/.codex/sessions/2026/11/27/rollout-019a41b2.jsonl","~/work/moss-ui/package.json","~/.claude/projects/-Users-you-codes-sparrow-mail/b71d09fe.jsonl","~/codes/tidepool/.git/index"];
+$("#feed").innerHTML=[...files,...files].map(f=>`<li><b>read</b> ${f}</li>`).join("");
+let reads=0,secs=0,pvOn=false;
+new IntersectionObserver(([e])=>pvOn=e.isIntersecting).observe($("#privacy"));
+setInterval(()=>{if(!pvOn)return;secs++;reads+=3+(secs%4);$("#readn").textContent=reads.toLocaleString()+" files";$("#since").textContent=secs<60?secs+"s":Math.floor(secs/60)+"m "+secs%60+"s"},1000);
+
+/* ---------- footer robot: jelly on tap ---------- */
+const fb=$(".footbot");
+fb.addEventListener("click",()=>window.gsap&&gsap.timeline().to(fb,{scaleX:1.3,scaleY:.68,duration:.12}).to(fb,{scaleX:1,scaleY:1,duration:1.1,ease:"elastic.out(1.1,.3)"}));
+
+/* ---------- the one-take scroll story ---------- */
+if(window.gsap&&window.ScrollTrigger&&window.Lenis){
+gsap.registerPlugin(ScrollTrigger);
+const lenis=new Lenis({lerp:.085});
+lenis.on("scroll",ScrollTrigger.update);
+gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);
+$$('a[href^="#"]:not([data-film])').forEach(a=>a.addEventListener("click",e=>{const h=a.getAttribute("href"),t=$(h);if(t){e.preventDefault();lenis.scrollTo(h=="#top"?0:t,{duration:1.6})}}));
+
+const mm=gsap.matchMedia();
+mm.add("(min-width: 901px) and (min-height: 620px) and (prefers-reduced-motion: no-preference)",()=>{
+  document.documentElement.classList.add("motion");
+  const pin=$(".pin"),win=$(".win"),field=$(".field"),hA=$(".hA"),hB=$(".hB"),steps=$(".steps"),
+        robot=$(".robot"),home=$(".view.home"),sess=$(".view.sess"),sheet=$(".sheet"),crop=$(".crop"),
+        cur=$(".cursor"),main=$(".main");
+  gsap.set(hA,{xPercent:-50,yPercent:-50});gsap.set(steps,{yPercent:-50});
+  const W=1080,H=620;
+  const vw=()=>pin.clientWidth, vh=()=>pin.clientHeight;
+  const fit=()=>Math.min(1,(vh()-200)/H,(vw()-96)/W);
+  const off=(el,anc)=>{let x=0,y=0;while(el&&el!==anc){x+=el.offsetLeft;y+=el.offsetTop;el=el.offsetParent}return{x,y}};
+  // window states: A = peeking under the headline, B = centred box, C = beside the step copy
+  const A=()=>({x:0,y:vh()*.86+H*fit()*.95/2-vh()/2,scale:fit()*.95});
+  const B=()=>({x:0,y:58,scale:fit()});
+  const sC=()=>Math.min((vw()*.6)/W,(vh()-150)/H);
+  const C=()=>({x:vw()-44-W*sC()/2-vw()/2,y:30,scale:sC()});
+
+  // the mess: fragments from hidden folders, terminals and half-remembered chats
+  const F=[
+   ["folder","~/codes/tidepool",9,22,-6,"c1"],
+   ["bub","the cookie is set but /dashboard still bounces back",87,19,4,"t1","claude"],
+   ["term","claude --resume 8f3c…a21",13,47,3,"running"],
+   ["tag","⎇ rate-limit",84,42,-8,"c2"],
+   ["path","~/.codex/sessions/2026/11/27/…jsonl",28,13,2,"a-codex"],
+   ["bub","token bucket per API key, not per IP",70,11,-3,"t2","codex"],
+   ["folder","~/Desktop/old/harbor-sync",91,63,5,"c3"],
+   ["tag","4 uncommitted",19,69,-4,"c1","warn"],
+   ["bub","write the sync queue to IndexedDB first",9,79,6,"t3","opencode"],
+   ["path","~/.claude/projects/-Users-you-codes…",80,80,-2,"a-claude"],
+   ["term","opencode --session ses_9k2…",93,31,-5,"a-opencode"],
+   ["folder","~/work/moss-ui",5,35,8,"c4"],
+   ["tag","⎇ inbox-v2",95,50,6,"c5"],
+   ["path","opencode.db",3,58,-3,"loose"],
+   ["term","codex resume 019a…",22,89,4,"sessions"],
+   ["folder","~/codes/quill-cli",90,90,-4,"c6"]];
+  const frags=F.map(([k,txt,cx,cy,rot,slot,x],i)=>{
+    const el=document.createElement("div");el.className="frag";
+    el.innerHTML=k=="folder"?`<div class="f-folder"><i></i>${txt}</div>`:
+      k=="bub"?`<div class="f-bub"><b><i class="lg ${x}"></i>${NAME[x]}</b>› ${txt}</div>`:
+      k=="term"?`<div class="f-term"><span>❯</span> ${txt}</div>`:
+      k=="tag"?`<div class="f-tag ${x||""}">${txt}</div>`:`<div class="f-path">${txt}</div>`;
+    const d=el.firstChild;d.style.setProperty("--d",(5+i%5*.9)+"s");d.style.setProperty("--dl",(-i*.7)+"s");
+    d.style.setProperty("--bx",((i%3)-1)*8+"px");d.style.setProperty("--by",(i%2?-1:1)*(8+i%4*3)+"px");
+    field.appendChild(el);return{el,cx,cy,rot,slot:$(`[data-slot="${slot}"]`,win)};
+  });
+  const slots=$$("[data-slot]",win);
+  // where a fragment lands: its slot's centre, in stage coordinates, with the window in state B
+  const land=f=>{const b=B(),o=off(f.slot,win);return{x:vw()/2+b.x+(o.x+f.slot.offsetWidth/2-W/2)*b.scale,y:vh()/2+b.y+(o.y+f.slot.offsetHeight/2-H/2)*b.scale}};
+  frags.forEach(f=>gsap.set(f.el,{xPercent:-50,yPercent:-50}));
+
+  // crop marks hug whatever the step is about
+  const box=(el,pad=8)=>{const o=off(el,main);return{left:o.x-pad,top:o.y-pad,width:el.offsetWidth+pad*2,height:el.offsetHeight+pad*2}};
+  const grid=$(".grid",home),slist=$(".slist",sess),resumeB=$("#resume");
+  const curAt=()=>{const o=off(resumeB,main);return{x:o.x+resumeB.offsetWidth*.55,y:o.y+resumeB.offsetHeight*.55}};
+  const typed=$("#typed"),line="claude --resume 8f3c2e1a",ty={n:0};
+  const counters=$$("[data-n]",win).map(b=>({b,v:+b.dataset.n,o:{n:0}}));
+  const stepEls=$$(".step",steps),bars=$$(".step .bar i",steps);
+
+  const tl=gsap.timeline({defaults:{ease:"none"},scrollTrigger:{trigger:pin,start:"top top",end:"+=560%",pin:true,scrub:1,invalidateOnRefresh:true}});
+  // 0–1 hold on the mess · 1–3.2 everything packs into the box
+  tl.to(hA,{y:-170,opacity:0,duration:.9,ease:"power1.in"},1);
+  tl.fromTo(win,{x:()=>A().x,y:()=>A().y,scale:()=>A().scale},{x:()=>B().x,y:()=>B().y,scale:()=>B().scale,duration:1.5,ease:"power2.inOut"},1);
+  const popped=new Set();
+  frags.forEach((f,i)=>{
+    const at=1.25+i*.055;
+    tl.fromTo(f.el,{left:()=>f.cx/100*vw(),top:()=>f.cy/100*vh(),x:0,y:0,rotation:f.rot,scale:1,opacity:1},
+      {x:()=>land(f).x-f.cx/100*vw(),y:()=>land(f).y-f.cy/100*vh(),rotation:0,
+       scale:()=>gsap.utils.clamp(.3,1,B().scale*f.slot.offsetWidth/f.el.offsetWidth),duration:1.05,ease:"power3.in"},at);
+    tl.to(f.el,{opacity:0,duration:.12},at+.97);
+    if(!popped.has(f.slot)){popped.add(f.slot);tl.fromTo(f.slot,{opacity:0,scale:.86},{opacity:1,scale:1,duration:.45,ease:"back.out(2.6)"},at+.98)}
+  });
+  slots.filter(s=>!popped.has(s)).forEach(s=>tl.fromTo(s,{opacity:0},{opacity:1,duration:.3},2.6));
+  counters.forEach(c=>tl.fromTo(c.o,{n:0},{n:c.v,duration:.9,ease:"power1.out",onUpdate:()=>c.b.textContent=Math.round(c.o.n)},2.2));
+  tl.fromTo(robot,{scaleX:1,scaleY:1},{keyframes:[{scaleX:1.28,scaleY:.7,duration:.12},{scaleX:.88,scaleY:1.16,duration:.14},{scaleX:1,scaleY:1,duration:.5,ease:"elastic.out(1,.35)"}]},3.05);
+  tl.fromTo(hB,{y:30,opacity:0},{y:0,opacity:1,duration:.5,ease:"power2.out"},2.9);
+  // 3.9 the box moves aside; the three steps play inside it
+  tl.to(hB,{y:-30,opacity:0,duration:.4},3.9);
+  tl.to(win,{x:()=>C().x,y:()=>C().y,scale:()=>C().scale,duration:.9,ease:"power2.inOut"},3.9);
+  tl.fromTo(steps,{opacity:0,x:-40},{opacity:1,x:0,duration:.6,ease:"power2.out"},4.25);
+  const act=(i,at)=>stepEls.forEach((s,j)=>tl.to(s,{opacity:j==i?1:.3,duration:.3},at));
+  // step 1: projects
+  act(0,4.4);
+  tl.fromTo(crop,{opacity:0,left:()=>box(grid,22).left,top:()=>box(grid,22).top,width:()=>box(grid,22).width,height:()=>box(grid,22).height},
+    {opacity:1,left:()=>box(grid).left,top:()=>box(grid).top,width:()=>box(grid).width,height:()=>box(grid).height,duration:.5,ease:"back.out(1.6)"},4.5);
+  tl.fromTo(bars[0],{scaleX:0},{scaleX:1,duration:1.4},4.5);
+  // step 2: chats, filed by repo
+  act(1,5.95);
+  tl.to($('[data-nv="home"]',win),{backgroundColor:"rgba(239,239,241,0)",duration:.2},6);
+  tl.fromTo($('[data-nv="sess"]',win),{backgroundColor:"rgba(239,239,241,0)"},{backgroundColor:"rgba(239,239,241,1)",duration:.2},6);
+  tl.to(home,{opacity:0,y:-16,duration:.4},6);
+  tl.fromTo(sess,{opacity:0,y:20},{opacity:1,y:0,duration:.45,ease:"power2.out"},6.15);
+  tl.to(crop,{left:()=>box(slist).left,top:()=>box(slist).top,width:()=>box(slist).width,height:()=>box(slist).height,duration:.55,ease:"back.out(1.4)"},6.15);
+  tl.fromTo(bars[1],{scaleX:0},{scaleX:1,duration:1.4},6.2);
+  // step 3: click Resume, the terminal comes up with the conversation back
+  act(2,7.75);
+  tl.to(crop,{opacity:0,duration:.25},7.75);
+  tl.fromTo(cur,{opacity:0,x:()=>main.offsetWidth*.7,y:()=>main.offsetHeight*.95},{opacity:1,x:()=>curAt().x,y:()=>curAt().y,duration:.6,ease:"power2.inOut"},7.8);
+  tl.fromTo(resumeB,{scale:1},{scale:.88,duration:.08},8.42).to(resumeB,{scale:1,duration:.3,ease:"elastic.out(1,.4)"});
+  tl.to(cur,{opacity:0,duration:.2},8.6);
+  tl.fromTo(sheet,{yPercent:105},{yPercent:0,duration:.55,ease:"back.out(1.1)"},8.55);
+  tl.fromTo(ty,{n:0},{n:line.length,duration:.7,onUpdate:()=>typed.textContent=line.slice(0,Math.round(ty.n))},9.05);
+  tl.fromTo($$(".tline",sheet),{opacity:0,y:8},{opacity:1,y:0,duration:.3,stagger:.22},9.8);
+  tl.fromTo(bars[2],{scaleX:0},{scaleX:1,duration:1.2},8.5);
+  tl.to({},{duration:.8},10.6);
+
+  // gentle parallax on the mess while it's still a mess
+  const st=tl.scrollTrigger,qx=gsap.quickTo(field,"x",{duration:.9,ease:"power3"}),qy=gsap.quickTo(field,"y",{duration:.9,ease:"power3"});
+  const mv=e=>{const k=st.progress<.08?1:0;qx((e.clientX/innerWidth-.5)*-26*k);qy((e.clientY/innerHeight-.5)*-18*k)};
+  addEventListener("mousemove",mv);
+  return()=>{document.documentElement.classList.remove("motion");frags.forEach(f=>f.el.remove());removeEventListener("mousemove",mv)};
+});
+// simple entrances everywhere else
+mm.add("(prefers-reduced-motion: no-preference)",()=>{
+  $$(".pv>*,.close h2,.close .ctas,.filmcard,.faq details").forEach(el=>gsap.from(el,{y:40,opacity:0,duration:1,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 88%"}}));
+  gsap.from(".footbot",{y:80,scaleY:.6,duration:1.2,ease:"elastic.out(1,.4)",scrollTrigger:{trigger:"footer",start:"top 80%"}});
+});
+}
 </script>
 </body>
 </html>
